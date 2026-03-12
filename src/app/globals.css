@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505;
+  --background: #0a0a0a;
   --foreground: #e4e4e7;
-  --accent: #a78bfa;
-  --accent-dim: #7c3aed;
+  --accent: #00eaff;
+  --accent-dim: rgba(0, 234, 255, 0.16);
   --surface: #111111;
   --surface-hover: #1a1a1a;
   --border: #222222;
@@ -18,13 +18,17 @@
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-space-mono);
+  --font-mono: var(--font-space-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Scrollbar */
@@ -41,8 +45,8 @@ body {
 
 /* Glow effect on accent elements */
 .glow {
-  box-shadow: 0 0 20px rgba(167, 139, 250, 0.15),
-              0 0 60px rgba(167, 139, 250, 0.05);
+  box-shadow: 0 0 22px rgba(0, 234, 255, 0.12),
+              0 0 80px rgba(0, 234, 255, 0.06);
 }
 
 /* Typing indicator */
@@ -54,3 +58,40 @@ body {
 .typing-dot:nth-child(1) { animation: pulse-dot 1.4s infinite 0s; }
 .typing-dot:nth-child(2) { animation: pulse-dot 1.4s infinite 0.2s; }
 .typing-dot:nth-child(3) { animation: pulse-dot 1.4s infinite 0.4s; }
+
+/* Display font helper */
+.font-display {
+  font-family: var(--font-bebas-neue);
+}
+
+/* Subtle animated hero backdrop (CSS-only) */
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-4%, -6%, 0); }
+}
+
+.hero-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(0, 234, 255, 0.08), transparent 60%),
+    radial-gradient(700px 420px at 80% 35%, rgba(255, 255, 255, 0.04), transparent 55%),
+    radial-gradient(900px 520px at 55% 85%, rgba(0, 234, 255, 0.05), transparent 60%);
+  filter: blur(0px);
+  animation: drift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.hero-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.05;
+  mask-image: radial-gradient(closest-side at 50% 30%, black 40%, transparent 75%);
+  pointer-events: none;
+}

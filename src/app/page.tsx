@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ProjectCard } from "@/components/ProjectCard";
+import { SkillsGrid } from "@/components/SkillsGrid";
+import { GitHubFeed } from "@/components/GitHubFeed";
 
 interface Message {
   role: "user" | "assistant";
@@ -254,105 +257,192 @@ export default function Home() {
 
       {/* Projects */}
       <section id="projects" className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
-          Projects
+        <h2 className="font-display text-white leading-[0.9] tracking-tight" style={{ fontSize: "clamp(44px, 6vw, 72px)" }}>
+          Things I&apos;ve Built
         </h2>
-        <div className="mt-8 grid md:grid-cols-3 gap-4">
-          {[
-            {
-              title: "AdsGency AI",
-              desc: "AI-driven marketing automation platform for e-commerce.",
-              meta: "Python • FastAPI • AWS • Postgres • Shopify",
-            },
-            {
-              title: "Recipe iOS App",
-              desc: "SwiftUI cooking-mode app with timers + text-to-speech.",
-              meta: "Swift • SwiftUI • AVFoundation",
-            },
-            {
-              title: "Personal Finance Discord Bot",
-              desc: "Chat-first expense tracking + budgets in Discord.",
-              meta: "Python • MySQL • Discord API",
-            },
-          ].map((p) => (
-            <div key={p.title} className="border border-border rounded-2xl bg-surface p-5 hover:bg-surface-hover transition-colors">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-white font-semibold tracking-tight">{p.title}</h3>
-                <div className="w-2 h-2 rounded-full bg-accent glow mt-2" />
-              </div>
-              <p className="text-zinc-400 mt-3 text-sm leading-relaxed">{p.desc}</p>
-              <p className="text-zinc-600 mt-4 text-xs">{p.meta}</p>
-            </div>
-          ))}
+        <p className="mt-4 text-zinc-500 max-w-2xl">
+          Real systems, shipped work, and projects I built because I wanted them to exist.
+        </p>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <ProjectCard
+            name="AdsGency AI"
+            type="Professional"
+            description="AI-driven marketing automation platform for e-commerce brands. I built backend services powering advertising workflows, integrated the Shopify API, and kept deployments stable with AWS + CI/CD."
+            tech={["Python", "FastAPI", "AWS", "PostgreSQL", "Shopify API"]}
+            caseStudy={{
+              problem:
+                "E-commerce teams needed reliable automation for ad workflows, but real-world integrations (Shopify, ads platforms, and internal services) often failed in edge cases.",
+              built:
+                "Backend services and pipelines to orchestrate AI ad workflows, robust Shopify API integrations, and the deployment tooling to ship safely and debug production quickly.",
+              differently:
+                "Invest earlier in integration test harnesses and better observability around third‑party API failures to reduce on-call debugging time.",
+            }}
+          />
+
+          <ProjectCard
+            name="Recipe iOS App"
+            type="Personal"
+            description="A SwiftUI cooking app designed for the actual cooking experience: big text, step-by-step navigation, and hands-free support. I built it because I genuinely wanted to use it."
+            tech={["Swift", "SwiftUI", "AVFoundation"]}
+            caseStudy={{
+              problem:
+                "Most recipe apps are great for browsing but clunky once you’re mid-cook—touching the screen with messy hands and losing your place.",
+              built:
+                "A focused cooking mode with step navigation, per-step timers, and text-to-speech so instructions can be followed without constantly looking at the phone.",
+              differently:
+                "Add more offline-first support and a better content pipeline (importing recipes cleanly) to make the app useful day one for more people.",
+            }}
+          />
+
+          <ProjectCard
+            name="Personal Finance Discord Bot"
+            type="Personal"
+            description="A Discord bot that makes tracking spending frictionless in chat. Log expenses by category, view summaries, and set budgets—without opening another app."
+            tech={["Python", "MySQL", "Discord API"]}
+            caseStudy={{
+              problem:
+                "Expense tracking fails when the workflow is too heavy—people won’t open a separate app every time they spend $6.",
+              built:
+                "A chat-first command system for logging expenses, generating summaries, and enforcing simple budgeting rules backed by a MySQL data model.",
+              differently:
+                "Improve UX with natural-language parsing and reminders, plus richer analytics dashboards outside Discord for long-term trends.",
+            }}
+          />
         </div>
       </section>
 
       {/* Skills */}
       <section id="skills" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
-          Skills
+        <h2
+          className="font-display text-white leading-[0.9] tracking-tight"
+          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
+        >
+          What I Work With
         </h2>
-        <div className="mt-8 grid md:grid-cols-3 gap-4 text-sm">
-          {[
-            { k: "Languages", v: "Python, TypeScript, SQL, Swift" },
-            { k: "Backend", v: "FastAPI, Node.js, REST APIs" },
-            { k: "Frontend", v: "React, Next.js" },
-            { k: "Databases", v: "PostgreSQL, MySQL" },
-            { k: "DevOps", v: "AWS, CI/CD, Docker" },
-            { k: "Interests", v: "AI systems, infra, developer tools" },
-          ].map((s) => (
-            <div key={s.k} className="border border-border rounded-2xl bg-surface p-5">
-              <p className="text-zinc-500 text-xs uppercase tracking-[0.18em]">{s.k}</p>
-              <p className="text-white mt-3 leading-relaxed">{s.v}</p>
-            </div>
-          ))}
+
+        <div className="mt-10">
+          <SkillsGrid />
+        </div>
+      </section>
+
+      {/* GitHub */}
+      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
+        <h2
+          className="font-display text-white leading-[0.9] tracking-tight"
+          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
+        >
+          Recently Building
+        </h2>
+        <p className="mt-4 text-zinc-500 max-w-2xl">
+          A quick snapshot of what I’ve been shipping lately.
+        </p>
+
+        <div className="mt-10">
+          <GitHubFeed />
         </div>
       </section>
 
       {/* About */}
       <section id="about" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
-          About
+        <h2
+          className="font-display text-white leading-[0.9] tracking-tight"
+          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
+        >
+          About Me
         </h2>
-        <div className="mt-8 max-w-3xl text-zinc-400 leading-relaxed space-y-4">
-          <p>
-            I’m a full-stack engineer in San Francisco with 1–2 years of experience.
-            I studied Computer Science and Comparative World Literature at SFSU—part
-            logic, part story. I like owning features end-to-end and sweating the
-            integration details until they behave.
-          </p>
-          <p>
-            I’m currently looking for a full-time role at an early-stage or growth-stage
-            startup working on AI systems, infrastructure, or interesting backend problems.
-          </p>
+
+        <div className="mt-10 grid gap-10 md:grid-cols-[240px_1fr] items-start">
+          <div className="hidden md:block relative">
+            <div className="select-none font-display text-white/5 leading-none tracking-tight text-[160px]">
+              PK
+            </div>
+          </div>
+
+          <div className="text-zinc-400 leading-relaxed">
+            <p>
+              I studied Computer Science and Comparative World Literature at San
+              Francisco State University — an unusual mix, but it shaped how I
+              think: part logical, part creative. I like understanding whole
+              systems, not just my piece of them. That curiosity shows up in how
+              I debug, how I architect, and how I communicate. Outside of code
+              I'm reading, exploring ideas across disciplines, and occasionally
+              convincing myself a side project is a good idea. I'm most
+              energized by early-stage teams building things that matter — where
+              engineers are close to the problem and ownership is real.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              <span className="text-accent font-semibold">1-2 yrs exp</span>
+              <span className="text-accent font-semibold">SF Based</span>
+              <span className="text-accent font-semibold">Open to work</span>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Contact */}
       <section id="contact" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
-          Contact
+        <h2
+          className="font-display text-white leading-[0.9] tracking-tight text-center"
+          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
+        >
+          Let&apos;s Work Together
         </h2>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+
+        <p className="mt-6 text-zinc-400 text-center max-w-2xl mx-auto leading-relaxed">
+          I&apos;m actively looking for the right full-time role. If you&apos;re
+          building something interesting, I&apos;d love to hear about it.
+        </p>
+
+        <div className="mt-10 flex items-center justify-center">
           <a
-            href="mailto:pankuri.kh@gmail.com"
-            className="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-accent text-black font-semibold tracking-tight hover:opacity-90 transition-opacity glow"
+            href="mailto:pankuri@email.com"
+            className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-accent text-black font-semibold tracking-tight hover:opacity-90 transition-opacity glow"
           >
-            Email me
+            Get in Touch →
           </a>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-6 text-sm">
           <a
             href="https://github.com/pankurik"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center px-5 py-3 rounded-xl border border-border text-white hover:border-accent hover:text-accent transition-colors"
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
           >
-            GitHub
+            <span className="text-accent">●</span> GitHub
+          </a>
+          <a
+            href="#"
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+          >
+            <span className="text-accent">●</span> LinkedIn
+          </a>
+          <a
+            href="#"
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+          >
+            <span className="text-accent">●</span> Resume
           </a>
         </div>
 
-        <p className="text-xs text-zinc-700 mt-10">
-          © {new Date().getFullYear()} Pankuri Khare
-        </p>
+        <div className="mt-12 border-t border-border pt-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <p className="text-xs text-zinc-600">
+              Built by Pankuri Khare · Powered by Claude API + pgvector · 2026
+            </p>
+
+            <details className="text-xs text-zinc-500">
+              <summary className="cursor-pointer select-none hover:text-white transition-colors">
+                [ built with ]
+              </summary>
+              <div className="mt-3 rounded-xl border border-border bg-surface px-4 py-3 text-zinc-400">
+                Next.js, Supabase, pgvector, OpenAI embeddings, Claude Haiku, Vercel
+              </div>
+            </details>
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -29,7 +29,7 @@ function chunkByHeading(
   markdown: string,
   minChunkSize = 100
 ): { heading: string; content: string }[] {
-  const lines = markdown.split("\n");
+  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const chunks: { heading: string; content: string }[] = [];
   let currentHeading = "";
   let currentLines: string[] = [];

@@ -11,9 +11,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 async function generateEmbedding(text: string): Promise<number[]> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing OPENAI_API_KEY");
+  }
+
+  const openai = new OpenAI({ apiKey });
   const result = await openai.embeddings.create({
     model: "text-embedding-3-small",
     input: text.trim(),

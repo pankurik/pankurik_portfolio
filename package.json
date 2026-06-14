@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "embed": "npx tsx scripts/embed-docs.ts"
+    "embed": "npx tsx docs/embed_knowledge.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

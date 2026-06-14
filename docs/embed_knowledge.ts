@@ -25,20 +25,26 @@ async function generateEmbedding(text: string): Promise<number[]> {
   return result.data[0].embedding;
 }
 
-function chunkByHeading(markdown: string): { heading: string; content: string }[] {
+function chunkByHeading(
+  markdown: string,
+  minChunkSize = 100
+): { heading: string; content: string }[] {
   const lines = markdown.split("\n");
   const chunks: { heading: string; content: string }[] = [];
   let currentHeading = "";
   let currentLines: string[] = [];
 
+  const flush = () => {
+    if (!currentHeading || currentLines.length === 0) return;
+    const content = `${currentHeading}\n${currentLines.join("\n")}`.trim();
+    if (content.length >= minChunkSize) {
+      chunks.push({ heading: currentHeading, content });
+    }
+  };
+
   for (const line of lines) {
     if (line.startsWith("## ")) {
-      if (currentHeading && currentLines.length > 0) {
-        chunks.push({
-          heading: currentHeading,
-          content: `${currentHeading}\n${currentLines.join("\n")}`.trim(),
-        });
-      }
+      if (currentHeading && currentLines.length > 0) flush();
       currentHeading = line;
       currentLines = [];
     } else {
@@ -46,13 +52,7 @@ function chunkByHeading(markdown: string): { heading: string; content: string }[
     }
   }
 
-  // Push the last chunk
-  if (currentHeading && currentLines.length > 0) {
-    chunks.push({
-      heading: currentHeading,
-      content: `${currentHeading}\n${currentLines.join("\n")}`.trim(),
-    });
-  }
+  if (currentHeading && currentLines.length > 0) flush();
 
   return chunks;
 }

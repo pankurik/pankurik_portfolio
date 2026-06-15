@@ -124,7 +124,7 @@ export const projects: Project[] = [
     featured: true,
     tagPills: ["Professional", "AI Platform"],
     role: "Software Engineer",
-    period: "Aug 2025 – Jan 2026",
+    period: "Aug 2025 – Present",
     description: [
       { text: "AI-driven marketing automation platform — built the " },
       { text: "DataValidationAgent from scratch", emphasis: true },
@@ -237,6 +237,24 @@ export const projects: Project[] = [
     link: "https://github.com/pankurik",
     whatIBuilt:
       "Python Discord bot with commands for logging expenses, setting budgets, creating savings goals, and viewing spending summaries and category breakdowns. MySQL backend with a normalized relational schema covering 10+ entities — users, transactions, categories, budgets, goals, alerts, and summaries — with proper multi-user data isolation. SQL aggregation queries answered real questions: how much did I spend this month, which category is over budget, how close am I to a savings goal. Tested with real users and submitted as a database systems course project.",
+  },
+  {
+    title: "Java Chat App",
+    type: "Personal",
+    tagPills: ["Personal", "Systems"],
+    role: "Solo Developer",
+    period: "Java · MongoDB · React",
+    description: [
+      { text: "Built a full chat app from scratch — including a " },
+      { text: "raw Java HTTP server, custom HTTP parser, and router", emphasis: true },
+      { text: " with no web framework. Token-based auth, DAO/DTO data layer, MongoDB persistence, and a React frontend — " },
+      { text: "every layer written by hand", emphasis: true },
+      { text: "." },
+    ],
+    tags: ["Java", "MongoDB", "React", "HTTP", "Auth", "DAO Pattern"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "Raw TCP server using Java ServerSocket — no Spring Boot, no framework. Custom HTTP parser that reads raw request bytes, extracts method, path, query params, headers, and body. Hand-written router mapping 9 endpoints to handler classes via a clean interface pattern. Token-based auth: SHA-256 password hashing before storage, session tokens generated as SHA256(username + expiry), checked on every protected route. DAO/DTO pattern with generic base classes and singleton DAOs for Users, Auth, Messages, Conversations, and BlockedUsers. Fluent HttpResponseBuilder, consistent RestApiAppResponse<T> wrapper across all endpoints. Conversation ID generation: alphabetically sorts both usernames before joining so alice_bob and bob_alice always resolve to the same canonical record. React frontend with login, registration, real-time chat UI, block/unblock, and session-based auth headers on every request.",
   },
 ];
 
@@ -363,6 +381,7 @@ export const skillCategories: SkillCategory[] = [
       { name: "NestJS", context: "SpeEdLabs backend services" },
       { name: "REST APIs", context: "Shopify, Meta, Google, and LinkedIn integrations" },
       { name: "Flask", context: "AdsGency AI agents service layer" },
+      { name: "Java", context: "Built a raw HTTP server, custom HTTP parser, and router from scratch — no framework; also used for finance tracker alerting" },
     ],
   },
   {
@@ -379,6 +398,7 @@ export const skillCategories: SkillCategory[] = [
       { name: "Snowflake", context: "AdsGency data warehouse normalization" },
       { name: "BigQuery", context: "AdsGency analytics data source" },
       { name: "Redshift", context: "AdsGency ETL pipeline" },
+      { name: "MongoDB", context: "Java chat app — DAO/DTO data layer with singleton pattern and double-checked instantiation" },
     ],
   },
   {
@@ -421,8 +441,8 @@ export const skillCategories: SkillCategory[] = [
       { name: "Shopify API", context: "AdsGency commerce integrations" },
       { name: "Discord API", context: "Finance bot commands and event handling" },
       { name: "Babel", context: "AdsGency backend translation extraction and i18n pipeline" },
-      { name: "Java", context: "Finance tracker alerting system" },
       { name: "C / C++", context: "CCSF tutoring and coursework" },
+      { name: "Java", context: "Built a raw HTTP server, custom HTTP parser, and router from scratch — no framework; also used for finance tracker alerting" },
     ],
   },
 ];
@@ -566,7 +586,7 @@ export const siteCopy = {
     sectionLabel: "What I've shipped",
     headline: "SELECTED",
     headlineAccent: "WORK",
-    dragHint: "Drag to explore",
+    dragHint: "Hover a card to pause · auto-scrolls",
     cta: "View project →",
   },
   skills: {
@@ -579,6 +599,7 @@ export const siteCopy = {
     sectionLabel: "What's in my setup",
     headline: "TOOLS I",
     headlineAccent: "USE",
+    hoverHint: "Pick a category, then hover a tool to see why it's in the rotation.",
   },
   github: {
     sectionLabel: "What I've been pushing",

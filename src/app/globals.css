@@ -27,6 +27,64 @@ body {
   color: var(--foreground);
 }
 
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #1a6b35;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transform: translate(-100px, -100px) translate(-50%, -50%);
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    opacity 0.2s ease;
+  will-change: transform, width, height;
+}
+
+.custom-cursor-dot.is-visible {
+  opacity: 1;
+}
+
+.custom-cursor-dot.is-hovering {
+  width: 48px;
+  height: 48px;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #1a6b35;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  transform: translate(-100px, -100px) translate(-50%, -50%);
+  transition: opacity 0.25s ease;
+  will-change: transform, opacity;
+}
+
+.custom-cursor-ring.is-visible {
+  opacity: 1;
+}
+
+.custom-cursor-ring.is-hovering {
+  opacity: 0;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -62,6 +120,83 @@ html {
 /* Display font helper */
 .font-display {
   font-family: var(--font-bebas-neue);
+}
+
+/* Hero — light section */
+.hero-section-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.hero-nav-pulse {
+  animation: hero-nav-pulse 2s ease-in-out infinite;
+}
+
+@keyframes hero-nav-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+}
+
+.hero-headline-line {
+  overflow: hidden;
+}
+
+.hero-headline-line-inner {
+  transform: translateY(100%);
+  opacity: 0;
+  animation: hero-line-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-headline-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.hero-headline-delay-2 {
+  animation-delay: 0.25s;
+}
+
+.hero-headline-delay-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes hero-line-rise {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.hero-headline-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px #1a6b35;
+}
+
+.hero-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hero-marquee 28s linear infinite;
+}
+
+@keyframes hero-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Subtle animated hero backdrop (CSS-only) */

@@ -19,6 +19,17 @@ interface Message {
   content: string;
 }
 
+type ContactType = "hiring" | "collaboration" | "other";
+
+const CONTACT_TYPE_OPTIONS: {
+  value: ContactType;
+  label: string;
+}[] = [
+  { value: "hiring", label: "I'm hiring" },
+  { value: "collaboration", label: "Collaboration" },
+  { value: "other", label: "Other" },
+];
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: siteCopy.chat.openingMessage },
@@ -26,6 +37,14 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeSection, setActiveSection] = useState("top");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactType, setContactType] = useState<ContactType>("other");
+  const [contactWebsite, setContactWebsite] = useState("");
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactError, setContactError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -100,6 +119,42 @@ export default function Home() {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSend();
+    }
+  }
+
+  async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setContactSuccess(false);
+    setContactError(false);
+    setContactSubmitting(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          message: contactMessage,
+          type: contactType,
+          website: contactWebsite,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Contact submission failed");
+      }
+
+      setContactSuccess(true);
+      setContactName("");
+      setContactEmail("");
+      setContactMessage("");
+      setContactWebsite("");
+      setContactType("other");
+    } catch {
+      setContactError(true);
+    } finally {
+      setContactSubmitting(false);
     }
   }
 
@@ -535,6 +590,113 @@ export default function Home() {
                 </a>
               ))}
             </div>
+
+            <p className="mt-8 mb-6 text-[10px] uppercase tracking-[0.12em] text-black/25">
+              Or send a message
+            </p>
+
+            <form
+              onSubmit={handleContactSubmit}
+              className="flex max-w-[480px] flex-col gap-5"
+            >
+              <input
+                type="text"
+                name="website"
+                value={contactWebsite}
+                onChange={(e) => setContactWebsite(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
+
+              <div>
+                <label htmlFor="contact-name" className="contact-form-label">
+                  Name
+                </label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  required
+                  maxLength={100}
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  placeholder="Your name"
+                  className="contact-form-input"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="contact-email" className="contact-form-label">
+                  Email
+                </label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  required
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="Your email"
+                  className="contact-form-input"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="contact-message" className="contact-form-label">
+                  Message
+                </label>
+                <textarea
+                  id="contact-message"
+                  required
+                  rows={4}
+                  maxLength={1000}
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  placeholder="What's on your mind?"
+                  className="contact-form-input resize-none"
+                />
+              </div>
+
+              <div>
+                <span className="contact-form-label">Type</span>
+                <div className="flex flex-wrap gap-2">
+                  {CONTACT_TYPE_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setContactType(option.value)}
+                      className={[
+                        "px-3 py-1.5 font-mono text-[11px] transition-colors cursor-pointer",
+                        contactType === option.value
+                          ? "bg-[#1A6B35] text-white border border-[#1A6B35]"
+                          : "bg-transparent text-black/45 border border-black/20 hover:border-[#1A6B35]/40",
+                      ].join(" ")}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={contactSubmitting}
+                className="w-full bg-[#1A6B35] px-4 py-[0.85rem] font-mono text-[11px] tracking-[0.08em] text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-default cursor-pointer"
+              >
+                {contactSubmitting ? "Sending..." : "→ Send message"}
+              </button>
+
+              {contactSuccess && (
+                <p className="contact-form-feedback font-mono text-[12px] text-[#1A6B35]">
+                  Got it — I&apos;ll be in touch soon.
+                </p>
+              )}
+              {contactError && (
+                <p className="contact-form-feedback font-mono text-[12px] text-red-600">
+                  Something went wrong — try emailing me directly.
+                </p>
+              )}
+            </form>
         </div>
 
         <footer className="section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.06] pt-6 mt-10">

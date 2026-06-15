@@ -578,17 +578,23 @@ export default function Home() {
               {about.email}
             </a>
             <div className="mt-6 flex flex-wrap gap-6">
-              {siteCopy.contact.links.map((link) => (
+              {siteCopy.contact.links.map((link) => {
+                const href = about[link.key];
+                const isExternal =
+                  href.startsWith("http") || link.key === "resume";
+
+                return (
                 <a
                   key={link.key}
-                  href={about[link.key]}
-                  target={link.key === "github" ? "_blank" : undefined}
-                  rel={link.key === "github" ? "noreferrer" : undefined}
+                  href={href}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
                   className="font-mono text-[11px] text-black/45 hover:text-[#1A6B35] transition-colors"
                 >
                   {link.label}
                 </a>
-              ))}
+                );
+              })}
             </div>
 
             <p className="mt-8 mb-6 text-[10px] uppercase tracking-[0.12em] text-black/25">

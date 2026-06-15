@@ -51,7 +51,7 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="portfolio-section pt-12 pb-0">
       <div className="section-content">
-        <div className="section-intro">
+        <div className="section-intro scroll-hidden scroll-from-bottom scroll-stagger-100">
           <div className="section-intro-title">
             <p className="section-label">{siteCopy.projects.sectionLabel}</p>
             <h2 className="section-title">
@@ -59,7 +59,7 @@ export function ProjectsSection() {
               <span className="section-title-accent">{siteCopy.projects.headlineAccent}</span>
             </h2>
           </div>
-          <p className="section-intro-meta flex items-center gap-1">
+          <p className="section-intro-meta flex items-center gap-1 scroll-hidden scroll-from-bottom scroll-stagger-100" style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}>
             {siteCopy.projects.dragHint}
             <span className="projects-drag-arrow inline-block">→</span>
           </p>

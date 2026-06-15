@@ -344,17 +344,23 @@ export default function Home() {
       <ProjectsSection />
 
       {/* Skills */}
-      <section id="skills" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2
-          className="font-display text-white leading-[0.9] tracking-tight"
-          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
-        >
-          {siteCopy.skills.title}
-        </h2>
-
-        <div className="mt-10">
-          <SkillsGrid />
+      <section id="skills" className="bg-[#F5F5F0] text-[#0D0D0D]">
+        <div className="border-b border-black/[0.08] px-6 py-8">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="chat-section-label">{siteCopy.skills.sectionLabel}</p>
+              <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
+                {siteCopy.skills.headline}{" "}
+                <span className="text-[#1A6B35]">{siteCopy.skills.headlineAccent}</span>
+              </h2>
+            </div>
+            <p className="max-w-xs text-xs text-black/40 leading-relaxed sm:text-right">
+              {siteCopy.skills.hoverHint}
+            </p>
+          </div>
         </div>
+
+        <SkillsGrid />
       </section>
 
       {/* GitHub */}

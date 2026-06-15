@@ -415,8 +415,8 @@ export default function Home() {
         </section>
 
         {/* About */}
-        <section id="about" className="snap-section snap-section--white">
-          <div className="section-panel">
+        <section id="about" className="snap-section snap-section--cream">
+          <div className="section-panel section-panel--start">
             <div className="section-content">
               <div className="section-intro">
                 <div className="section-intro-title">
@@ -569,15 +569,15 @@ export default function Home() {
         </section>
 
         {/* Projects */}
-        <section id="projects" className="snap-section snap-section--cream">
-          <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
+        <section id="projects" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--start section-panel--projects flex flex-col gap-6">
             <ProjectsSection />
           </div>
         </section>
 
         {/* Skills */}
-        <section id="skills" className="snap-section snap-section--white">
-          <div className="section-panel flex flex-col justify-center gap-8">
+        <section id="skills" className="snap-section snap-section--cream">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
             <div className="section-content">
               <div className="section-intro">
                 <div className="section-intro-title">
@@ -597,8 +597,8 @@ export default function Home() {
         </section>
 
         {/* Tools */}
-        <section id="tools" className="snap-section snap-section--cream">
-          <div className="section-panel flex flex-col justify-center gap-8">
+        <section id="tools" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
             <div className="section-content">
               <div className="section-intro">
                 <div className="section-intro-title">
@@ -619,7 +619,7 @@ export default function Home() {
 
         {/* GitHub */}
         <section id="github" className="snap-section snap-section--dark">
-          <div className="section-panel flex flex-col justify-center gap-8">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
             <div className="section-content">
               <div className="section-intro section-intro-minimal">
                 <p className="section-label">{siteCopy.github.sectionLabel}</p>
@@ -635,9 +635,9 @@ export default function Home() {
 
         {/* Chat */}
         <section id="chat" className="snap-section snap-section--white">
-          <div className="section-panel section-panel--flush py-20 flex flex-col min-h-screen">
-            <div className="section-content shrink-0">
-              <div className="section-intro">
+          <div className="section-panel section-panel--start section-panel--chat">
+            <div className="section-content">
+              <div className="section-intro section-intro--compact">
                 <div className="section-intro-title">
                   <p className="section-label">{siteCopy.chat.sectionLabel}</p>
                   <h2 className="section-title">
@@ -647,18 +647,17 @@ export default function Home() {
                     </span>
                   </h2>
                 </div>
-                <p className="section-intro-meta lg:text-right">
+                <p className="section-intro-meta">
                   {siteCopy.chat.description}
                 </p>
               </div>
-            </div>
 
-            <div className="flex-1 grid lg:grid-cols-2 min-h-0 mt-8">
-              <div className="flex flex-col min-h-[50vh] lg:min-h-0">
-                <div
-                  ref={chatScrollRef}
-                  className="flex-1 overflow-y-auto px-6 py-6"
-                >
+              <div className="chat-layout mt-6 grid lg:grid-cols-2 lg:gap-6">
+                <div className="chat-panel flex flex-col h-[520px] max-h-[70vh] border border-black/[0.08] bg-[#F5F5F0]">
+                  <div
+                    ref={chatScrollRef}
+                    className="flex-1 overflow-y-auto px-6 py-6"
+                  >
                   <div className="flex flex-col gap-5">
                     {messages.map((msg, i) => (
                       <div
@@ -735,10 +734,11 @@ export default function Home() {
                   </div>
                   <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
                 </div>
-              </div>
+                </div>
 
-              <div className="h-full min-h-[50vh] lg:min-h-0">
-                <ChatStatsPanel />
+                <div className="chat-stats-shell h-[520px] max-h-[70vh]">
+                  <ChatStatsPanel />
+                </div>
               </div>
             </div>
           </div>

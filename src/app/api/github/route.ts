@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { about } from "@/data/content";
+
+const githubUsername = new URL(about.github).pathname.replace(/^\//, "");
 
 type GitHubEvent = {
   type: string;
@@ -75,7 +78,7 @@ function describeEvent(e: GitHubEvent): FeedItem | null {
 }
 
 export async function GET() {
-  const url = "https://api.github.com/users/pankurik/events/public";
+  const url = `https://api.github.com/users/${githubUsername}/events/public`;
 
   const res = await fetch(url, {
     headers: {

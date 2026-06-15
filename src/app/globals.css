@@ -231,22 +231,17 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .section-panel {
-    opacity: 0.3;
+    opacity: 1;
     transform: translateY(30px);
-    transition:
-      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .snap-section.section-active .section-panel {
-    opacity: 1;
     transform: translateY(0);
   }
 
   .snap-section.section-leaving .section-panel {
-    opacity: 0.3;
     transform: translateY(0);
-    transition: opacity 0.3s ease;
   }
 }
 

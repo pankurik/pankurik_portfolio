@@ -18,6 +18,11 @@ export type Project = {
   featured?: boolean;
 };
 
+export type WebsiteLink = {
+  url: string;
+  label: string;
+};
+
 export type Experience = {
   company: string;
   role: string;
@@ -25,6 +30,12 @@ export type Experience = {
   location: string;
   employmentType?: string;
   latest?: boolean;
+  logo: string;
+  logoWide?: boolean;
+  website?: WebsiteLink;
+  impactStats: { value: string; label: string }[];
+  systems: string[];
+  highlight: string;
   bullets: RichTextPart[][];
 };
 
@@ -32,6 +43,9 @@ export type Leadership = {
   title: string;
   organization: string;
   period: string;
+  featured?: boolean;
+  website?: WebsiteLink;
+  stats: { value: string; label: string }[];
   description: RichTextPart[];
 };
 
@@ -41,6 +55,8 @@ export type About = {
   location: string;
   bio: string;
   shortBio: string;
+  pullQuote: string;
+  pullQuoteContext: string;
   bioStrip: RichTextPart[];
   bioPills: {
     green: string[];
@@ -89,6 +105,8 @@ export const about: About = {
   location: "San Francisco",
   shortBio:
     "Full-stack engineer based in SF. I build backends, AI pipelines, and iOS apps — and I care about systems that hold up under failure.",
+  pullQuote: "Part logical, part creative.",
+  pullQuoteContext: "CS + Comparative Literature at SF State",
   bio: "I studied Computer Science and Comparative World Literature at San Francisco State University — an unusual mix, but it shaped how I think: part logical, part creative. Give me an ambiguous problem and I'll figure it out. That shows up in how I debug systems I've never seen, how I navigate infrastructure without a playbook, and how I keep going when the answer isn't obvious. I'm most energized by early-stage teams where engineers are close to the problem and ownership is real.",
   bioStrip: [
     { text: "I studied CS and Comparative World Literature at SF State — an unusual mix, but it shaped how I think: " },
@@ -265,6 +283,22 @@ export const experience: Experience[] = [
     location: "San Francisco",
     employmentType: "Full-time",
     latest: true,
+    logo: "/logos/adsgency_ai_logo.jpeg",
+    website: { url: "https://adsgency.ai/", label: "Product platform" },
+    impactStats: [
+      { value: "33%", label: "of all commits" },
+      { value: "60%", label: "pipeline efficiency" },
+      { value: "5s→2s", label: "page load" },
+    ],
+    systems: [
+      "LangGraph",
+      "DataValidationAgent",
+      "8-source ETL",
+      "Analytics dashboard",
+      "i18n · 7 languages",
+    ],
+    highlight:
+      "Primary technical owner — LangGraph pipelines, DataValidationAgent, unified data layer across 8 enterprise sources, and real-time analytics dashboard.",
     bullets: [
       [
         { text: "Promoted to " },
@@ -318,6 +352,16 @@ export const experience: Experience[] = [
     period: "Aug 2024 – May 2025",
     location: "San Francisco",
     employmentType: "Part-time",
+    logo: "/logos/ccsf.svg",
+    website: { url: "https://www.ccsf.edu/", label: "Campus" },
+    impactStats: [
+      { value: "5/5", label: "students passed" },
+      { value: "10", label: "hrs / week" },
+      { value: "2", label: "strong turnarounds" },
+    ],
+    systems: ["C / C++", "Data structures", "Algorithms", "OS concepts"],
+    highlight:
+      "One-on-one CS tutoring in C, C++, data structures, and algorithms — all 5 students passed.",
     bullets: [
       [
         { text: "Taught C, C++, data structures, algorithms, and OS concepts in " },
@@ -337,6 +381,23 @@ export const experience: Experience[] = [
     period: "Apr 2021 – Mar 2023",
     location: "India",
     employmentType: "Remote",
+    logo: "/logos/speedlabs.png",
+    website: { url: "https://practice.speedlabs.in/", label: "Quiz platform" },
+    impactStats: [
+      { value: "1–3 hr", label: "timed sessions" },
+      { value: "Zero", label: "data loss on refresh" },
+      { value: "Live", label: "student quizzes" },
+    ],
+    systems: [
+      "React",
+      "NestJS",
+      "PostgreSQL",
+      "Redis",
+      "Incremental save",
+      "Auto-submit timer",
+    ],
+    highlight:
+      "End-to-end quiz platform — incremental save, timer with auto-submit, React + NestJS + Redis.",
     bullets: [
       [
         { text: "Built core quiz infrastructure end-to-end — question rendering, navigation, answer state management (unanswered / answered / marked for review), and " },
@@ -492,6 +553,12 @@ export const leadership: Leadership[] = [
     title: "ISA President",
     organization: "Indian Student Association · SF State",
     period: "Jun 2023 – Jun 2025",
+    featured: true,
+    website: { url: "https://isa-website.vercel.app/", label: "Association site" },
+    stats: [
+      { value: "180+", label: "Diwali attendees" },
+      { value: "30%", label: "membership growth" },
+    ],
     description: [
       { text: "Led a " },
       { text: "10-person officer team", emphasis: true },
@@ -506,6 +573,11 @@ export const leadership: Leadership[] = [
     title: "Peer Mentor",
     organization: "San Francisco State University",
     period: "Aug 2022 – May 2025",
+    website: { url: "https://ueap.sfsu.edu/fye", label: "FYE program" },
+    stats: [
+      { value: "300+", label: "students advised" },
+      { value: "3 yr", label: "tenure" },
+    ],
     description: [
       { text: "Advised " },
       { text: "300+ first-year students", emphasis: true },
@@ -516,6 +588,11 @@ export const leadership: Leadership[] = [
     title: "Orientation Leader",
     organization: "San Francisco State University",
     period: "Feb 2022 – Aug 2022",
+    website: {
+      url: "https://activities.sfsu.edu/new-student-orientation",
+      label: "NSO program",
+    },
+    stats: [{ value: "150+", label: "students & parents / day" }],
     description: [
       { text: "Led groups of " },
       { text: "150+ students and parents per day", emphasis: true },
@@ -615,13 +692,22 @@ export const siteCopy = {
     sectionLabel: "The human behind the code",
     headline: "ABOUT &",
     headlineAccent: "EXPERIENCE",
+    tabs: {
+      story: "Story",
+      experience: "Experience",
+      leadership: "Leadership",
+    },
+    currentlyIntoLabel: "Currently into",
+    resumeLink: "View full resume →",
+    whatIBuilt: "What I built",
+    whatIBuiltLess: "Hide details",
+    showMore: (count: number) => `Show ${count} more`,
+    showLess: "Show less",
+    readMore: "Read more",
+    readLess: "Show less",
   },
   experience: {
-    label: "Work experience",
     latestTag: "Latest",
-  },
-  leadership: {
-    label: "Leadership",
   },
   contact: {
     label: "Get in touch",

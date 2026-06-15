@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ProjectCard } from "@/components/ProjectCard";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { GitHubFeed } from "@/components/GitHubFeed";
 import { ChatStatsPanel } from "@/components/ChatStatsPanel";
+import { ProjectsSection } from "@/components/ProjectsSection";
 import {
   about,
-  projects,
   experience,
   leadership,
   hero,
@@ -342,21 +341,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Projects */}
-      <section id="projects" className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <h2 className="font-display text-white leading-[0.9] tracking-tight" style={{ fontSize: "clamp(44px, 6vw, 72px)" }}>
-          {siteCopy.projects.title}
-        </h2>
-        <p className="mt-4 text-zinc-500 max-w-2xl">
-          {siteCopy.projects.subtitle}
-        </p>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.title} {...project} />
-          ))}
-        </div>
-      </section>
+      <ProjectsSection />
 
       {/* Skills */}
       <section id="skills" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">

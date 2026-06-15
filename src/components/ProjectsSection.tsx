@@ -11,7 +11,7 @@ export function ProjectsSection() {
   return (
     <>
       <div className="section-content shrink-0">
-        <div className="section-intro">
+        <div className="section-intro section-intro--compact">
           <div className="section-intro-title">
             <p className="section-label">{siteCopy.projects.sectionLabel}</p>
             <h2 className="section-title">
@@ -21,7 +21,7 @@ export function ProjectsSection() {
               </span>
             </h2>
           </div>
-          <p className="section-intro-meta flex items-center gap-1">
+          <p className="section-intro-meta flex items-center justify-center gap-1">
             {siteCopy.projects.dragHint}
             <span className="projects-scroll-arrow inline-block">→</span>
           </p>
@@ -29,12 +29,12 @@ export function ProjectsSection() {
       </div>
 
       <div
-        className="projects-carousel group/carousel relative flex flex-1 flex-col min-h-0"
+        className="projects-carousel group/carousel"
         style={
           { "--projects-marquee-duration": MARQUEE_DURATION } as CSSProperties
         }
       >
-        <div className="projects-track-shell relative flex-1 min-h-0">
+        <div className="projects-track-shell relative">
           <div
             className="projects-track-fade projects-track-fade--left pointer-events-none absolute inset-y-0 left-0 z-10 w-12"
             aria-hidden="true"
@@ -44,7 +44,7 @@ export function ProjectsSection() {
             aria-hidden="true"
           />
 
-          <div className="projects-marquee-viewport flex h-full items-center overflow-hidden py-1">
+          <div className="projects-marquee-viewport overflow-hidden py-1">
             <div className="projects-marquee-track flex w-max gap-5">
               {loopProjects.map((project, index) => (
                 <ProjectCard
@@ -58,7 +58,7 @@ export function ProjectsSection() {
           </div>
         </div>
 
-        <div className="section-content shrink-0">
+        <div className="section-content shrink-0 mt-6">
           <div className="h-[2px] overflow-hidden bg-black/[0.06]">
             <div className="projects-progress-fill h-full bg-[#1A6B35]" />
           </div>

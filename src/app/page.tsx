@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { SkillsGrid } from "@/components/SkillsGrid";
+import { ToolsSection } from "@/components/ToolsSection";
 import { GitHubFeed } from "@/components/GitHubFeed";
-import { ChatStatsPanel } from "@/components/ChatStatsPanel";
+import { ChatInlineStats } from "@/components/ChatInlineStats";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { RichText } from "@/components/RichText";
 import {
@@ -35,6 +36,7 @@ const PAGE_SECTIONS = [
   { id: "about", label: "About" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
+  { id: "tools", label: "Tools" },
   { id: "github", label: "GitHub" },
   { id: "chat", label: "Chat" },
   { id: "contact", label: "Contact" },
@@ -45,6 +47,7 @@ export default function Home() {
     { role: "assistant", content: siteCopy.chat.openingMessage },
   ]);
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -68,6 +71,8 @@ export default function Home() {
   const isDarkUi = activeSection === "github" || activeSection === "contact";
 
   function scrollToId(id: string) {
+    activeSectionRef.current = id;
+    setActiveSection(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -115,7 +120,7 @@ export default function Home() {
     if (!container) return;
 
     const ids = PAGE_SECTIONS.map((s) => s.id);
-    const ratios = new Map<string, number>();
+    const visibleHeights = new Map<string, number>();
 
     const updateSectionClasses = (nextId: string) => {
       const prevId = activeSectionRef.current;
@@ -137,23 +142,26 @@ export default function Home() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          ratios.set(entry.target.id, entry.intersectionRatio);
+          visibleHeights.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRect.height : 0
+          );
         });
 
         let bestId = activeSectionRef.current;
-        let bestRatio = 0;
-        ratios.forEach((ratio, id) => {
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
+        let bestVisible = 0;
+        visibleHeights.forEach((height, id) => {
+          if (height > bestVisible) {
+            bestVisible = height;
             bestId = id;
           }
         });
 
-        if (bestRatio >= 0.6) {
+        if (bestVisible > 0) {
           updateSectionClasses(bestId);
         }
       },
-      { root: container, threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] }
+      { root: container, threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
     );
 
     ids.forEach((id) => {
@@ -178,7 +186,7 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, history }),
       });
 
       const data = await res.json();
@@ -191,6 +199,11 @@ export default function Home() {
       } else {
         setMessages((prev) => [
           ...prev,
+          { role: "assistant", content: data.answer },
+        ]);
+        setHistory((prev) => [
+          ...prev,
+          { role: "user", content: message },
           { role: "assistant", content: data.answer },
         ]);
       }
@@ -409,7 +422,7 @@ export default function Home() {
 
         {/* About */}
         <section id="about" className="snap-section snap-section--cream">
-          <div className="section-panel">
+          <div className="section-panel section-panel--start">
             <div className="section-content">
               <div className="section-intro">
                 <div className="section-intro-title">
@@ -560,16 +573,17 @@ export default function Home() {
             </div>
           </div>
         </section>
+
         {/* Projects */}
         <section id="projects" className="snap-section snap-section--white">
-          <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
+          <div className="section-panel section-panel--start section-panel--projects flex flex-col gap-6">
             <ProjectsSection />
           </div>
         </section>
 
         {/* Skills */}
         <section id="skills" className="snap-section snap-section--cream">
-          <div className="section-panel flex flex-col justify-center gap-8">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
             <div className="section-content">
               <div className="section-intro">
                 <div className="section-intro-title">
@@ -588,9 +602,30 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Tools */}
+        <section id="tools" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
+            <div className="section-content">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.tools.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.tools.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.tools.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
+                <p className="section-intro-meta">{siteCopy.tools.hoverHint}</p>
+              </div>
+            </div>
+            <ToolsSection />
+          </div>
+        </section>
+
         {/* GitHub */}
         <section id="github" className="snap-section snap-section--dark">
-          <div className="section-panel flex flex-col justify-center gap-8">
+          <div className="section-panel section-panel--start flex flex-col gap-8">
             <div className="section-content">
               <div className="section-intro section-intro-minimal">
                 <p className="section-label">{siteCopy.github.sectionLabel}</p>
@@ -605,10 +640,10 @@ export default function Home() {
         </section>
 
         {/* Chat */}
-        <section id="chat" className="snap-section snap-section--white">
-          <div className="section-panel section-panel--flush py-20 flex flex-col min-h-screen">
-            <div className="section-content shrink-0">
-              <div className="section-intro">
+        <section id="chat" className="snap-section snap-section--cream">
+          <div className="section-panel section-panel--start section-panel--chat">
+            <div className="section-content">
+              <div className="section-intro section-intro--compact">
                 <div className="section-intro-title">
                   <p className="section-label">{siteCopy.chat.sectionLabel}</p>
                   <h2 className="section-title">
@@ -618,103 +653,112 @@ export default function Home() {
                     </span>
                   </h2>
                 </div>
-                <p className="section-intro-meta lg:text-right">
+                <p className="section-intro-meta">
                   {siteCopy.chat.description}
                 </p>
               </div>
-            </div>
 
-            <div className="flex-1 grid lg:grid-cols-2 min-h-0 mt-8">
-              <div className="flex flex-col min-h-[50vh] lg:min-h-0">
-                <div
-                  ref={chatScrollRef}
-                  className="flex-1 overflow-y-auto px-6 py-6"
-                >
-                  <div className="flex flex-col gap-5">
-                    {messages.map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                      >
-                        {msg.role === "assistant" && (
-                          <div className="mb-2 flex items-center gap-2">
-                            <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                            <span className="chat-section-label text-[#1A6B35]">
+              <div className="chat-shell mt-6">
+                <div className="chat-shell-header shrink-0">
+                  <p className="chat-shell-title">{siteCopy.chat.terminalTitle}</p>
+                  <div className="hidden sm:block">
+                    <ChatInlineStats refreshKey={messages.length} />
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                    <span className="chat-section-label text-[#1A6B35]">live</span>
+                  </div>
+                </div>
+
+                <div className="chat-panel min-h-0 overflow-hidden">
+                  <div
+                    ref={chatScrollRef}
+                    className="chat-messages min-h-0 px-6 py-8 bg-white"
+                  >
+                    <div className="flex flex-col gap-6 max-w-3xl">
+                      {messages.map((msg, i) => (
+                        <div
+                          key={i}
+                          className={`chat-message flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
+                        >
+                          {msg.role === "assistant" && (
+                            <span className="chat-section-label mb-2 text-[#1A6B35]">
                               {siteCopy.chat.aiLabel}
                             </span>
+                          )}
+                          <div
+                            className={`max-w-[90%] px-5 py-4 text-[15px] leading-relaxed whitespace-pre-wrap ${
+                              msg.role === "user"
+                                ? "bg-[#1A6B35] text-white"
+                                : "bg-[#F5F5F0] text-[#0D0D0D] border border-black/[0.08] border-l-4 border-l-[#1A6B35]"
+                            }`}
+                          >
+                            {msg.content}
                           </div>
-                        )}
-                        <div
-                          className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                            msg.role === "user"
-                              ? "bg-[#1A6B35] text-white"
-                              : "bg-white text-[#0D0D0D] border border-black/[0.12]"
-                          }`}
-                        >
-                          {msg.content}
                         </div>
-                      </div>
-                    ))}
-                    {loading && (
-                      <div className="flex flex-col items-start">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-section-label text-[#1A6B35]">
+                      ))}
+                      {loading && (
+                        <div className="chat-message flex flex-col items-start">
+                          <span className="chat-section-label mb-2 text-[#1A6B35]">
                             {siteCopy.chat.aiLabel}
                           </span>
+                          <div className="bg-[#F5F5F0] border border-black/[0.08] border-l-4 border-l-[#1A6B35] px-5 py-4 flex gap-1.5">
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          </div>
                         </div>
-                        <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                      )}
+                      {messages.length === 1 && !loading && (
+                        <div className="mt-2 flex flex-col gap-3 max-w-xl">
+                          <p className="chat-section-label">
+                            {siteCopy.chat.startWithLabel}
+                          </p>
+                          {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                            <button
+                              key={prompt}
+                              type="button"
+                              onClick={() => handleSend(prompt)}
+                              className="chat-starter"
+                            >
+                              {prompt}
+                            </button>
+                          ))}
                         </div>
-                      </div>
-                    )}
-                    <div ref={messagesEndRef} />
+                      )}
+                      <div ref={messagesEndRef} />
+                    </div>
                   </div>
-                </div>
 
-                <div className="px-6 py-4 bg-[#F5F5F0]">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                  <div className="chat-composer shrink-0 border-t border-black/[0.08] px-6 py-4 bg-[#F5F5F0]">
+                    <div className="flex items-center gap-3 max-w-3xl">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={siteCopy.chat.placeholder}
+                        className="flex-1 bg-white border border-black/[0.12] px-4 py-3.5 text-[15px] text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
+                      />
                       <button
-                        key={prompt}
-                        onClick={() => setInput(prompt)}
-                        className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
+                        type="button"
+                        onClick={() => handleSend()}
+                        disabled={!input.trim() || loading}
+                        className="shrink-0 px-6 py-3.5 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                       >
-                        {prompt}
+                        {siteCopy.chat.sendLabel}
                       </button>
-                    ))}
+                    </div>
+                    <p className="chat-shell-title mt-3 max-w-3xl">
+                      {siteCopy.chat.poweredBy}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={siteCopy.chat.placeholder}
-                      className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
-                    />
-                    <button
-                      onClick={() => handleSend()}
-                      disabled={!input.trim() || loading}
-                      className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                      {siteCopy.chat.sendLabel}
-                    </button>
-                  </div>
-                  <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
                 </div>
-              </div>
-
-              <div className="h-full min-h-[50vh] lg:min-h-0">
-                <ChatStatsPanel />
               </div>
             </div>
           </div>
         </section>
-
 
         {/* Contact */}
         <section id="contact" className="snap-section snap-section--green">

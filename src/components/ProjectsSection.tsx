@@ -1,63 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects, siteCopy } from "@/data/content";
 
+const MARQUEE_DURATION = "52s";
+const loopProjects = [...projects, ...projects];
+
 export function ProjectsSection() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const updateProgress = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    setProgress(maxScroll > 0 ? track.scrollLeft / maxScroll : 0);
-  }, []);
-
-  useEffect(() => {
-    updateProgress();
-    window.addEventListener("resize", updateProgress);
-    return () => window.removeEventListener("resize", updateProgress);
-  }, [updateProgress]);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    const track = trackRef.current;
-    if (!track) return;
-    dragState.current = {
-      active: true,
-      startX: e.clientX,
-      scrollLeft: track.scrollLeft,
-    };
-    setIsDragging(true);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const track = trackRef.current;
-    if (!track || !dragState.current.active) return;
-    e.preventDefault();
-    const walk = e.clientX - dragState.current.startX;
-    track.scrollLeft = dragState.current.scrollLeft - walk;
-    updateProgress();
-  };
-
-  const endDrag = () => {
-    dragState.current.active = false;
-    setIsDragging(false);
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      e.stopPropagation();
-    }
-  };
-
   return (
     <>
       <div className="section-content shrink-0">
-        <div className="section-intro">
+        <div className="section-intro section-intro--compact">
           <div className="section-intro-title">
             <p className="section-label">{siteCopy.projects.sectionLabel}</p>
             <h2 className="section-title">
@@ -67,36 +21,48 @@ export function ProjectsSection() {
               </span>
             </h2>
           </div>
-          <p className="section-intro-meta flex items-center gap-1">
+          <p className="section-intro-meta flex items-center justify-center gap-1">
             {siteCopy.projects.dragHint}
-            <span className="projects-drag-arrow inline-block">→</span>
+            <span className="projects-scroll-arrow inline-block">→</span>
           </p>
         </div>
       </div>
 
       <div
-        ref={trackRef}
-        className={[
-          "projects-track flex flex-1 overflow-x-auto min-h-0",
-          isDragging ? "cursor-grabbing select-none" : "cursor-grab",
-        ].join(" ")}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={endDrag}
-        onMouseLeave={endDrag}
-        onScroll={updateProgress}
-        onWheel={handleWheel}
+        className="projects-carousel group/carousel"
+        style={
+          { "--projects-marquee-duration": MARQUEE_DURATION } as CSSProperties
+        }
       >
-        {projects.map((project, index) => (
-          <ProjectCard key={project.title} {...project} index={index} />
-        ))}
-      </div>
+        <div className="projects-track-shell relative">
+          <div
+            className="projects-track-fade projects-track-fade--left pointer-events-none absolute inset-y-0 left-0 z-10 w-12"
+            aria-hidden="true"
+          />
+          <div
+            className="projects-track-fade projects-track-fade--right pointer-events-none absolute inset-y-0 right-0 z-10 w-20"
+            aria-hidden="true"
+          />
 
-      <div className="h-[2px] bg-black/[0.06] shrink-0">
-        <div
-          className="h-full bg-[#1A6B35] transition-[width] duration-150"
-          style={{ width: `${progress * 100}%` }}
-        />
+          <div className="projects-marquee-viewport overflow-hidden py-1">
+            <div className="projects-marquee-track flex w-max gap-5">
+              {loopProjects.map((project, index) => (
+                <ProjectCard
+                  key={`${project.title}-${index}`}
+                  {...project}
+                  index={index % projects.length}
+                  ariaHidden={index >= projects.length}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="section-content shrink-0 mt-6">
+          <div className="h-[2px] overflow-hidden bg-black/[0.06]">
+            <div className="projects-progress-fill h-full bg-[#1A6B35]" />
+          </div>
+        </div>
       </div>
     </>
   );

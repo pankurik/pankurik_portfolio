@@ -32,11 +32,11 @@ const CONTACT_TYPE_OPTIONS: {
 
 const PAGE_SECTIONS = [
   { id: "hero", label: "Hero" },
+  { id: "about", label: "About" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
   { id: "github", label: "GitHub" },
   { id: "chat", label: "Chat" },
-  { id: "about", label: "About" },
   { id: "contact", label: "Contact" },
 ] as const;
 
@@ -288,14 +288,6 @@ export default function Home() {
                 {link.label}
               </button>
             ))}
-            <a
-              href={about.github}
-              target="_blank"
-              rel="noreferrer"
-              className="site-nav-link hover:text-black/60 transition-colors"
-            >
-              GitHub
-            </a>
           </nav>
 
           <div className="site-nav-availability flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
@@ -410,161 +402,6 @@ export default function Home() {
                     ))}
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Projects */}
-        <section id="projects" className="snap-section snap-section--white">
-          <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
-            <ProjectsSection />
-          </div>
-        </section>
-
-        {/* Skills */}
-        <section id="skills" className="snap-section snap-section--cream">
-          <div className="section-panel flex flex-col justify-center gap-8">
-            <div className="section-content">
-              <div className="section-intro">
-                <div className="section-intro-title">
-                  <p className="section-label">{siteCopy.skills.sectionLabel}</p>
-                  <h2 className="section-title">
-                    {siteCopy.skills.headline}{" "}
-                    <span className="section-title-accent">
-                      {siteCopy.skills.headlineAccent}
-                    </span>
-                  </h2>
-                </div>
-                <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
-              </div>
-            </div>
-            <SkillsGrid />
-          </div>
-        </section>
-
-        {/* GitHub */}
-        <section id="github" className="snap-section snap-section--dark">
-          <div className="section-panel flex flex-col justify-center gap-8">
-            <div className="section-content">
-              <div className="section-intro section-intro-minimal">
-                <p className="section-label">{siteCopy.github.sectionLabel}</p>
-                <div className="section-intro-meta flex items-center gap-2 text-[#3ECF6A]">
-                  <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#3ECF6A]" />
-                  {siteCopy.github.liveLabel}
-                </div>
-              </div>
-            </div>
-            <GitHubFeed />
-          </div>
-        </section>
-
-        {/* Chat */}
-        <section id="chat" className="snap-section snap-section--white">
-          <div className="section-panel section-panel--flush py-20 flex flex-col min-h-screen">
-            <div className="section-content shrink-0">
-              <div className="section-intro">
-                <div className="section-intro-title">
-                  <p className="section-label">{siteCopy.chat.sectionLabel}</p>
-                  <h2 className="section-title">
-                    {siteCopy.chat.headline}{" "}
-                    <span className="section-title-accent">
-                      {siteCopy.chat.headlineAccent}
-                    </span>
-                  </h2>
-                </div>
-                <p className="section-intro-meta lg:text-right">
-                  {siteCopy.chat.description}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex-1 grid lg:grid-cols-2 min-h-0 mt-8">
-              <div className="flex flex-col min-h-[50vh] lg:min-h-0">
-                <div
-                  ref={chatScrollRef}
-                  className="flex-1 overflow-y-auto px-6 py-6"
-                >
-                  <div className="flex flex-col gap-5">
-                    {messages.map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                      >
-                        {msg.role === "assistant" && (
-                          <div className="mb-2 flex items-center gap-2">
-                            <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                            <span className="chat-section-label text-[#1A6B35]">
-                              {siteCopy.chat.aiLabel}
-                            </span>
-                          </div>
-                        )}
-                        <div
-                          className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                            msg.role === "user"
-                              ? "bg-[#1A6B35] text-white"
-                              : "bg-white text-[#0D0D0D] border border-black/[0.12]"
-                          }`}
-                        >
-                          {msg.content}
-                        </div>
-                      </div>
-                    ))}
-                    {loading && (
-                      <div className="flex flex-col items-start">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-section-label text-[#1A6B35]">
-                            {siteCopy.chat.aiLabel}
-                          </span>
-                        </div>
-                        <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                        </div>
-                      </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </div>
-
-                <div className="px-6 py-4 bg-[#F5F5F0]">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {siteCopy.chat.suggestedPrompts.map((prompt) => (
-                      <button
-                        key={prompt}
-                        onClick={() => setInput(prompt)}
-                        className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={siteCopy.chat.placeholder}
-                      className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
-                    />
-                    <button
-                      onClick={() => handleSend()}
-                      disabled={!input.trim() || loading}
-                      className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                      {siteCopy.chat.sendLabel}
-                    </button>
-                  </div>
-                  <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
-                </div>
-              </div>
-
-              <div className="h-full min-h-[50vh] lg:min-h-0">
-                <ChatStatsPanel />
               </div>
             </div>
           </div>
@@ -723,6 +560,161 @@ export default function Home() {
             </div>
           </div>
         </section>
+        {/* Projects */}
+        <section id="projects" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
+            <ProjectsSection />
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section id="skills" className="snap-section snap-section--cream">
+          <div className="section-panel flex flex-col justify-center gap-8">
+            <div className="section-content">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.skills.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.skills.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.skills.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
+                <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
+              </div>
+            </div>
+            <SkillsGrid />
+          </div>
+        </section>
+
+        {/* GitHub */}
+        <section id="github" className="snap-section snap-section--dark">
+          <div className="section-panel flex flex-col justify-center gap-8">
+            <div className="section-content">
+              <div className="section-intro section-intro-minimal">
+                <p className="section-label">{siteCopy.github.sectionLabel}</p>
+                <div className="section-intro-meta flex items-center gap-2 text-[#3ECF6A]">
+                  <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#3ECF6A]" />
+                  {siteCopy.github.liveLabel}
+                </div>
+              </div>
+            </div>
+            <GitHubFeed />
+          </div>
+        </section>
+
+        {/* Chat */}
+        <section id="chat" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--flush py-20 flex flex-col min-h-screen">
+            <div className="section-content shrink-0">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.chat.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.chat.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.chat.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
+                <p className="section-intro-meta lg:text-right">
+                  {siteCopy.chat.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-1 grid lg:grid-cols-2 min-h-0 mt-8">
+              <div className="flex flex-col min-h-[50vh] lg:min-h-0">
+                <div
+                  ref={chatScrollRef}
+                  className="flex-1 overflow-y-auto px-6 py-6"
+                >
+                  <div className="flex flex-col gap-5">
+                    {messages.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
+                      >
+                        {msg.role === "assistant" && (
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-section-label text-[#1A6B35]">
+                              {siteCopy.chat.aiLabel}
+                            </span>
+                          </div>
+                        )}
+                        <div
+                          className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                            msg.role === "user"
+                              ? "bg-[#1A6B35] text-white"
+                              : "bg-white text-[#0D0D0D] border border-black/[0.12]"
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
+                      </div>
+                    ))}
+                    {loading && (
+                      <div className="flex flex-col items-start">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-section-label text-[#1A6B35]">
+                            {siteCopy.chat.aiLabel}
+                          </span>
+                        </div>
+                        <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </div>
+
+                <div className="px-6 py-4 bg-[#F5F5F0]">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => setInput(prompt)}
+                        className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder={siteCopy.chat.placeholder}
+                      className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
+                    />
+                    <button
+                      onClick={() => handleSend()}
+                      disabled={!input.trim() || loading}
+                      className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {siteCopy.chat.sendLabel}
+                    </button>
+                  </div>
+                  <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
+                </div>
+              </div>
+
+              <div className="h-full min-h-[50vh] lg:min-h-0">
+                <ChatStatsPanel />
+              </div>
+            </div>
+          </div>
+        </section>
+
 
         {/* Contact */}
         <section id="contact" className="snap-section snap-section--green">

@@ -505,11 +505,10 @@ export const siteCopy = {
   },
   nav: {
     links: [
+      { label: "About", href: "about" },
       { label: "Projects", href: "projects" },
       { label: "Skills", href: "skills" },
-      { label: "GitHub", href: "github" },
       { label: "Chat", href: "chat" },
-      { label: "About", href: "about" },
       { label: "Contact", href: "contact" },
     ],
   },

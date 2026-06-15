@@ -130,36 +130,53 @@ export default function Home() {
         </header>
 
         <div className="flex-1 flex flex-col justify-between w-full">
-          <div className="max-w-6xl mx-auto w-full px-6 pt-10 md:pt-14">
-            <div className="flex flex-wrap items-center gap-3 text-xs">
-              <span className="px-3 py-1 border border-[#1A6B35] text-[#1A6B35] rounded-full">
-                {about.title}
-              </span>
-              <span className="text-black/40">{about.location}</span>
-              <span className="text-black/40">{about.year}</span>
-            </div>
-
-            <h1 className="mt-8 font-display leading-[0.85] tracking-tight text-[clamp(72px,12vw,148px)]">
-              <span className="hero-headline-line block">
-                <span className="hero-headline-line-inner hero-headline-delay-1 block text-[#0D0D0D]">
-                  I BUILD
+          <div className="relative min-h-[70vh] w-full overflow-hidden">
+            <video
+              src="/BayArea.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 z-0 h-full w-full object-cover"
+            />
+            <div
+              className="absolute inset-0 z-[1]"
+              style={{
+                background:
+                  "linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 100%)",
+              }}
+            />
+            <div className="relative z-[2] mx-auto flex min-h-[70vh] max-w-6xl flex-col justify-end px-6 pb-10 pt-10 md:pt-14">
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <span className="rounded-full border border-white/50 px-3 py-1 text-white">
+                  {about.title}
                 </span>
-              </span>
-              <span className="hero-headline-line block">
-                <span className="hero-headline-line-inner hero-headline-delay-2 flex items-end gap-6 flex-wrap">
-                  <span className="hero-headline-outline">THINGS</span>
-                  <span className="font-sans text-[11px] text-black/30 pb-3 tracking-normal normal-case">
-                    {hero.headlineMeta}
+                <span className="text-white/60">{about.location}</span>
+                <span className="text-white/60">{about.year}</span>
+              </div>
+
+              <h1 className="mt-8 font-display leading-[0.85] tracking-tight text-[clamp(72px,12vw,148px)]">
+                <span className="hero-headline-line block">
+                  <span className="hero-headline-line-inner hero-headline-delay-1 block text-white">
+                    I BUILD
                   </span>
                 </span>
-              </span>
-              <span className="hero-headline-line block">
-                <span className="hero-headline-line-inner hero-headline-delay-3 block">
-                  <span className="text-[#0D0D0D]">THAT </span>
-                  <span className="text-[#1A6B35]">HOLD.</span>
+                <span className="hero-headline-line block">
+                  <span className="hero-headline-line-inner hero-headline-delay-2 flex items-end gap-6 flex-wrap">
+                    <span className="hero-headline-outline-video">THINGS</span>
+                    <span className="font-sans text-[11px] text-white/50 pb-3 tracking-normal normal-case">
+                      {hero.headlineMeta}
+                    </span>
+                  </span>
                 </span>
-              </span>
-            </h1>
+                <span className="hero-headline-line block">
+                  <span className="hero-headline-line-inner hero-headline-delay-3 block">
+                    <span className="text-white">THAT </span>
+                    <span className="text-[#3ECF6A]">HOLD.</span>
+                  </span>
+                </span>
+              </h1>
+            </div>
           </div>
 
           <div className="w-full">

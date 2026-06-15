@@ -232,6 +232,31 @@ html {
   animation: chat-bounce 1.2s infinite 0.3s;
 }
 
+/* Projects section */
+.projects-track {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.projects-track::-webkit-scrollbar {
+  display: none;
+}
+
+.projects-drag-arrow {
+  animation: projects-arrow-nudge 1.5s ease-in-out infinite;
+}
+
+@keyframes projects-arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
 /* Subtle animated hero backdrop (CSS-only) */
 @keyframes drift {
   0% { transform: translate3d(0, 0, 0); }

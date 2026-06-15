@@ -4,17 +4,19 @@ import { useState, useRef, useEffect } from "react";
 import { ProjectCard } from "@/components/ProjectCard";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { GitHubFeed } from "@/components/GitHubFeed";
+import {
+  about,
+  projects,
+  experience,
+  leadership,
+  hero,
+  siteCopy,
+} from "@/data/content";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
-
-const SUGGESTED_QUESTIONS = [
-  "What tech stack do you work with?",
-  "Tell me about your recent projects",
-  "What's your background?",
-];
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -85,71 +87,153 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Sticky navbar */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button
-            onClick={() => scrollToId("top")}
-            className="text-white tracking-tight font-semibold hover:text-accent transition-colors cursor-pointer"
-          >
-            Pankuri Khare
-          </button>
-
-          <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
-            <button onClick={() => scrollToId("projects")} className="hover:text-white transition-colors cursor-pointer">
-              Projects
-            </button>
-            <button onClick={() => scrollToId("skills")} className="hover:text-white transition-colors cursor-pointer">
-              Skills
-            </button>
-            <a
-              href="https://github.com/pankurik"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              GitHub
-            </a>
-            <button onClick={() => scrollToId("about")} className="hover:text-white transition-colors cursor-pointer">
-              About
-            </button>
-            <button onClick={() => scrollToId("contact")} className="hover:text-white transition-colors cursor-pointer">
-              Contact
-            </button>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
-      <section id="top" className="relative overflow-hidden hero-backdrop">
-        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-24">
-          <div className="max-w-3xl">
-            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-              Full-stack engineer • San Francisco
-            </p>
-            <h1
-              className="font-display text-white leading-[0.9] tracking-tight mt-4"
-              style={{ fontSize: "clamp(60px, 10vw, 120px)" }}
+      <section
+        id="top"
+        className="hero-light min-h-screen flex flex-col bg-[#F5F5F0] text-[#0D0D0D]"
+      >
+        <header className="border-b border-black/[0.08]">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+            <button
+              onClick={() => scrollToId("top")}
+              className="text-[#1A6B35] tracking-tight font-semibold hover:opacity-80 transition-opacity cursor-pointer shrink-0"
             >
-              I build things that don&apos;t break.
-            </h1>
-            <p className="mt-6 text-zinc-400 max-w-xl text-base md:text-lg leading-relaxed">
-              Full-stack engineer. SF-based. Currently looking for the right team.
-            </p>
+              {about.name}
+            </button>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => scrollToId("chat")}
-                className="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-accent text-black font-semibold tracking-tight hover:opacity-90 transition-opacity cursor-pointer glow"
+            <nav className="hidden md:flex items-center gap-6 text-sm text-black/30">
+              {siteCopy.nav.links.map((link) => (
+                <button
+                  key={link.href}
+                  onClick={() => scrollToId(link.href)}
+                  className="hover:text-black/60 transition-colors cursor-pointer"
+                >
+                  {link.label}
+                </button>
+              ))}
+              <a
+                href={about.github}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-black/60 transition-colors"
               >
-                Chat with my AI
-              </button>
-              <button
-                onClick={() => scrollToId("projects")}
-                className="inline-flex items-center justify-center px-5 py-3 rounded-xl border border-border text-white hover:border-accent hover:text-accent transition-colors cursor-pointer"
-              >
-                View Projects
-              </button>
+                GitHub
+              </a>
+            </nav>
+
+            <div className="flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
+              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
+              {about.availability}
+            </div>
+          </div>
+        </header>
+
+        <div className="flex-1 flex flex-col justify-between w-full">
+          <div className="max-w-6xl mx-auto w-full px-6 pt-10 md:pt-14">
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <span className="px-3 py-1 border border-[#1A6B35] text-[#1A6B35] rounded-full">
+                {about.title}
+              </span>
+              <span className="text-black/40">{about.location}</span>
+              <span className="text-black/40">{about.year}</span>
+            </div>
+
+            <h1 className="mt-8 font-display leading-[0.85] tracking-tight text-[clamp(72px,12vw,148px)]">
+              <span className="hero-headline-line block">
+                <span className="hero-headline-line-inner hero-headline-delay-1 block text-[#0D0D0D]">
+                  I BUILD
+                </span>
+              </span>
+              <span className="hero-headline-line block">
+                <span className="hero-headline-line-inner hero-headline-delay-2 flex items-end gap-6 flex-wrap">
+                  <span className="hero-headline-outline">THINGS</span>
+                  <span className="font-sans text-[11px] text-black/30 pb-3 tracking-normal normal-case">
+                    {hero.headlineMeta}
+                  </span>
+                </span>
+              </span>
+              <span className="hero-headline-line block">
+                <span className="hero-headline-line-inner hero-headline-delay-3 block">
+                  <span className="text-[#0D0D0D]">THAT </span>
+                  <span className="text-[#1A6B35]">HOLD.</span>
+                </span>
+              </span>
+            </h1>
+          </div>
+
+          <div className="w-full">
+            <div className="hero-marquee overflow-hidden bg-[#1A6B35] py-3">
+              <div className="hero-marquee-track">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="hero-marquee-content flex shrink-0">
+                    {hero.marqueeItems.map((item) => (
+                      <span
+                        key={`${i}-${item}`}
+                        className="font-display text-[22px] text-white px-8 whitespace-nowrap"
+                      >
+                        {item} ·
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="max-w-6xl mx-auto px-6 py-12 grid gap-10 md:grid-cols-3">
+              <div>
+                <p className="hero-section-label">About</p>
+                <p className="mt-4 text-sm leading-relaxed text-black/60">
+                  {about.shortBio}
+                </p>
+                <div className="mt-6 flex flex-col gap-3">
+                  <button
+                    onClick={() => scrollToId("chat")}
+                    className="inline-flex items-center justify-center px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    → Chat with my AI
+                  </button>
+                  <button
+                    onClick={() => scrollToId("projects")}
+                    className="inline-flex items-center justify-center px-5 py-3 border border-[#0D0D0D]/20 text-[#0D0D0D] text-sm hover:border-[#1A6B35] hover:text-[#1A6B35] transition-colors cursor-pointer"
+                  >
+                    → View Projects
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <p className="hero-section-label">Currently into</p>
+                <ul className="mt-4 space-y-0">
+                  {hero.currentlyInto.map((item) => (
+                    <li
+                      key={item.title}
+                      className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
+                    >
+                      <span className="text-black/70">{item.title}</span>
+                      <span className="text-[#1A6B35] text-right shrink-0">
+                        {item.tags.join(" · ")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="hero-section-label">Selected work</p>
+                <ul className="mt-4 space-y-0">
+                  {hero.selectedWork.map((item) => (
+                    <li
+                      key={item.title}
+                      className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
+                    >
+                      <span className="text-black/70">{item.title}</span>
+                      <span className="text-[#1A6B35] text-right shrink-0">
+                        {item.tags.join(" · ")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -160,10 +244,10 @@ export default function Home() {
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
-              Ask me anything
+              {siteCopy.chat.title}
             </h2>
             <p className="text-zinc-500 mt-2 max-w-2xl">
-              Ask about my experience, projects, skills, or what I’m looking for.
+              {siteCopy.chat.subtitle}
             </p>
           </div>
         </div>
@@ -177,7 +261,7 @@ export default function Home() {
                   Start with a question or pick a prompt.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
-                  {SUGGESTED_QUESTIONS.map((q) => (
+                  {siteCopy.chat.suggestedQuestions.map((q) => (
                     <button
                       key={q}
                       onClick={() => handleSend(q)}
@@ -228,7 +312,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask me something..."
+                placeholder={siteCopy.chat.placeholder}
                 rows={1}
                 className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-600 resize-none outline-none max-h-32"
               />
@@ -249,7 +333,7 @@ export default function Home() {
               </button>
             </div>
             <p className="text-xs text-zinc-700 mt-3">
-              powered by claude haiku + rag
+              {siteCopy.chat.poweredBy}
             </p>
           </div>
         </div>
@@ -258,57 +342,16 @@ export default function Home() {
       {/* Projects */}
       <section id="projects" className="max-w-6xl mx-auto px-6 py-16 md:py-20">
         <h2 className="font-display text-white leading-[0.9] tracking-tight" style={{ fontSize: "clamp(44px, 6vw, 72px)" }}>
-          Things I&apos;ve Built
+          {siteCopy.projects.title}
         </h2>
         <p className="mt-4 text-zinc-500 max-w-2xl">
-          Real systems, shipped work, and projects I built because I wanted them to exist.
+          {siteCopy.projects.subtitle}
         </p>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <ProjectCard
-            name="AdsGency AI"
-            type="Professional"
-            description="AI-driven marketing automation platform for e-commerce brands. I built backend services powering advertising workflows, integrated the Shopify API, and kept deployments stable with AWS + CI/CD."
-            tech={["Python", "FastAPI", "AWS", "PostgreSQL", "Shopify API"]}
-            caseStudy={{
-              problem:
-                "E-commerce teams needed reliable automation for ad workflows, but real-world integrations (Shopify, ads platforms, and internal services) often failed in edge cases.",
-              built:
-                "Backend services and pipelines to orchestrate AI ad workflows, robust Shopify API integrations, and the deployment tooling to ship safely and debug production quickly.",
-              differently:
-                "Invest earlier in integration test harnesses and better observability around third‑party API failures to reduce on-call debugging time.",
-            }}
-          />
-
-          <ProjectCard
-            name="Recipe iOS App"
-            type="Personal"
-            description="A SwiftUI cooking app designed for the actual cooking experience: big text, step-by-step navigation, and hands-free support. I built it because I genuinely wanted to use it."
-            tech={["Swift", "SwiftUI", "AVFoundation"]}
-            caseStudy={{
-              problem:
-                "Most recipe apps are great for browsing but clunky once you’re mid-cook—touching the screen with messy hands and losing your place.",
-              built:
-                "A focused cooking mode with step navigation, per-step timers, and text-to-speech so instructions can be followed without constantly looking at the phone.",
-              differently:
-                "Add more offline-first support and a better content pipeline (importing recipes cleanly) to make the app useful day one for more people.",
-            }}
-          />
-
-          <ProjectCard
-            name="Personal Finance Discord Bot"
-            type="Personal"
-            description="A Discord bot that makes tracking spending frictionless in chat. Log expenses by category, view summaries, and set budgets—without opening another app."
-            tech={["Python", "MySQL", "Discord API"]}
-            caseStudy={{
-              problem:
-                "Expense tracking fails when the workflow is too heavy—people won’t open a separate app every time they spend $6.",
-              built:
-                "A chat-first command system for logging expenses, generating summaries, and enforcing simple budgeting rules backed by a MySQL data model.",
-              differently:
-                "Improve UX with natural-language parsing and reminders, plus richer analytics dashboards outside Discord for long-term trends.",
-            }}
-          />
+        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <ProjectCard key={project.title} {...project} />
+          ))}
         </div>
       </section>
 
@@ -318,7 +361,7 @@ export default function Home() {
           className="font-display text-white leading-[0.9] tracking-tight"
           style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
         >
-          What I Work With
+          {siteCopy.skills.title}
         </h2>
 
         <div className="mt-10">
@@ -332,10 +375,10 @@ export default function Home() {
           className="font-display text-white leading-[0.9] tracking-tight"
           style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
         >
-          Recently Building
+          {siteCopy.github.title}
         </h2>
         <p className="mt-4 text-zinc-500 max-w-2xl">
-          A quick snapshot of what I’ve been shipping lately.
+          {siteCopy.github.subtitle}
         </p>
 
         <div className="mt-10">
@@ -349,33 +392,72 @@ export default function Home() {
           className="font-display text-white leading-[0.9] tracking-tight"
           style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
         >
-          About Me
+          {siteCopy.about.title}
         </h2>
 
         <div className="mt-10 grid gap-10 md:grid-cols-[240px_1fr] items-start">
           <div className="hidden md:block relative">
             <div className="select-none font-display text-white/5 leading-none tracking-tight text-[160px]">
-              PK
+              {about.initials}
             </div>
           </div>
 
-          <div className="text-zinc-400 leading-relaxed">
-            <p>
-              I studied Computer Science and Comparative World Literature at San
-              Francisco State University — an unusual mix, but it shaped how I
-              think: part logical, part creative. I like understanding whole
-              systems, not just my piece of them. That curiosity shows up in how
-              I debug, how I architect, and how I communicate. Outside of code
-              I'm reading, exploring ideas across disciplines, and occasionally
-              convincing myself a side project is a good idea. I'm most
-              energized by early-stage teams building things that matter — where
-              engineers are close to the problem and ownership is real.
-            </p>
+          <div className="space-y-10">
+            <div className="text-zinc-400 leading-relaxed">
+              <p>{about.bio}</p>
 
-            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-              <span className="text-accent font-semibold">1-2 yrs exp</span>
-              <span className="text-accent font-semibold">SF Based</span>
-              <span className="text-accent font-semibold">Open to work</span>
+              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                {siteCopy.about.badges.map((badge) => (
+                  <span key={badge} className="text-accent font-semibold">
+                    {badge}
+                  </span>
+                ))}
+                <span className="text-accent font-semibold">{about.availability}</span>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-white text-lg font-semibold tracking-tight">
+                {siteCopy.experience.title}
+              </h3>
+              <div className="mt-6 space-y-8">
+                {experience.map((job) => (
+                  <div key={`${job.company}-${job.period}`}>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className="text-white font-semibold">{job.role}</p>
+                      <p className="text-xs text-zinc-500">{job.period}</p>
+                    </div>
+                    <p className="text-sm text-accent mt-1">
+                      {job.company} · {job.location}
+                    </p>
+                    <ul className="mt-3 space-y-2 text-sm text-zinc-400 list-disc pl-5">
+                      {job.bullets.map((bullet) => (
+                        <li key={bullet}>{bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-white text-lg font-semibold tracking-tight">
+                {siteCopy.leadership.title}
+              </h3>
+              <div className="mt-6 space-y-6">
+                {leadership.map((entry) => (
+                  <div key={`${entry.title}-${entry.organization}`}>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className="text-white font-semibold">{entry.title}</p>
+                      <p className="text-xs text-zinc-500">{entry.period}</p>
+                    </div>
+                    <p className="text-sm text-accent mt-1">{entry.organization}</p>
+                    <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
+                      {entry.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -387,26 +469,25 @@ export default function Home() {
           className="font-display text-white leading-[0.9] tracking-tight text-center"
           style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
         >
-          Let&apos;s Work Together
+          {siteCopy.contact.title}
         </h2>
 
         <p className="mt-6 text-zinc-400 text-center max-w-2xl mx-auto leading-relaxed">
-          I&apos;m actively looking for the right full-time role. If you&apos;re
-          building something interesting, I&apos;d love to hear about it.
+          {siteCopy.contact.subtitle}
         </p>
 
         <div className="mt-10 flex items-center justify-center">
           <a
-            href="mailto:pankuri@email.com"
+            href={`mailto:${about.email}`}
             className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-accent text-black font-semibold tracking-tight hover:opacity-90 transition-opacity glow"
           >
-            Get in Touch →
+            {siteCopy.contact.cta}
           </a>
         </div>
 
         <div className="mt-8 flex items-center justify-center gap-6 text-sm">
           <a
-            href="https://github.com/pankurik"
+            href={about.github}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
@@ -414,13 +495,13 @@ export default function Home() {
             <span className="text-accent">●</span> GitHub
           </a>
           <a
-            href="#"
+            href={about.linkedin}
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
           >
             <span className="text-accent">●</span> LinkedIn
           </a>
           <a
-            href="#"
+            href={about.resume}
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
           >
             <span className="text-accent">●</span> Resume
@@ -430,7 +511,7 @@ export default function Home() {
         <div className="mt-12 border-t border-border pt-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <p className="text-xs text-zinc-600">
-              Built by Pankuri Khare · Powered by Claude API + pgvector · 2026
+              {siteCopy.footer.builtBy(about.name)}
             </p>
 
             <details className="text-xs text-zinc-500">
@@ -438,7 +519,7 @@ export default function Home() {
                 [ built with ]
               </summary>
               <div className="mt-3 rounded-xl border border-border bg-surface px-4 py-3 text-zinc-400">
-                Next.js, Supabase, pgvector, OpenAI embeddings, Claude Haiku, Vercel
+                {siteCopy.footer.stack}
               </div>
             </details>
           </div>

@@ -184,6 +184,17 @@ html {
   -webkit-text-stroke: 2px #1a6b35;
 }
 
+.hero-headline-outline-video {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #ffffff;
+  transition: color 0.3s ease, -webkit-text-stroke 0.3s ease;
+}
+
+.hero-headline-outline-video:hover {
+  color: #3ecf6a;
+  -webkit-text-stroke: 0 transparent;
+}
+
 .hero-marquee-track {
   display: flex;
   width: max-content;

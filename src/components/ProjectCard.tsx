@@ -21,7 +21,7 @@ export function ProjectCard({
   return (
     <article
       className={[
-        "project-card group relative flex w-[420px] h-[580px] shrink-0 snap-start flex-col justify-between border-r border-black/[0.08] p-10 transition-colors duration-300",
+        "project-card group relative flex w-[420px] h-[580px] shrink-0 snap-start flex-col justify-between border-r border-black/[0.08] p-12 transition-colors duration-300",
         featured
           ? "bg-[#1A6B35] hover:bg-[#145529]"
           : "bg-transparent hover:bg-white",

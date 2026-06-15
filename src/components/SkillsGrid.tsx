@@ -1,61 +1,76 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { skillItems } from "@/data/content";
+import { useState } from "react";
+import { skillCategories, siteCopy } from "@/data/content";
 
 export function SkillsGrid() {
-  const arenaRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = arenaRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) setInView(true);
-      },
-      { threshold: 0.2 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [activeSkill, setActiveSkill] = useState<{
+    name: string;
+    context: string;
+  } | null>(null);
 
   return (
-    <div
-      ref={arenaRef}
-      className="skills-arena relative h-[600px] overflow-hidden p-8"
-    >
-      {skillItems.map((skill, index) => (
-        <span
-          key={skill.name}
-          className={[
-            "skill-tag group",
-            `skill-tag-${skill.size}`,
-            skill.green ? "skill-tag-green" : "",
-            inView ? "is-visible" : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-          data-direction={skill.direction}
-          style={
-            {
-              top: skill.position.top,
-              left: skill.position.left,
-              right: skill.position.right,
-              bottom: skill.position.bottom,
-              "--skill-rot": `${skill.rotation}deg`,
-              "--skill-delay": `${index * 40}ms`,
-            } as React.CSSProperties
-          }
+    <div className="skills-panel pb-2 skills-panel-inner">
+      <div className="section-content">
+        <div className="skills-categories grid gap-6 md:grid-cols-2 lg:gap-8">
+          {skillCategories.map((category) => (
+            <div
+              key={category.id}
+              className="skills-category border border-black/[0.06] bg-white p-5 md:p-6"
+              onMouseLeave={() => setActiveSkill(null)}
+            >
+              <p className="section-label mb-4">{category.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <button
+                    key={skill.name}
+                    type="button"
+                    className={[
+                      "skill-pill",
+                      skill.primary ? "skill-pill-primary" : "",
+                      activeSkill?.name === skill.name ? "is-active" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    onMouseEnter={() =>
+                      setActiveSkill({
+                        name: skill.name,
+                        context: skill.context,
+                      })
+                    }
+                    onFocus={() =>
+                      setActiveSkill({
+                        name: skill.name,
+                        context: skill.context,
+                      })
+                    }
+                    onBlur={() => setActiveSkill(null)}
+                  >
+                    {skill.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="skills-detail mt-10 min-h-[3.25rem] border-t border-black/[0.06] pt-6"
+          aria-live="polite"
         >
-          {skill.name}
-          <span className="skill-tooltip" role="tooltip">
-            {skill.tooltip}
-          </span>
-        </span>
-      ))}
+          {activeSkill ? (
+            <p className="skills-detail-text font-mono text-[12px] leading-relaxed">
+              <span className="text-[#1A6B35]">{activeSkill.name}</span>
+              <span className="text-black/25"> — </span>
+              <span className="text-black/50">{activeSkill.context}</span>
+            </p>
+          ) : (
+            <p className="skills-detail-placeholder font-mono text-[11px] text-black/25">
+              {siteCopy.skills.hoverHint}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -30,13 +30,24 @@ const CONTACT_TYPE_OPTIONS: {
   { value: "other", label: "Other" },
 ];
 
+const PAGE_SECTIONS = [
+  { id: "hero", label: "Hero" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "github", label: "GitHub" },
+  { id: "chat", label: "Chat" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
+] as const;
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: siteCopy.chat.openingMessage },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeSection, setActiveSection] = useState("top");
+  const [activeSection, setActiveSection] = useState("hero");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
@@ -46,34 +57,113 @@ export default function Home() {
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactError, setContactError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const activeSectionRef = useRef("hero");
+
+  const activeIndex = PAGE_SECTIONS.findIndex((s) => s.id === activeSection);
+  const sectionNumber = String(Math.max(activeIndex + 1, 1)).padStart(2, "0");
+  const isDarkUi = activeSection === "github" || activeSection === "contact";
 
   function scrollToId(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = chatScrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, loading]);
 
   useEffect(() => {
-    const sectionIds = ["top", "projects", "about", "chat", "contact"];
-    const observers = sectionIds.flatMap((id) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      setScrollProgress(maxScroll > 0 ? (container.scrollTop / maxScroll) * 100 : 0);
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const video = heroVideoRef.current;
+    if (!container || !video) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    const onScroll = () => {
+      const heroEl = document.getElementById("hero");
+      if (!heroEl) return;
+      const heroScroll = Math.max(0, -heroEl.getBoundingClientRect().top);
+      video.style.transform = `translateY(${heroScroll * 0.4}px)`;
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const ids = PAGE_SECTIONS.map((s) => s.id);
+    const ratios = new Map<string, number>();
+
+    const updateSectionClasses = (nextId: string) => {
+      const prevId = activeSectionRef.current;
+      if (prevId === nextId) return;
+
+      ids.forEach((id) => {
+        document.getElementById(id)?.classList.remove("section-active", "section-leaving");
+      });
+
+      if (prevId) {
+        document.getElementById(prevId)?.classList.add("section-leaving");
+      }
+      document.getElementById(nextId)?.classList.add("section-active");
+
+      activeSectionRef.current = nextId;
+      setActiveSection(nextId);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          ratios.set(entry.target.id, entry.intersectionRatio);
+        });
+
+        let bestId = activeSectionRef.current;
+        let bestRatio = 0;
+        ratios.forEach((ratio, id) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        });
+
+        if (bestRatio >= 0.6) {
+          updateSectionClasses(bestId);
+        }
+      },
+      { root: container, threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] }
+    );
+
+    ids.forEach((id) => {
       const el = document.getElementById(id);
-      if (!el) return [];
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry?.isIntersecting) setActiveSection(id);
-        },
-        { rootMargin: "-42% 0px -52% 0px", threshold: 0 }
-      );
-
-      observer.observe(el);
-      return [observer];
+      if (el) observer.observe(el);
     });
 
-    return () => observers.forEach((observer) => observer.disconnect());
+    document.getElementById("hero")?.classList.add("section-active");
+
+    return () => observer.disconnect();
   }, []);
 
   async function handleSend(text?: string) {
@@ -159,12 +249,26 @@ export default function Home() {
   }
 
   return (
-    <div className="portfolio-page min-h-screen">
+    <div
+      className={[
+        "portfolio-page",
+        isDarkUi ? "is-dark-ui" : "",
+        activeSection === "contact" ? "is-section-contact" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div
+        className="scroll-progress-bar"
+        style={{ width: `${scrollProgress}%` }}
+        aria-hidden="true"
+      />
+
       <header className="site-nav">
         <div className="section-content py-4 flex items-center justify-between gap-6">
           <button
-            onClick={() => scrollToId("top")}
-            className="text-[#1A6B35] tracking-tight font-semibold hover:opacity-80 transition-opacity cursor-pointer shrink-0"
+            onClick={() => scrollToId("hero")}
+            className="site-nav-name text-[#1A6B35] tracking-tight font-semibold hover:opacity-80 transition-opacity cursor-pointer shrink-0"
           >
             {about.name}
           </button>
@@ -188,73 +292,111 @@ export default function Home() {
               href={about.github}
               target="_blank"
               rel="noreferrer"
-              className="hover:text-black/60 transition-colors"
+              className="site-nav-link hover:text-black/60 transition-colors"
             >
               GitHub
             </a>
           </nav>
 
-          <div className="flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
+          <div className="site-nav-availability flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
             <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
             {about.availability}
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section id="top" className="hero-light flex flex-col">
-        <div className="flex flex-col w-full">
-          <div className="hero-video-block relative min-h-[70vh] w-full overflow-hidden">
-            <video
-              src="/BayArea.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 z-0 h-full w-full object-cover"
-            />
-            <div
-              className="absolute inset-0 z-[1]"
-              style={{
-                background:
-                  "linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 100%)",
-              }}
-            />
-            <div className="relative z-[2] mx-auto flex min-h-[70vh] max-w-6xl flex-col justify-end px-6 pb-10 pt-10 md:pt-14">
-              <div className="flex flex-wrap items-center gap-3 text-xs">
-                <span className="rounded-full border border-white/50 px-3 py-1 text-white">
-                  {about.title}
-                </span>
-                <span className="text-white/60">{about.location}</span>
-                <span className="text-white/60">{about.year}</span>
-              </div>
+      <nav className="section-nav-dots" aria-label="Section navigation">
+        {PAGE_SECTIONS.map((section) => (
+          <button
+            key={section.id}
+            type="button"
+            aria-label={`Go to ${section.label}`}
+            aria-current={activeSection === section.id ? "true" : undefined}
+            onClick={() => scrollToId(section.id)}
+            className={[
+              "section-nav-dot",
+              activeSection === section.id ? "is-active" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          />
+        ))}
+      </nav>
 
-              <h1 className="mt-8 font-display leading-[0.85] tracking-tight text-[clamp(72px,12vw,148px)]">
-                <span className="hero-headline-line block">
-                  <span className="hero-headline-line-inner hero-headline-delay-1 block text-white">
-                    I BUILD
+      <div className="section-counter" aria-live="polite">
+        {sectionNumber} / {String(PAGE_SECTIONS.length).padStart(2, "0")}
+      </div>
+
+      <div ref={scrollContainerRef} className="snap-scroll">
+        {/* Hero */}
+        <section id="hero" className="snap-section snap-section--cream section-active">
+          <div className="section-panel section-panel--flush !p-0 min-h-screen flex flex-col">
+            <div className="hero-video-block relative flex-1 min-h-0 overflow-hidden">
+              <video
+                ref={heroVideoRef}
+                src="/BayArea.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 z-0 h-full w-full object-cover will-change-transform"
+              />
+              <div
+                className="absolute inset-0 z-[1]"
+                style={{
+                  background:
+                    "linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 100%)",
+                }}
+              />
+              <div className="relative z-[2] mx-auto flex h-full max-w-6xl flex-col justify-end px-6 pb-12 pt-24">
+                <div className="flex flex-wrap items-center gap-3 text-xs">
+                  <span className="rounded-full border border-white/50 px-3 py-1 text-white">
+                    {about.title}
                   </span>
-                </span>
-                <span className="hero-headline-line block">
-                  <span className="hero-headline-line-inner hero-headline-delay-2 flex items-end gap-6 flex-wrap">
-                    <span className="hero-headline-outline-video">THINGS</span>
-                    <span className="font-sans text-[11px] text-white/50 pb-3 tracking-normal normal-case">
-                      {hero.headlineMeta}
+                  <span className="text-white/60">{about.location}</span>
+                  <span className="text-white/60">{about.year}</span>
+                </div>
+
+                <h1 className="mt-8 font-display leading-[0.85] tracking-tight text-[clamp(72px,12vw,148px)]">
+                  <span className="hero-headline-line block">
+                    <span className="hero-headline-line-inner hero-headline-delay-1 block text-white">
+                      I BUILD
                     </span>
                   </span>
-                </span>
-                <span className="hero-headline-line block">
-                  <span className="hero-headline-line-inner hero-headline-delay-3 block">
-                    <span className="text-white">THAT </span>
-                    <span className="text-[#3ECF6A]">HOLD.</span>
+                  <span className="hero-headline-line block">
+                    <span className="hero-headline-line-inner hero-headline-delay-2 flex items-end gap-6 flex-wrap">
+                      <span className="hero-headline-outline-video">THINGS</span>
+                      <span className="font-sans text-[11px] text-white/50 pb-3 tracking-normal normal-case">
+                        {hero.headlineMeta}
+                      </span>
+                    </span>
                   </span>
-                </span>
-              </h1>
-            </div>
-          </div>
+                  <span className="hero-headline-line block">
+                    <span className="hero-headline-line-inner hero-headline-delay-3 block">
+                      <span className="text-white">THAT </span>
+                      <span className="text-[#3ECF6A]">HOLD.</span>
+                    </span>
+                  </span>
+                </h1>
 
-          <div className="w-full">
-            <div className="hero-marquee overflow-hidden bg-[#1A6B35] py-3">
+                <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    onClick={() => scrollToId("projects")}
+                    className="inline-flex items-center justify-center px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    → View Projects
+                  </button>
+                  <button
+                    onClick={() => scrollToId("chat")}
+                    className="inline-flex items-center justify-center px-5 py-3 border border-white/40 text-white text-sm hover:border-white hover:bg-white/10 transition-colors cursor-pointer"
+                  >
+                    → Chat with my AI
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="hero-marquee shrink-0 overflow-hidden bg-[#1A6B35] py-3">
               <div className="hero-marquee-track">
                 {Array.from({ length: 2 }).map((_, i) => (
                   <div key={i} className="hero-marquee-content flex shrink-0">
@@ -270,448 +412,466 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
-            <div className="max-w-6xl mx-auto px-6 py-10 grid gap-10 md:grid-cols-2">
-              <div>
-                <p className="text-sm leading-relaxed text-black/60">
-                  {about.shortBio}
-                </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <button
-                    onClick={() => scrollToId("projects")}
-                    className="inline-flex items-center justify-center px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
-                  >
-                    → View Projects
-                  </button>
-                  <button
-                    onClick={() => scrollToId("chat")}
-                    className="inline-flex items-center justify-center px-5 py-3 border border-[#0D0D0D]/20 text-[#0D0D0D] text-sm hover:border-[#1A6B35] hover:text-[#1A6B35] transition-colors cursor-pointer"
-                  >
-                    → Chat with my AI
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <p className="section-label">Currently into</p>
-                <ul className="mt-4 space-y-0">
-                  {hero.currentlyInto.map((item) => (
-                    <li
-                      key={item.title}
-                      className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
-                    >
-                      <span className="text-black/70">{item.title}</span>
-                      <span className="text-[#1A6B35] text-right shrink-0">
-                        {item.tags.join(" · ")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <ProjectsSection />
-
-      {/* About */}
-      <section id="about" className="portfolio-section">
-        <div className="section-content">
-          <div className="section-intro">
-            <div className="section-intro-title">
-              <p className="section-label">{siteCopy.about.sectionLabel}</p>
-              <h2 className="section-title">
-                {siteCopy.about.headline}{" "}
-                <span className="section-title-accent">{siteCopy.about.headlineAccent}</span>
-              </h2>
-            </div>
+        {/* Projects */}
+        <section id="projects" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
+            <ProjectsSection />
           </div>
+        </section>
 
-          <div className="grid gap-10 lg:grid-cols-2">
-            <p className="font-mono text-sm leading-[1.9] text-black/55">
-              <RichText parts={about.bioStrip} />
-            </p>
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {about.bioPills.green.map((pill) => (
-                  <span
-                    key={pill}
-                    className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
-                  >
-                    {pill}
-                  </span>
-                ))}
-              </div>
-              {about.bioPills.muted.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex flex-wrap gap-2">
-                  {row.map((pill) => (
-                    <span
-                      key={pill}
-                      className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
-                    >
-                      {pill}
+        {/* Skills */}
+        <section id="skills" className="snap-section snap-section--cream">
+          <div className="section-panel flex flex-col justify-center gap-8">
+            <div className="section-content">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.skills.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.skills.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.skills.headlineAccent}
                     </span>
-                  ))}
+                  </h2>
                 </div>
-              ))}
+                <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
+              </div>
             </div>
+            <SkillsGrid />
           </div>
+        </section>
 
-          <div className="section-subblock">
-            <p className="section-label mb-8">{siteCopy.experience.label}</p>
-            <div className="space-y-12">
-              {experience.map((job) => (
+        {/* GitHub */}
+        <section id="github" className="snap-section snap-section--dark">
+          <div className="section-panel flex flex-col justify-center gap-8">
+            <div className="section-content">
+              <div className="section-intro section-intro-minimal">
+                <p className="section-label">{siteCopy.github.sectionLabel}</p>
+                <div className="section-intro-meta flex items-center gap-2 text-[#3ECF6A]">
+                  <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#3ECF6A]" />
+                  {siteCopy.github.liveLabel}
+                </div>
+              </div>
+            </div>
+            <GitHubFeed />
+          </div>
+        </section>
+
+        {/* Chat */}
+        <section id="chat" className="snap-section snap-section--white">
+          <div className="section-panel section-panel--flush py-20 flex flex-col min-h-screen">
+            <div className="section-content shrink-0">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.chat.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.chat.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.chat.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
+                <p className="section-intro-meta lg:text-right">
+                  {siteCopy.chat.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-1 grid lg:grid-cols-2 min-h-0 mt-8">
+              <div className="flex flex-col min-h-[50vh] lg:min-h-0">
                 <div
-                  key={`${job.company}-${job.period}`}
-                  className="grid gap-x-10"
-                  style={{ gridTemplateColumns: "160px 1px 1fr" }}
+                  ref={chatScrollRef}
+                  className="flex-1 overflow-y-auto px-6 py-6"
                 >
-                  <div>
-                    <p className="font-mono text-[11px] text-black/40 leading-relaxed">
-                      {job.period}
-                    </p>
-                    {job.latest && (
-                      <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
-                        {siteCopy.experience.latestTag}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
-                    <div
-                      className={[
-                        "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
-                        job.latest
-                          ? "bg-[#1A6B35]"
-                          : "bg-white border border-black/20",
-                      ].join(" ")}
-                    />
-                  </div>
-
-                  <div>
-                    <h3 className="font-display text-[28px] leading-none tracking-tight">
-                      {job.company}
-                    </h3>
-                    <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
-                      {job.role}
-                      {job.employmentType ? ` · ${job.employmentType}` : ""}
-                      {job.location ? ` · ${job.location}` : ""}
-                    </p>
-                    <ul className="mt-4 space-y-2">
-                      {job.bullets.map((bullet, bulletIndex) => (
-                        <li
-                          key={bulletIndex}
-                          className="text-[11px] leading-relaxed text-black/45"
+                  <div className="flex flex-col gap-5">
+                    {messages.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
+                      >
+                        {msg.role === "assistant" && (
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-section-label text-[#1A6B35]">
+                              {siteCopy.chat.aiLabel}
+                            </span>
+                          </div>
+                        )}
+                        <div
+                          className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                            msg.role === "user"
+                              ? "bg-[#1A6B35] text-white"
+                              : "bg-white text-[#0D0D0D] border border-black/[0.12]"
+                          }`}
                         >
-                          <span className="text-[#1A6B35]">—</span>{" "}
-                          <RichText parts={bullet} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="section-subblock">
-            <p className="section-label mb-8">{siteCopy.leadership.label}</p>
-            <div className="grid gap-4 md:grid-cols-3">
-              {leadership.map((entry) => (
-                <article
-                  key={`${entry.title}-${entry.period}`}
-                  className="border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
-                >
-                  <h3 className="font-display text-[22px] leading-tight tracking-tight">
-                    {entry.title}
-                  </h3>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
-                    {entry.organization}
-                  </p>
-                  <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
-                  <p className="mt-3 text-[11px] leading-relaxed text-black/45">
-                    <RichText parts={entry.description} />
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Skills */}
-      <section id="skills" className="portfolio-section pt-0">
-        <div className="section-content">
-          <div className="section-intro section-intro-minimal">
-            <p className="section-label">{siteCopy.skills.sectionLabel}</p>
-            <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
-          </div>
-        </div>
-
-        <SkillsGrid />
-      </section>
-
-      {/* GitHub */}
-      <section id="github" className="portfolio-section pt-0">
-        <div className="section-content">
-          <div className="section-intro section-intro-minimal">
-            <p className="section-label">{siteCopy.github.sectionLabel}</p>
-            <div className="section-intro-meta flex items-center gap-2 text-[#1A6B35]">
-              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
-              {siteCopy.github.liveLabel}
-            </div>
-          </div>
-        </div>
-
-        <GitHubFeed />
-      </section>
-
-      {/* Chat */}
-      <section id="chat" className="portfolio-section min-h-[85vh] flex flex-col pb-0">
-        <div className="section-content">
-          <div className="section-intro">
-            <div className="section-intro-title">
-              <p className="section-label">{siteCopy.chat.sectionLabel}</p>
-              <h2 className="section-title">
-                {siteCopy.chat.headline}{" "}
-                <span className="section-title-accent">{siteCopy.chat.headlineAccent}</span>
-              </h2>
-            </div>
-            <p className="section-intro-meta lg:text-right">{siteCopy.chat.description}</p>
-          </div>
-        </div>
-
-        <div className="flex-1 grid lg:grid-cols-2 min-h-0 border-t border-black/[0.06]">
-          <div className="flex flex-col min-h-[70vh] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-black/[0.08]">
-            <div className="flex-1 overflow-y-auto px-6 py-6">
-              <div className="flex flex-col gap-5">
-                {messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                  >
-                    {msg.role === "assistant" && (
-                      <div className="mb-2 flex items-center gap-2">
-                        <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                        <span className="chat-section-label text-[#1A6B35]">
-                          {siteCopy.chat.aiLabel}
-                        </span>
+                          {msg.content}
+                        </div>
+                      </div>
+                    ))}
+                    {loading && (
+                      <div className="flex flex-col items-start">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-section-label text-[#1A6B35]">
+                            {siteCopy.chat.aiLabel}
+                          </span>
+                        </div>
+                        <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                        </div>
                       </div>
                     )}
-                    <div
-                      className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                        msg.role === "user"
-                          ? "bg-[#1A6B35] text-white"
-                          : "bg-white text-[#0D0D0D] border border-black/[0.12]"
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
+                    <div ref={messagesEndRef} />
                   </div>
-                ))}
-                {loading && (
-                  <div className="flex flex-col items-start">
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                      <span className="chat-section-label text-[#1A6B35]">
-                        {siteCopy.chat.aiLabel}
-                      </span>
-                    </div>
-                    <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
-                      <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                      <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                      <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
+                </div>
 
-            <div className="border-t border-black/[0.08] px-6 py-4 bg-[#F5F5F0]">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {siteCopy.chat.suggestedPrompts.map((prompt) => (
-                  <button
-                    key={prompt}
-                    onClick={() => setInput(prompt)}
-                    className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
-                  >
-                    {prompt}
-                  </button>
-                ))}
+                <div className="px-6 py-4 bg-[#F5F5F0]">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => setInput(prompt)}
+                        className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder={siteCopy.chat.placeholder}
+                      className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
+                    />
+                    <button
+                      onClick={() => handleSend()}
+                      disabled={!input.trim() || loading}
+                      className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {siteCopy.chat.sendLabel}
+                    </button>
+                  </div>
+                  <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={siteCopy.chat.placeholder}
-                  className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
-                />
-                <button
-                  onClick={() => handleSend()}
-                  disabled={!input.trim() || loading}
-                  className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {siteCopy.chat.sendLabel}
-                </button>
+
+              <div className="h-full min-h-[50vh] lg:min-h-0">
+                <ChatStatsPanel />
               </div>
-              <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
             </div>
           </div>
+        </section>
 
-          <ChatStatsPanel />
-        </div>
-      </section>
-
-      <section id="contact" className="portfolio-section border-t border-black/[0.06]">
-        <div className="section-content">
-            <p className="section-label">{siteCopy.contact.label}</p>
-            <a
-              href={`mailto:${about.email}`}
-              className="mt-4 inline-block font-display text-[clamp(32px,6vw,42px)] leading-none text-[#1A6B35] hover:opacity-80 transition-opacity"
-            >
-              {about.email}
-            </a>
-            <div className="mt-6 flex flex-wrap gap-6">
-              {siteCopy.contact.links.map((link) => {
-                const href = about[link.key];
-                const isExternal =
-                  href.startsWith("http") || link.key === "resume";
-
-                return (
-                <a
-                  key={link.key}
-                  href={href}
-                  target={isExternal ? "_blank" : undefined}
-                  rel={isExternal ? "noreferrer" : undefined}
-                  className="font-mono text-[11px] text-black/45 hover:text-[#1A6B35] transition-colors"
-                >
-                  {link.label}
-                </a>
-                );
-              })}
-            </div>
-
-            <p className="mt-8 mb-6 text-[10px] uppercase tracking-[0.12em] text-black/25">
-              Or send a message
-            </p>
-
-            <form
-              onSubmit={handleContactSubmit}
-              className="flex max-w-[480px] flex-col gap-5"
-            >
-              <input
-                type="text"
-                name="website"
-                value={contactWebsite}
-                onChange={(e) => setContactWebsite(e.target.value)}
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-                className="hidden"
-              />
-
-              <div>
-                <label htmlFor="contact-name" className="contact-form-label">
-                  Name
-                </label>
-                <input
-                  id="contact-name"
-                  type="text"
-                  required
-                  maxLength={100}
-                  value={contactName}
-                  onChange={(e) => setContactName(e.target.value)}
-                  placeholder="Your name"
-                  className="contact-form-input"
-                />
+        {/* About */}
+        <section id="about" className="snap-section snap-section--cream">
+          <div className="section-panel">
+            <div className="section-content">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.about.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.about.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.about.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
               </div>
 
-              <div>
-                <label htmlFor="contact-email" className="contact-form-label">
-                  Email
-                </label>
-                <input
-                  id="contact-email"
-                  type="email"
-                  required
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                  placeholder="Your email"
-                  className="contact-form-input"
-                />
+              <div className="grid gap-10 md:grid-cols-2 mb-12">
+                <div>
+                  <p className="text-sm leading-relaxed text-black/60">
+                    {about.shortBio}
+                  </p>
+                </div>
+                <div>
+                  <p className="section-label">Currently into</p>
+                  <ul className="mt-4 space-y-0">
+                    {hero.currentlyInto.map((item) => (
+                      <li
+                        key={item.title}
+                        className="flex items-baseline justify-between gap-4 py-3 text-sm"
+                      >
+                        <span className="text-black/70">{item.title}</span>
+                        <span className="text-[#1A6B35] text-right shrink-0">
+                          {item.tags.join(" · ")}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-              <div>
-                <label htmlFor="contact-message" className="contact-form-label">
-                  Message
-                </label>
-                <textarea
-                  id="contact-message"
-                  required
-                  rows={4}
-                  maxLength={1000}
-                  value={contactMessage}
-                  onChange={(e) => setContactMessage(e.target.value)}
-                  placeholder="What's on your mind?"
-                  className="contact-form-input resize-none"
-                />
-              </div>
-
-              <div>
-                <span className="contact-form-label">Type</span>
-                <div className="flex flex-wrap gap-2">
-                  {CONTACT_TYPE_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setContactType(option.value)}
-                      className={[
-                        "px-3 py-1.5 font-mono text-[11px] transition-colors cursor-pointer",
-                        contactType === option.value
-                          ? "bg-[#1A6B35] text-white border border-[#1A6B35]"
-                          : "bg-transparent text-black/45 border border-black/20 hover:border-[#1A6B35]/40",
-                      ].join(" ")}
-                    >
-                      {option.label}
-                    </button>
+              <div className="grid gap-10 lg:grid-cols-2">
+                <p className="font-mono text-sm leading-[1.9] text-black/55">
+                  <RichText parts={about.bioStrip} />
+                </p>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {about.bioPills.green.map((pill) => (
+                      <span
+                        key={pill}
+                        className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
+                      >
+                        {pill}
+                      </span>
+                    ))}
+                  </div>
+                  {about.bioPills.muted.map((row, rowIndex) => (
+                    <div key={rowIndex} className="flex flex-wrap gap-2">
+                      {row.map((pill) => (
+                        <span
+                          key={pill}
+                          className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
+                        >
+                          {pill}
+                        </span>
+                      ))}
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={contactSubmitting}
-                className="w-full bg-[#1A6B35] px-4 py-[0.85rem] font-mono text-[11px] tracking-[0.08em] text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-default cursor-pointer"
+              <div className="section-subblock">
+                <p className="section-label mb-8">{siteCopy.experience.label}</p>
+                <div className="space-y-12">
+                  {experience.map((job) => (
+                    <div
+                      key={`${job.company}-${job.period}`}
+                      className="grid gap-x-10 mb-12 last:mb-0"
+                      style={{ gridTemplateColumns: "160px 1px 1fr" }}
+                    >
+                      <div>
+                        <p className="font-mono text-[11px] text-black/40 leading-relaxed">
+                          {job.period}
+                        </p>
+                        {job.latest && (
+                          <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
+                            {siteCopy.experience.latestTag}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
+                        <div
+                          className={[
+                            "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
+                            job.latest
+                              ? "bg-[#1A6B35]"
+                              : "bg-white border border-black/20",
+                          ].join(" ")}
+                        />
+                      </div>
+
+                      <div>
+                        <h3 className="font-display text-[28px] leading-none tracking-tight">
+                          {job.company}
+                        </h3>
+                        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
+                          {job.role}
+                          {job.employmentType ? ` · ${job.employmentType}` : ""}
+                          {job.location ? ` · ${job.location}` : ""}
+                        </p>
+                        <ul className="mt-4 space-y-2">
+                          {job.bullets.map((bullet, bulletIndex) => (
+                            <li
+                              key={bulletIndex}
+                              className="text-[11px] leading-relaxed text-black/45"
+                            >
+                              <span className="text-[#1A6B35]">—</span>{" "}
+                              <RichText parts={bullet} />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="section-subblock">
+                <p className="section-label mb-8">{siteCopy.leadership.label}</p>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {leadership.map((entry) => (
+                    <article
+                      key={`${entry.title}-${entry.period}`}
+                      className="p-5 transition-colors hover:bg-white/60"
+                    >
+                      <h3 className="font-display text-[22px] leading-tight tracking-tight">
+                        {entry.title}
+                      </h3>
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
+                        {entry.organization}
+                      </p>
+                      <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
+                      <p className="mt-3 text-[11px] leading-relaxed text-black/45">
+                        <RichText parts={entry.description} />
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" className="snap-section snap-section--green">
+          <div className="section-panel flex flex-col justify-between min-h-screen">
+            <div className="section-content flex-1">
+              <p className="contact-section-label section-label">
+                {siteCopy.contact.label}
+              </p>
+              <a
+                href={`mailto:${about.email}`}
+                className="contact-email mt-4 inline-block hover:opacity-90 transition-opacity"
               >
-                {contactSubmitting ? "Sending..." : "→ Send message"}
-              </button>
+                {about.email}
+              </a>
+              <div className="mt-6 flex flex-wrap gap-6">
+                {siteCopy.contact.links.map((link) => {
+                  const href = about[link.key];
+                  const isExternal =
+                    href.startsWith("http") || link.key === "resume";
 
-              {contactSuccess && (
-                <p className="contact-form-feedback font-mono text-[12px] text-[#1A6B35]">
-                  Got it — I&apos;ll be in touch soon.
-                </p>
-              )}
-              {contactError && (
-                <p className="contact-form-feedback font-mono text-[12px] text-red-600">
-                  Something went wrong — try emailing me directly.
-                </p>
-              )}
-            </form>
-        </div>
+                  return (
+                    <a
+                      key={link.key}
+                      href={href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noreferrer" : undefined}
+                      className="contact-link"
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </div>
 
-        <footer className="section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.06] pt-6 mt-10">
-          <p className="text-[10px] text-black/35">
-            {siteCopy.footer.copyright(about.name, about.year)}
-          </p>
-          <p className="text-[10px] text-black/35">{siteCopy.footer.builtWith}</p>
-        </footer>
-      </section>
+              <p className="mt-10 mb-6 text-[10px] uppercase tracking-[0.12em] text-white/40">
+                Or send a message
+              </p>
+
+              <form
+                onSubmit={handleContactSubmit}
+                className="flex max-w-[480px] flex-col gap-5"
+              >
+                <input
+                  type="text"
+                  name="website"
+                  value={contactWebsite}
+                  onChange={(e) => setContactWebsite(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
+                <div>
+                  <label htmlFor="contact-name" className="contact-form-label-light">
+                    Name
+                  </label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    required
+                    maxLength={100}
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                    placeholder="Your name"
+                    className="contact-form-input-light"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="contact-email" className="contact-form-label-light">
+                    Email
+                  </label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    required
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="Your email"
+                    className="contact-form-input-light"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="contact-message" className="contact-form-label-light">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    required
+                    rows={4}
+                    maxLength={1000}
+                    value={contactMessage}
+                    onChange={(e) => setContactMessage(e.target.value)}
+                    placeholder="What's on your mind?"
+                    className="contact-form-input-light resize-none"
+                  />
+                </div>
+
+                <div>
+                  <span className="contact-form-label-light">Type</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {CONTACT_TYPE_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setContactType(option.value)}
+                        className={[
+                          "contact-type-pill-light cursor-pointer",
+                          contactType === option.value ? "is-selected" : "",
+                        ].join(" ")}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={contactSubmitting}
+                  className="contact-form-submit-light disabled:opacity-60 disabled:cursor-default cursor-pointer"
+                >
+                  {contactSubmitting ? "Sending..." : "→ Send message"}
+                </button>
+
+                {contactSuccess && (
+                  <p className="font-mono text-[12px] text-white/90">
+                    Got it — I&apos;ll be in touch soon.
+                  </p>
+                )}
+                {contactError && (
+                  <p className="font-mono text-[12px] text-red-200">
+                    Something went wrong — try emailing me directly.
+                  </p>
+                )}
+              </form>
+            </div>
+
+            <footer className="section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-10 mt-10">
+              <p className="contact-footer-text">
+                {siteCopy.footer.copyright(about.name, about.year)}
+              </p>
+              <p className="contact-footer-text">{siteCopy.footer.builtWith}</p>
+            </footer>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

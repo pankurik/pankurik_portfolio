@@ -236,14 +236,27 @@ export const hero = {
 
 export const siteCopy = {
   chat: {
-    title: "Ask me anything",
-    subtitle: "Ask about my experience, projects, skills, or what I'm looking for.",
+    sectionLabel: "Ask me anything",
+    headline: "TALK TO",
+    headlineAccent: "MY AI",
+    description:
+      "An AI trained on my actual experience, projects, and personality. Ask it anything a recruiter or founder would ask me.",
+    openingMessage:
+      "Hey! I'm Pankuri's AI — ask me about her projects, stack, what she's looking for, or anything else. I'll answer as her.",
+    aiLabel: "Pankuri's AI",
     placeholder: "Ask me something...",
+    sendLabel: "→ Send",
     poweredBy: "powered by claude haiku + rag",
-    suggestedQuestions: [
-      "What tech stack do you work with?",
-      "Tell me about your recent projects",
-      "What's your background?",
+    statsLabel: "Live from Supabase",
+    topicsLabel: "Most asked about",
+    recentLabel: "Recent questions",
+    noRecentQuestions: "No questions yet — be the first to ask.",
+    suggestedPrompts: [
+      "What's your stack?",
+      "Why startups?",
+      "Tell me about CardMind",
+      "What are you reading?",
+      "What do you want to build?",
     ],
   },
   projects: {

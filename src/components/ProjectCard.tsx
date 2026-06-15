@@ -84,7 +84,7 @@ export function ProjectCard({
 
   return (
     <article
-      className="project-card project-card-standard group relative flex w-[400px] h-[560px] shrink-0 flex-col justify-between border border-black/[0.08] bg-white p-12 pl-11 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+      className="project-card project-card-standard group relative flex w-[400px] h-[560px] shrink-0 flex-col justify-between border border-black/[0.08] bg-[#F5F5F0] p-12 pl-11 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
       style={{ borderLeftWidth: "4px", borderLeftColor: typeAccent }}
       aria-hidden={ariaHidden || undefined}
     >

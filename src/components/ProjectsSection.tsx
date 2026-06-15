@@ -48,18 +48,26 @@ export function ProjectsSection() {
     setIsDragging(false);
   };
 
+  const handleWheel = (e: React.WheelEvent) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      e.stopPropagation();
+    }
+  };
+
   return (
-    <section id="projects" className="portfolio-section pt-12 pb-0">
-      <div className="section-content">
-        <div className="section-intro scroll-hidden scroll-from-bottom scroll-stagger-100">
+    <>
+      <div className="section-content shrink-0">
+        <div className="section-intro">
           <div className="section-intro-title">
             <p className="section-label">{siteCopy.projects.sectionLabel}</p>
             <h2 className="section-title">
               {siteCopy.projects.headline}{" "}
-              <span className="section-title-accent">{siteCopy.projects.headlineAccent}</span>
+              <span className="section-title-accent">
+                {siteCopy.projects.headlineAccent}
+              </span>
             </h2>
           </div>
-          <p className="section-intro-meta flex items-center gap-1 scroll-hidden scroll-from-bottom scroll-stagger-100" style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}>
+          <p className="section-intro-meta flex items-center gap-1">
             {siteCopy.projects.dragHint}
             <span className="projects-drag-arrow inline-block">→</span>
           </p>
@@ -69,7 +77,7 @@ export function ProjectsSection() {
       <div
         ref={trackRef}
         className={[
-          "projects-track flex overflow-x-auto",
+          "projects-track flex flex-1 overflow-x-auto min-h-0",
           isDragging ? "cursor-grabbing select-none" : "cursor-grab",
         ].join(" ")}
         onMouseDown={handleMouseDown}
@@ -77,18 +85,19 @@ export function ProjectsSection() {
         onMouseUp={endDrag}
         onMouseLeave={endDrag}
         onScroll={updateProgress}
+        onWheel={handleWheel}
       >
         {projects.map((project, index) => (
           <ProjectCard key={project.title} {...project} index={index} />
         ))}
       </div>
 
-      <div className="h-[2px] bg-black/[0.06]">
+      <div className="h-[2px] bg-black/[0.06] shrink-0">
         <div
           className="h-full bg-[#1A6B35] transition-[width] duration-150"
           style={{ width: `${progress * 100}%` }}
         />
       </div>
-    </section>
+    </>
   );
 }

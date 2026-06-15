@@ -1137,6 +1137,7 @@ body {
 
 .about-accordion-body-inner {
   overflow: hidden;
+  min-height: 0;
   padding: 0 1.5rem;
 }
 
@@ -1149,6 +1150,15 @@ body {
   padding-right: 0;
 }
 
+.about-card--leadership .about-accordion-body--inline.about-accordion-body--open {
+  margin-top: 0.25rem;
+}
+
+.about-accordion-body--inline.about-accordion-body--open .about-accordion-body-inner {
+  padding-top: 0.25rem;
+  padding-bottom: 0;
+}
+
 .about-card--leadership {
   display: flex;
   flex-direction: column;
@@ -1157,6 +1167,11 @@ body {
 
 .about-card--leadership-featured {
   grid-column: 1 / -1;
+}
+
+.about-leadership-more {
+  margin-top: 1.25rem;
+  align-self: flex-start;
 }
 
 .about-stat-badges {

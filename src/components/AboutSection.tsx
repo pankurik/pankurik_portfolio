@@ -780,6 +780,18 @@ export function AboutSection({ isActive }: AboutSectionProps) {
                     ))}
                   </div>
 
+                  <button
+                    type="button"
+                    className="about-expand-btn about-leadership-more"
+                    onClick={() => toggleLeadership(key)}
+                    aria-expanded={isExpanded}
+                  >
+                    {isExpanded
+                      ? siteCopy.about.readLess
+                      : siteCopy.about.readMore}
+                    <ChevronIcon open={isExpanded} />
+                  </button>
+
                   <div
                     className={[
                       "about-accordion-body about-accordion-body--inline",
@@ -792,18 +804,6 @@ export function AboutSection({ isActive }: AboutSectionProps) {
                       </p>
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    className="about-expand-btn mt-auto pt-4"
-                    onClick={() => toggleLeadership(key)}
-                    aria-expanded={isExpanded}
-                  >
-                    {isExpanded
-                      ? siteCopy.about.readLess
-                      : siteCopy.about.readMore}
-                    <ChevronIcon open={isExpanded} />
-                  </button>
                 </article>
               );
             })}

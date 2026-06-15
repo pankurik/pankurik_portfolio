@@ -104,8 +104,7 @@ export const about: About = {
   bioPills: {
     green: ["Open to work", "SF-based", "Full-time"],
     muted: [
-      ["1-2 yrs experience", "Full-stack"],
-      ["Startups preferred", "AI systems"],
+      ["Full-stack","Startups preferred", "AI systems"],
     ],
   },
   email: "pankurikhare17@gmail.com",
@@ -564,22 +563,18 @@ export const siteCopy = {
     headlineAccent: "MY AI",
     description:
       "An AI trained on my actual experience, projects, and personality. Ask it anything a recruiter or founder would ask me.",
+    terminalTitle: "pankuri-ai — rag session",
     openingMessage:
       "Hey! I'm Pankuri's AI — ask me about her projects, stack, what she's looking for, or anything else. I'll answer as her.",
     aiLabel: "Pankuri's AI",
+    startWithLabel: "Start with",
     placeholder: "Ask me something...",
     sendLabel: "→ Send",
-    poweredBy: "powered by claude haiku + rag",
-    statsLabel: "Live from Supabase",
-    topicsLabel: "Most asked about",
-    recentLabel: "Recent questions",
-    noRecentQuestions: "No questions yet — be the first to ask.",
+    poweredBy: "claude haiku · pgvector · supabase",
     suggestedPrompts: [
       "What's your stack?",
       "Why startups?",
       "Tell me about CardMind",
-      "What are you reading?",
-      "What do you want to build?",
     ],
   },
   projects: {

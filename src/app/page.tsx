@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { SkillsGrid } from "@/components/SkillsGrid";
+import { ToolsSection } from "@/components/ToolsSection";
 import { GitHubFeed } from "@/components/GitHubFeed";
 import { ChatStatsPanel } from "@/components/ChatStatsPanel";
 import { ProjectsSection } from "@/components/ProjectsSection";
@@ -35,6 +36,7 @@ const PAGE_SECTIONS = [
   { id: "about", label: "About" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
+  { id: "tools", label: "Tools" },
   { id: "github", label: "GitHub" },
   { id: "chat", label: "Chat" },
   { id: "contact", label: "Contact" },
@@ -68,6 +70,8 @@ export default function Home() {
   const isDarkUi = activeSection === "github" || activeSection === "contact";
 
   function scrollToId(id: string) {
+    activeSectionRef.current = id;
+    setActiveSection(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -115,7 +119,7 @@ export default function Home() {
     if (!container) return;
 
     const ids = PAGE_SECTIONS.map((s) => s.id);
-    const ratios = new Map<string, number>();
+    const visibleHeights = new Map<string, number>();
 
     const updateSectionClasses = (nextId: string) => {
       const prevId = activeSectionRef.current;
@@ -137,23 +141,26 @@ export default function Home() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          ratios.set(entry.target.id, entry.intersectionRatio);
+          visibleHeights.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRect.height : 0
+          );
         });
 
         let bestId = activeSectionRef.current;
-        let bestRatio = 0;
-        ratios.forEach((ratio, id) => {
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
+        let bestVisible = 0;
+        visibleHeights.forEach((height, id) => {
+          if (height > bestVisible) {
+            bestVisible = height;
             bestId = id;
           }
         });
 
-        if (bestRatio >= 0.6) {
+        if (bestVisible > 0) {
           updateSectionClasses(bestId);
         }
       },
-      { root: container, threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] }
+      { root: container, threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
     );
 
     ids.forEach((id) => {
@@ -408,7 +415,7 @@ export default function Home() {
         </section>
 
         {/* About */}
-        <section id="about" className="snap-section snap-section--cream">
+        <section id="about" className="snap-section snap-section--white">
           <div className="section-panel">
             <div className="section-content">
               <div className="section-intro">
@@ -560,15 +567,16 @@ export default function Home() {
             </div>
           </div>
         </section>
+
         {/* Projects */}
-        <section id="projects" className="snap-section snap-section--white">
+        <section id="projects" className="snap-section snap-section--cream">
           <div className="section-panel section-panel--flush py-20 flex flex-col gap-8 min-h-screen">
             <ProjectsSection />
           </div>
         </section>
 
         {/* Skills */}
-        <section id="skills" className="snap-section snap-section--cream">
+        <section id="skills" className="snap-section snap-section--white">
           <div className="section-panel flex flex-col justify-center gap-8">
             <div className="section-content">
               <div className="section-intro">
@@ -585,6 +593,27 @@ export default function Home() {
               </div>
             </div>
             <SkillsGrid />
+          </div>
+        </section>
+
+        {/* Tools */}
+        <section id="tools" className="snap-section snap-section--cream">
+          <div className="section-panel flex flex-col justify-center gap-8">
+            <div className="section-content">
+              <div className="section-intro">
+                <div className="section-intro-title">
+                  <p className="section-label">{siteCopy.tools.sectionLabel}</p>
+                  <h2 className="section-title">
+                    {siteCopy.tools.headline}{" "}
+                    <span className="section-title-accent">
+                      {siteCopy.tools.headlineAccent}
+                    </span>
+                  </h2>
+                </div>
+                <p className="section-intro-meta">{siteCopy.tools.hoverHint}</p>
+              </div>
+            </div>
+            <ToolsSection />
           </div>
         </section>
 
@@ -714,7 +743,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
 
         {/* Contact */}
         <section id="contact" className="snap-section snap-section--green">

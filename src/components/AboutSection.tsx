@@ -8,6 +8,7 @@ import {
   useState,
   type MouseEvent,
 } from "react";
+import type { RichTextPart } from "@/data/content";
 import { RichText } from "@/components/RichText";
 import {
   about,
@@ -15,6 +16,7 @@ import {
   hero,
   leadership,
   siteCopy,
+  type ExperienceBulletGroup,
 } from "@/data/content";
 
 type AboutTab = "story" | "experience" | "leadership";
@@ -167,6 +169,148 @@ function timelineRange(period: string) {
   return timelineYear(period);
 }
 
+const VISIBLE_BULLETS = 3;
+
+function countBullets(groups: ExperienceBulletGroup[]) {
+  return groups.reduce((sum, group) => sum + group.bullets.length, 0);
+}
+
+function visibleBulletGroups(
+  groups: ExperienceBulletGroup[],
+  showAll: boolean
+): ExperienceBulletGroup[] {
+  if (showAll) return groups;
+
+  let remaining = VISIBLE_BULLETS;
+  const result: ExperienceBulletGroup[] = [];
+
+  for (const group of groups) {
+    if (remaining <= 0) break;
+
+    const bullets = group.bullets.slice(0, remaining);
+    if (bullets.length > 0) {
+      result.push({ label: group.label, bullets });
+      remaining -= bullets.length;
+    }
+  }
+
+  return result;
+}
+
+function splitBulletLead(parts: RichTextPart[]) {
+  const leadIndex = parts.findIndex((part) => part.emphasis);
+  if (leadIndex === -1) {
+    return { lead: null as string | null, body: parts };
+  }
+
+  const prefixParts = parts.slice(0, leadIndex);
+  const leadPart = parts[leadIndex];
+  const suffixParts = parts.slice(leadIndex + 1);
+  const prefixText = prefixParts.map((part) => part.text).join("");
+  const mergePrefix =
+    prefixText.length > 0 && prefixText.length <= 28 && !prefixText.includes(".");
+
+  const lead = mergePrefix
+    ? `${prefixText}${leadPart.text}`
+    : leadPart.text;
+
+  const body = cleanBodyParts(mergePrefix ? suffixParts : [...prefixParts, ...suffixParts]);
+
+  return { lead, body };
+}
+
+function cleanBodyParts(parts: RichTextPart[]) {
+  if (parts.length === 0) return parts;
+
+  const first = parts[0];
+  const cleanedText = first.text.replace(/^\s*—\s*/, "");
+  if (!cleanedText.trim()) {
+    return parts.slice(1);
+  }
+
+  return [{ ...first, text: cleanedText }, ...parts.slice(1)];
+}
+
+function hasTextContent(parts: RichTextPart[]) {
+  return parts.some((part) => part.text.trim().length > 0);
+}
+
+function ExperienceBulletItem({ parts }: { parts: RichTextPart[] }) {
+  const { lead, body } = splitBulletLead(parts);
+
+  if (!lead) {
+    return (
+      <p className="about-text-mono about-bullet-body">
+        <RichText parts={parts} />
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <p className="about-bullet-lead">{lead}</p>
+      {hasTextContent(body) && (
+        <p className="about-text-mono about-bullet-body">
+          <RichText parts={body} />
+        </p>
+      )}
+    </>
+  );
+}
+
+function ExperienceJobDetails({
+  highlight,
+  bulletGroups,
+  bulletsExpanded,
+  onToggleBullets,
+}: {
+  highlight: string;
+  bulletGroups: ExperienceBulletGroup[];
+  bulletsExpanded: boolean;
+  onToggleBullets: () => void;
+}) {
+  const totalBullets = countBullets(bulletGroups);
+  const hiddenCount = totalBullets - VISIBLE_BULLETS;
+  const groupsToRender = visibleBulletGroups(bulletGroups, bulletsExpanded);
+
+  return (
+    <div className="about-job-details">
+      <p className="about-highlight about-text-body">{highlight}</p>
+
+      <div className="about-bullet-groups">
+        {groupsToRender.map((group) => (
+          <section key={group.label} className="about-bullet-group">
+            <h4 className="about-text-role about-bullet-group-label">
+              {group.label}
+            </h4>
+            <ul className="about-bullet-list">
+              {group.bullets.map((bullet, bulletIndex) => (
+                <li key={bulletIndex} className="about-bullet-item">
+                  <ExperienceBulletItem parts={bullet} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      {hiddenCount > 0 && (
+        <button
+          type="button"
+          className="about-expand-btn about-bullet-more mt-4"
+          onClick={onToggleBullets}
+          aria-expanded={bulletsExpanded}
+        >
+          {bulletsExpanded
+            ? siteCopy.about.showLess
+            : siteCopy.about.showMore(hiddenCount)}
+          <ChevronIcon open={bulletsExpanded} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 type ExperienceTimelineProps = {
   expandedDetails: Set<string>;
   onToggleDetails: (key: string) => void;
@@ -180,6 +324,9 @@ function ExperienceTimeline({
   const defaultKey = jobKey(latest.company, latest.period);
 
   const [activeJobKey, setActiveJobKey] = useState(defaultKey);
+  const [expandedBulletLists, setExpandedBulletLists] = useState<Set<string>>(
+    new Set()
+  );
   const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const isScrollingRef = useRef(false);
 
@@ -219,6 +366,15 @@ function ExperienceTimeline({
 
     return () => observer.disconnect();
   }, []);
+
+  function toggleBulletList(key: string) {
+    setExpandedBulletLists((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
   return (
     <div className="about-exp-timeline">
@@ -318,7 +474,16 @@ function ExperienceTimeline({
                   <button
                     type="button"
                     className="about-expand-btn"
-                    onClick={() => onToggleDetails(key)}
+                    onClick={() => {
+                      if (expandedDetails.has(key)) {
+                        setExpandedBulletLists((prev) => {
+                          const next = new Set(prev);
+                          next.delete(key);
+                          return next;
+                        });
+                      }
+                      onToggleDetails(key);
+                    }}
                     aria-expanded={detailsExpanded}
                   >
                     {detailsExpanded
@@ -329,16 +494,13 @@ function ExperienceTimeline({
                 </div>
 
                 {detailsExpanded && (
-                  <div className="about-job-details mt-4">
-                    <p className="about-text-detail mb-4">{job.highlight}</p>
-                    <ul className="space-y-2">
-                      {job.bullets.map((bullet, bulletIndex) => (
-                        <li key={bulletIndex} className="about-text-detail">
-                          <span className="text-[#1A6B35]">—</span>{" "}
-                          <RichText parts={bullet} />
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="mt-4">
+                    <ExperienceJobDetails
+                      highlight={job.highlight}
+                      bulletGroups={job.bulletGroups}
+                      bulletsExpanded={expandedBulletLists.has(key)}
+                      onToggleBullets={() => toggleBulletList(key)}
+                    />
                   </div>
                 )}
               </div>

@@ -23,6 +23,11 @@ export type WebsiteLink = {
   label: string;
 };
 
+export type ExperienceBulletGroup = {
+  label: string;
+  bullets: RichTextPart[][];
+};
+
 export type Experience = {
   company: string;
   role: string;
@@ -36,7 +41,7 @@ export type Experience = {
   impactStats: { value: string; label: string }[];
   systems: string[];
   highlight: string;
-  bullets: RichTextPart[][];
+  bulletGroups: ExperienceBulletGroup[];
 };
 
 export type Leadership = {
@@ -298,52 +303,72 @@ export const experience: Experience[] = [
       "i18n · 7 languages",
     ],
     highlight:
-      "Primary technical owner — LangGraph pipelines, DataValidationAgent, unified data layer across 8 enterprise sources, and real-time analytics dashboard.",
-    bullets: [
-      [
-        { text: "Promoted to " },
-        { text: "primary technical owner within the first month", emphasis: true },
-        { text: " — full architecture authority, and de facto PM responsibilities; became the person holding the product together across a distributed engineering team" },
-      ],
-      [
-        { text: "Designed and built " },
-        { text: "LangGraph multi-agent pipelines", emphasis: true },
-        { text: " for customer segmentation and multi-platform ad generation — orchestrated OpenAI, LangChain, and PGVector into automated workflows that ran continuously against live customer data across Facebook, Instagram, Google, TikTok, Twitter, Pinterest, and LinkedIn" },
-      ],
-      [
-        { text: "Built the " },
-        { text: "DataValidationAgent from scratch", emphasis: true },
-        { text: " — a 366-line service wired into every ETL job with schema validation, anomaly detection, data freshness checks, exponential backoff retry logic, degradation tracking, and QA escalation; caught bad data before it reached customers and drove a " },
-        { text: "60% pipeline efficiency improvement", emphasis: true },
-        { text: "; backed by 1,382 lines of unit tests covering edge cases, timezone handling, and retry behavior" },
-      ],
-      [
-        { text: "Designed and built the " },
-        { text: "campaign recommendation engine solo", emphasis: true },
-        { text: " — ingested performance data, audience segments, and budget signals across ad platforms; scored and ranked recommendations using a keyword-matching engine; cached results in S3 with a campaign recommendation UI that let users view, refresh, and act on suggestions with generated reasoning" },
-      ],
-      [
-        { text: "Built a unified data layer across " },
-        { text: "8 enterprise sources", emphasis: true },
-        { text: " (Databricks, Redshift, Snowflake, BigQuery, PostgreSQL, Shopify, Salesforce, MondayCRM) — designed normalization metadata generation per source so the AI layer could analyze customer data consistently regardless of where it lived; full ETL pipeline: ingestion, normalization, validation, and orchestration of long-running jobs" },
-      ],
-      [
-        { text: "Built the " },
-        { text: "real-time multi-campaign analytics dashboard end-to-end", emphasis: true },
-        { text: " (API design → backend → UI) — replaced the workflow where customers logged into each ad platform separately; unified live data from Facebook, Google, TikTok, and LinkedIn into a single view; reduced planning page load from " },
-        { text: "5s → 2s", emphasis: true },
-        { text: " measured via PostHog" },
-      ],
-      [
-        { text: "Owned full i18n across the entire product — extracted every hardcoded string from the frontend, built a " },
-        { text: "Babel-based translation extraction pipeline", emphasis: true },
-        { text: ", updated all API controllers to return localized responses, and shipped 7-language support (EN, AR, DE, ES, FR, HI, ZH) across frontend and backend simultaneously" },
-      ],
-      [
-        { text: "Top contributor across all three repositories — " },
-        { text: "1,327 of 4,008 total commits (33%)", emphasis: true },
-        { text: ", took initiative to restructure all 3 repos (frontend, backend, AI-agents), provided architectural guidance on the agent codebase, and stayed on-call for live production failures — debugging issues in real time on AWS" },
-      ],
+      "LangGraph pipelines, DataValidationAgent, unified data layer across 8 enterprise sources, and real-time analytics dashboard.",
+    bulletGroups: [
+      {
+        label: "Ownership & impact",
+        bullets: [
+          [
+            { text: "Promoted to " },
+            { text: "primary technical owner within the first month", emphasis: true },
+            { text: " — full architecture authority, and de facto PM responsibilities; became the person holding the product together across a distributed engineering team" },
+          ],
+          [
+            { text: "Top contributor across all three repositories — " },
+            { text: "1,327 of 4,008 total commits (33%)", emphasis: true },
+            { text: ", took initiative to restructure all 3 repos (frontend, backend, AI-agents), provided architectural guidance on the agent codebase, and stayed on-call for live production failures — debugging issues in real time on AWS" },
+          ],
+        ],
+      },
+      {
+        label: "AI & agents",
+        bullets: [
+          [
+            { text: "Designed and built " },
+            { text: "LangGraph multi-agent pipelines", emphasis: true },
+            { text: " for customer segmentation and multi-platform ad generation — orchestrated OpenAI, LangChain, and PGVector into automated workflows that ran continuously against live customer data across Facebook, Instagram, Google, TikTok, Twitter, Pinterest, and LinkedIn" },
+          ],
+          [
+            { text: "Built the " },
+            { text: "DataValidationAgent from scratch", emphasis: true },
+            { text: " — a 366-line service wired into every ETL job with schema validation, anomaly detection, data freshness checks, exponential backoff retry logic, degradation tracking, and QA escalation; caught bad data before it reached customers and drove a " },
+            { text: "60% pipeline efficiency improvement", emphasis: true },
+            { text: "; backed by 1,382 lines of unit tests covering edge cases, timezone handling, and retry behavior" },
+          ],
+          [
+            { text: "Designed and built the " },
+            { text: "campaign recommendation engine solo", emphasis: true },
+            { text: " — ingested performance data, audience segments, and budget signals across ad platforms; scored and ranked recommendations using a keyword-matching engine; cached results in S3 with a campaign recommendation UI that let users view, refresh, and act on suggestions with generated reasoning" },
+          ],
+        ],
+      },
+      {
+        label: "Data platform",
+        bullets: [
+          [
+            { text: "Built a unified data layer across " },
+            { text: "8 enterprise sources", emphasis: true },
+            { text: " (Databricks, Redshift, Snowflake, BigQuery, PostgreSQL, Shopify, Salesforce, MondayCRM) — designed normalization metadata generation per source so the AI layer could analyze customer data consistently regardless of where it lived; full ETL pipeline: ingestion, normalization, validation, and orchestration of long-running jobs" },
+          ],
+        ],
+      },
+      {
+        label: "Product & scale",
+        bullets: [
+          [
+            { text: "Built the " },
+            { text: "real-time multi-campaign analytics dashboard end-to-end", emphasis: true },
+            { text: " (API design → backend → UI) — replaced the workflow where customers logged into each ad platform separately; unified live data from Facebook, Google, TikTok, and LinkedIn into a single view; reduced planning page load from " },
+            { text: "5s → 2s", emphasis: true },
+            { text: " measured via PostHog" },
+          ],
+          [
+            { text: "Owned full i18n across the entire product — extracted every hardcoded string from the frontend, built a " },
+            { text: "Babel-based translation extraction pipeline", emphasis: true },
+            { text: ", updated all API controllers to return localized responses, and shipped 7-language support (EN, AR, DE, ES, FR, HI, ZH) across frontend and backend simultaneously" },
+          ],
+        ],
+      },
     ],
   },
   {
@@ -362,17 +387,27 @@ export const experience: Experience[] = [
     systems: ["C / C++", "Data structures", "Algorithms", "OS concepts"],
     highlight:
       "One-on-one CS tutoring in C, C++, data structures, and algorithms — all 5 students passed.",
-    bullets: [
-      [
-        { text: "Taught C, C++, data structures, algorithms, and OS concepts in " },
-        { text: "one-on-one scheduled sessions", emphasis: true },
-        { text: ", 10 hours weekly — topics included pointers, memory management, linked lists, trees, sorting algorithms, and process scheduling" },
-      ],
-      [
-        { text: "All 5 students passed; " },
-        { text: "2 who were struggling at the start", emphasis: true },
-        { text: " finished with strong grades — adapted explanations to each student's learning pace and gaps rather than teaching to a fixed script" },
-      ],
+    bulletGroups: [
+      {
+        label: "Teaching",
+        bullets: [
+          [
+            { text: "Taught C, C++, data structures, algorithms, and OS concepts in " },
+            { text: "one-on-one scheduled sessions", emphasis: true },
+            { text: ", 10 hours weekly — topics included pointers, memory management, linked lists, trees, sorting algorithms, and process scheduling" },
+          ],
+        ],
+      },
+      {
+        label: "Outcomes",
+        bullets: [
+          [
+            { text: "All 5 students passed; " },
+            { text: "2 who were struggling at the start", emphasis: true },
+            { text: " finished with strong grades — adapted explanations to each student's learning pace and gaps rather than teaching to a fixed script" },
+          ],
+        ],
+      },
     ],
   },
   {
@@ -398,22 +433,32 @@ export const experience: Experience[] = [
     ],
     highlight:
       "End-to-end quiz platform — incremental save, timer with auto-submit, React + NestJS + Redis.",
-    bullets: [
-      [
-        { text: "Built core quiz infrastructure end-to-end — question rendering, navigation, answer state management (unanswered / answered / marked for review), and " },
-        { text: "incremental save system", emphasis: true },
-        { text: " that persisted responses continuously so no work was lost on refresh, tab close, or network interruption" },
-      ],
-      [
-        { text: "Implemented timer system with countdown, automatic submission on timeout, and " },
-        { text: "state sync across browser refreshes", emphasis: true },
-        { text: " — critical for timed assessments running 1–3 hours with real students" },
-      ],
-      [
-        { text: "React + TypeScript frontend, " },
-        { text: "NestJS backend APIs", emphasis: true },
-        { text: " for question retrieval, response storage, and submission processing; PostgreSQL for persistence, Redis to cache active quiz state and reduce repeated DB reads during live sessions" },
-      ],
+    bulletGroups: [
+      {
+        label: "Quiz platform",
+        bullets: [
+          [
+            { text: "Built core quiz infrastructure end-to-end — question rendering, navigation, answer state management (unanswered / answered / marked for review), and " },
+            { text: "incremental save system", emphasis: true },
+            { text: " that persisted responses continuously so no work was lost on refresh, tab close, or network interruption" },
+          ],
+          [
+            { text: "Implemented timer system with countdown, automatic submission on timeout, and " },
+            { text: "state sync across browser refreshes", emphasis: true },
+            { text: " — critical for timed assessments running 1–3 hours with real students" },
+          ],
+        ],
+      },
+      {
+        label: "Stack",
+        bullets: [
+          [
+            { text: "React + TypeScript frontend, " },
+            { text: "NestJS backend APIs", emphasis: true },
+            { text: " for question retrieval, response storage, and submission processing; PostgreSQL for persistence, Redis to cache active quiz state and reduce repeated DB reads during live sessions" },
+          ],
+        ],
+      },
     ],
   },
 ];

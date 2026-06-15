@@ -1,7 +1,9 @@
-export type ProjectDescriptionPart = {
+export type RichTextPart = {
   text: string;
   emphasis?: boolean;
 };
+
+export type ProjectDescriptionPart = RichTextPart;
 
 export type Project = {
   title: string;
@@ -21,14 +23,16 @@ export type Experience = {
   role: string;
   period: string;
   location: string;
-  bullets: string[];
+  employmentType?: string;
+  latest?: boolean;
+  bullets: RichTextPart[][];
 };
 
 export type Leadership = {
   title: string;
   organization: string;
   period: string;
-  description: string;
+  description: RichTextPart[];
 };
 
 export type About = {
@@ -37,6 +41,11 @@ export type About = {
   location: string;
   bio: string;
   shortBio: string;
+  bioStrip: RichTextPart[];
+  bioPills: {
+    green: string[];
+    muted: string[][];
+  };
   email: string;
   github: string;
   linkedin: string;
@@ -76,6 +85,24 @@ export const about: About = {
   shortBio:
     "Full-stack engineer based in SF. I build backends, AI pipelines, and iOS apps — and I care about systems that hold up under failure.",
   bio: "I studied Computer Science and Comparative World Literature at San Francisco State University — an unusual mix, but it shaped how I think: part logical, part creative. I like understanding whole systems, not just my piece of them. That curiosity shows up in how I debug, how I architect, and how I communicate. Outside of code I'm reading, exploring ideas across disciplines, and occasionally convincing myself a side project is a good idea. I'm most energized by early-stage teams building things that matter — where engineers are close to the problem and ownership is real.",
+  bioStrip: [
+    { text: "I studied CS and Comparative World Literature at SF State — an unusual mix, but it shaped how I think: " },
+    { text: "part logical, part creative", emphasis: true },
+    { text: ". I like understanding " },
+    { text: "whole systems", emphasis: true },
+    { text: ", not just my piece of them. That shows up in how I debug, how I architect, and how I communicate. I'm most energized by " },
+    { text: "early-stage teams", emphasis: true },
+    { text: " building things that matter — where engineers are close to the problem and " },
+    { text: "ownership is real", emphasis: true },
+    { text: "." },
+  ],
+  bioPills: {
+    green: ["Open to work", "SF-based", "Full-time"],
+    muted: [
+      ["1-2 yrs experience", "Full-stack"],
+      ["Startups preferred", "AI systems"],
+    ],
+  },
   email: "pankuri@email.com",
   github: "https://github.com/pankurik",
   linkedin: "#",
@@ -192,33 +219,72 @@ export const experience: Experience[] = [
     company: "AdsGency AI",
     role: "Software Engineer",
     period: "Aug 2025 – Jan 2026",
-    location: "San Francisco, CA",
+    location: "San Francisco",
+    employmentType: "Full-time",
+    latest: true,
     bullets: [
-      "Built LangGraph multi-agent pipelines and ETL systems unifying data from 8 advertising and commerce sources.",
-      "Shipped a campaign recommendation engine and real-time analytics dashboard with i18n across 7 languages.",
-      "Owned AWS deployments, Docker containerization, and CI/CD pipelines for production reliability.",
+      [
+        { text: "Built " },
+        { text: "LangGraph multi-agent pipelines", emphasis: true },
+        { text: " for budget forecasting, SEO analysis, and content generation — integrated with OpenAI, LangChain, and PGVector" },
+      ],
+      [
+        { text: "Unified data layer across " },
+        { text: "8 enterprise sources", emphasis: true },
+        { text: " — Databricks, Snowflake, Redshift, BigQuery, PostgreSQL, Shopify, Salesforce, Monday CRM" },
+      ],
+      [
+        { text: "Wired " },
+        { text: "DataValidationAgent", emphasis: true },
+        { text: " into every ETL job — schema validation, anomaly detection, retry logic — improving pipeline efficiency by " },
+        { text: "60%", emphasis: true },
+      ],
+      [
+        { text: "Built " },
+        { text: "real-time analytics dashboard", emphasis: true },
+        { text: " pulling live from Facebook, Google, TikTok, and LinkedIn into one view" },
+      ],
+      [
+        { text: "Led " },
+        { text: "i18n", emphasis: true },
+        { text: " across frontend and backend supporting 7 languages — Korea, Japan, Europe, India" },
+      ],
     ],
   },
   {
-    company: "City College of San Francisco",
+    company: "City College SF",
     role: "CS Tutor",
     period: "Aug 2024 – May 2025",
-    location: "San Francisco, CA",
+    location: "San Francisco",
+    employmentType: "Part-time",
     bullets: [
-      "Tutored students in data structures, algorithms, and introductory programming courses.",
-      "Helped learners debug code and develop problem-solving approaches for technical interviews.",
-      "Adapted explanations to different learning styles across a diverse student body.",
+      [
+        { text: "Taught C, C++, and data structures to 5 students — " },
+        { text: "pointers, memory management, linked lists, trees, sorting algorithms", emphasis: true },
+      ],
+      [
+        { text: "Tracked individual progress and adjusted explanations to match each student's " },
+        { text: "learning pace", emphasis: true },
+      ],
     ],
   },
   {
     company: "SpeEdLabs",
     role: "Web Developer",
     period: "Apr 2021 – Mar 2023",
-    location: "Remote",
+    location: "India",
+    employmentType: "Remote",
     bullets: [
-      "Built and maintained web applications for an ed-tech platform serving learners and educators.",
-      "Collaborated on frontend features, API integrations, and responsive UI improvements.",
-      "Contributed to deployment workflows and cross-browser compatibility fixes.",
+      [
+        { text: "Built quiz infrastructure end-to-end — " },
+        { text: "incremental saves", emphasis: true },
+        { text: " that persisted responses continuously so no work was lost on refresh or disconnection" },
+      ],
+      [
+        { text: "React + TypeScript frontend, " },
+        { text: "NestJS backend APIs", emphasis: true },
+        { text: ", PostgreSQL + Redis for persistence and active quiz state" },
+      ],
     ],
   },
 ];
@@ -486,25 +552,38 @@ export const skillItems: SkillItem[] = [
 
 export const leadership: Leadership[] = [
   {
-    title: "President",
-    organization: "Indian Student Association, SF State",
-    period: "2025 – Present",
-    description:
-      "Lead campus programming, community events, and advocacy for international students at San Francisco State University.",
+    title: "ISA President",
+    organization: "Indian Student Association · SF State",
+    period: "Jun 2023 – Jun 2025",
+    description: [
+      { text: "Led a " },
+      { text: "10-person officer team", emphasis: true },
+      { text: ", SF State's largest Diwali celebration with " },
+      { text: "180+ attendees", emphasis: true },
+      { text: ", and drove " },
+      { text: "30% membership growth", emphasis: true },
+      { text: "." },
+    ],
   },
   {
     title: "Peer Mentor",
     organization: "San Francisco State University",
-    period: "2024 – 2025",
-    description:
-      "Mentored incoming students on academic planning, campus resources, and adjusting to university life in the US.",
+    period: "Aug 2022 – May 2025",
+    description: [
+      { text: "Advised " },
+      { text: "300+ first-year students", emphasis: true },
+      { text: " on academic planning, class registration, and navigating university life." },
+    ],
   },
   {
     title: "Orientation Leader",
     organization: "San Francisco State University",
-    period: "2024",
-    description:
-      "Guided new student cohorts through orientation week, campus tours, and onboarding programming.",
+    period: "Feb 2022 – Aug 2022",
+    description: [
+      { text: "Led groups of " },
+      { text: "150+ students and parents per day", emphasis: true },
+      { text: " through orientation — registration, academics, housing, financial aid." },
+    ],
   },
 ];
 
@@ -592,26 +671,28 @@ export const siteCopy = {
     ],
   },
   about: {
-    title: "About Me",
-    badges: ["1-2 yrs exp", "SF Based"],
+    sectionLabel: "The human behind the code",
+    headline: "ABOUT &",
+    headlineAccent: "EXPERIENCE",
   },
   experience: {
-    title: "Experience",
+    label: "Work experience",
+    latestTag: "Latest",
   },
   leadership: {
-    title: "Leadership",
+    label: "Leadership",
   },
   contact: {
-    title: "Let's Work Together",
-    subtitle:
-      "I'm actively looking for the right full-time role. If you're building something interesting, I'd love to hear about it.",
-    cta: "Get in Touch →",
+    label: "Get in touch",
+    links: [
+      { label: "LinkedIn →", key: "linkedin" as const },
+      { label: "GitHub →", key: "github" as const },
+      { label: "Resume →", key: "resume" as const },
+    ],
   },
   footer: {
-    builtBy: (name: string) =>
-      `Built by ${name} · Powered by Claude API + pgvector · ${about.year}`,
-    stack:
-      "Next.js, Supabase, pgvector, OpenAI embeddings, Claude Haiku, Vercel",
+    builtWith: "Built with Next.js · Supabase · Claude",
+    copyright: (name: string, year: string) => `© ${year} ${name}`,
   },
   nav: {
     links: [

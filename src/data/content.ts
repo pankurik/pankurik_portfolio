@@ -697,8 +697,8 @@ export const siteCopy = {
   nav: {
     links: [
       { label: "Projects", href: "projects" },
-      { label: "Skills", href: "skills" },
       { label: "About", href: "about" },
+      { label: "Chat", href: "chat" },
       { label: "Contact", href: "contact" },
     ],
   },

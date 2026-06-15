@@ -95,17 +95,22 @@ body.custom-cursor-active * {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
 }
 
-#top,
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#hero,
 #projects,
-#about,
 #skills,
 #github,
 #chat,
+#about,
 #contact {
-  scroll-margin-top: 80px;
+  scroll-margin-top: 0;
 }
 
 .scroll-progress-bar {
@@ -177,15 +182,197 @@ html {
 .portfolio-page {
   background: var(--cream);
   color: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.snap-scroll {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100vh;
+  position: relative;
+}
+
+.snap-section--cream {
+  background: #f5f5f0;
+}
+
+.snap-section--white {
+  background: #ffffff;
+}
+
+.snap-section--dark {
+  background: #0d0d0d;
+  color: #f5f5f0;
+}
+
+.snap-section--green {
+  background: #1a6b35;
+  color: #ffffff;
+}
+
+.section-panel {
+  min-height: 100vh;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .section-panel {
+    opacity: 0.3;
+    transform: translateY(30px);
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .snap-section.section-active .section-panel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .snap-section.section-leaving .section-panel {
+    opacity: 0.3;
+    transform: translateY(0);
+    transition: opacity 0.3s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-panel {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.section-nav-dots {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transform: translateY(-50%);
+}
+
+.section-nav-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.section-nav-dot.is-active {
+  width: 8px;
+  height: 8px;
+  background: #1a6b35;
+  border-color: #1a6b35;
+}
+
+.portfolio-page.is-dark-ui .section-nav-dot {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.portfolio-page.is-dark-ui .section-nav-dot.is-active {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.section-counter {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 60;
+  font-family: var(--font-space-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.portfolio-page.is-dark-ui .section-counter {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .site-nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   border-bottom: 1px solid var(--border-subtle);
   background: rgba(245, 245, 240, 0.88);
   backdrop-filter: blur(10px);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.portfolio-page.is-dark-ui .site-nav {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  background: rgba(13, 13, 13, 0.82);
+}
+
+.portfolio-page.is-dark-ui .site-nav .site-nav-link {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.portfolio-page.is-dark-ui .site-nav .site-nav-link.is-active,
+.portfolio-page.is-dark-ui .site-nav .site-nav-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.portfolio-page.is-dark-ui .site-nav .site-nav-name {
+  color: #ffffff;
+}
+
+.portfolio-page.is-dark-ui .site-nav .site-nav-availability {
+  color: #3ecf6a;
+}
+
+.portfolio-page.is-section-contact .site-nav {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+  background: rgba(26, 107, 53, 0.92);
+}
+
+.portfolio-page.is-section-contact .site-nav .site-nav-link {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.portfolio-page.is-section-contact .site-nav .site-nav-link.is-active,
+.portfolio-page.is-section-contact .site-nav .site-nav-link:hover {
+  color: #ffffff;
+}
+
+.portfolio-page.is-section-contact .site-nav .site-nav-name,
+.portfolio-page.is-section-contact .site-nav .site-nav-availability {
+  color: #ffffff;
+}
+
+.portfolio-page.is-section-contact .site-nav .hero-nav-pulse {
+  background: #ffffff;
 }
 
 .section-label,
@@ -198,7 +385,117 @@ html {
 }
 
 .portfolio-section {
-  padding: 3.5rem 0;
+  padding: 5rem 0;
+}
+
+.snap-section .section-panel--flush {
+  padding-top: 0;
+  padding-bottom: 0;
+  justify-content: flex-start;
+}
+
+.snap-section--dark .section-label,
+.snap-section--dark .section-intro-meta {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.snap-section--dark .section-title {
+  color: #ffffff;
+}
+
+.snap-section--dark .section-title-accent {
+  color: #3ecf6a;
+}
+
+.skills-panel-inner {
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-section-label {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.contact-email {
+  font-family: var(--font-bebas-neue);
+  font-size: clamp(40px, 8vw, 64px);
+  line-height: 0.95;
+  color: #ffffff;
+}
+
+.contact-link {
+  font-family: var(--font-space-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.2s ease;
+}
+
+.contact-link:hover {
+  color: #ffffff;
+}
+
+.contact-form-label-light {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.contact-form-input-light {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-space-mono);
+  font-size: 12px;
+  color: #0d0d0d;
+  outline: none;
+}
+
+.contact-form-input-light:focus {
+  border-color: #ffffff;
+}
+
+.contact-form-submit-light {
+  width: 100%;
+  background: #ffffff;
+  color: #1a6b35;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-space-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  transition: opacity 0.2s ease;
+}
+
+.contact-form-submit-light:hover {
+  opacity: 0.9;
+}
+
+.contact-type-pill-light {
+  padding: 6px 12px;
+  font-family: var(--font-space-mono);
+  font-size: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.75);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.contact-type-pill-light.is-selected {
+  background: #ffffff;
+  color: #1a6b35;
+  border-color: #ffffff;
+}
+
+.contact-footer-text {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
 }
 
 .section-content {
@@ -296,6 +593,12 @@ html {
 /* Legacy aliases — keep for chat micro-labels */
 .section-headline-accent {
   color: var(--green);
+}
+
+.snap-section.section-active .section-panel,
+.snap-section.section-active .section-panel--flush {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-video-block::after {
@@ -455,6 +758,8 @@ html {
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pinch-zoom;
 }
 
 .projects-track::-webkit-scrollbar {
@@ -475,96 +780,70 @@ html {
   }
 }
 
-/* Skills arena */
-.skill-tag {
-  position: absolute;
+/* Skills section */
+.skill-pill {
+  padding: 6px 14px;
   font-family: var(--font-space-mono);
-  color: rgba(0, 0, 0, 0.55);
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.5);
   border: 0.5px solid rgba(0, 0, 0, 0.12);
-  white-space: nowrap;
+  background: var(--cream);
   cursor: default;
-  opacity: 0;
   transition:
-    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
     background-color 0.2s ease,
     color 0.2s ease,
-    border-color 0.2s ease;
-  transition-delay: var(--skill-delay, 0ms);
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.skill-tag-xl {
-  font-size: 18px;
-  padding: 10px 20px;
-}
-
-.skill-tag-lg {
-  font-size: 14px;
-  padding: 8px 16px;
-}
-
-.skill-tag-md {
-  font-size: 12px;
-  padding: 6px 14px;
-}
-
-.skill-tag-sm {
-  font-size: 10px;
-  padding: 5px 10px;
-}
-
-.skill-tag-green {
+.skill-pill-primary {
   color: #1a6b35;
   border-color: rgba(26, 107, 53, 0.35);
+  background: rgba(26, 107, 53, 0.04);
 }
 
-.skill-tag[data-direction="left"]:not(.is-visible) {
-  transform: translateX(-60px);
+@media (prefers-reduced-motion: no-preference) {
+  .skill-pill:hover,
+  .skill-pill.is-active,
+  .skill-pill:focus-visible {
+    background-color: #1a6b35;
+    color: #f5f5f0;
+    border-color: #1a6b35;
+    transform: translateY(-1px);
+    outline: none;
+  }
 }
 
-.skill-tag[data-direction="right"]:not(.is-visible) {
-  transform: translateX(60px);
+@media (prefers-reduced-motion: reduce) {
+  .skill-pill:hover,
+  .skill-pill.is-active,
+  .skill-pill:focus-visible {
+    background-color: #1a6b35;
+    color: #f5f5f0;
+    border-color: #1a6b35;
+    outline: none;
+  }
 }
 
-.skill-tag[data-direction="top"]:not(.is-visible) {
-  transform: translateY(-60px);
+.skills-detail-text {
+  animation: skills-detail-in 0.25s ease forwards;
 }
 
-.skill-tag[data-direction="bottom"]:not(.is-visible) {
-  transform: translateY(60px);
+@keyframes skills-detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.skill-tag.is-visible {
-  opacity: 1;
-  transform: rotate(var(--skill-rot, 0deg));
-}
-
-.skill-tag.is-visible:hover {
-  background-color: #1a6b35;
-  color: #f5f5f0;
-  border-color: #1a6b35;
-  transform: rotate(var(--skill-rot, 0deg)) scale(1.08);
-  z-index: 10;
-}
-
-.skill-tooltip {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 10px);
-  transform: translateX(-50%);
-  padding: 6px 10px;
-  background: #0d0d0d;
-  color: #fff;
-  font-size: 10px;
-  font-family: var(--font-space-mono);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-
-.skill-tag.is-visible:hover .skill-tooltip {
-  opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  .skills-detail-text {
+    animation: none;
+  }
 }
 
 /* GitHub terminal */

@@ -577,10 +577,19 @@ export const siteCopy = {
     hoverHint: "Hover any skill to see where I've used it.",
   },
   github: {
-    title: "Recently Building",
-    subtitle: "A quick snapshot of what I've been shipping lately.",
-    fallback: "Check my GitHub for latest activity",
-    cta: "View GitHub →",
+    sectionLabel: "What I've been pushing",
+    headline: "GITHUB",
+    headlineAccent: "ACTIVITY",
+    liveLabel: "Live from GitHub API",
+    terminalTitle: "pankurik — github activity feed",
+    command: "gh activity --user pankurik --limit 6",
+    fetching: "fetching from api.github.com...",
+    rateLimitError: "✗ rate limit hit — try again shortly",
+    currentlyBuildingLabel: "# currently building",
+    building: [
+      { repo: "cardmind-ios", note: "submitting to App Store" },
+      { repo: "pankurik-portfolio", note: "redesign in progress" },
+    ],
   },
   about: {
     title: "About Me",

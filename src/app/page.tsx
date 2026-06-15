@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { ToolsSection } from "@/components/ToolsSection";
 import { GitHubFeed } from "@/components/GitHubFeed";
-import { ChatStatsPanel } from "@/components/ChatStatsPanel";
+import { ChatInlineStats } from "@/components/ChatInlineStats";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { RichText } from "@/components/RichText";
 import {
@@ -634,7 +634,7 @@ export default function Home() {
         </section>
 
         {/* Chat */}
-        <section id="chat" className="snap-section snap-section--white">
+        <section id="chat" className="snap-section snap-section--cream">
           <div className="section-panel section-panel--start section-panel--chat">
             <div className="section-content">
               <div className="section-intro section-intro--compact">
@@ -652,92 +652,102 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="chat-layout mt-6 grid lg:grid-cols-2 lg:gap-6">
-                <div className="chat-panel flex flex-col h-[520px] max-h-[70vh] border border-black/[0.08] bg-[#F5F5F0]">
+              <div className="chat-shell mt-6">
+                <div className="chat-shell-header shrink-0">
+                  <p className="chat-shell-title">{siteCopy.chat.terminalTitle}</p>
+                  <div className="hidden sm:block">
+                    <ChatInlineStats refreshKey={messages.length} />
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
+                    <span className="chat-section-label text-[#1A6B35]">live</span>
+                  </div>
+                </div>
+
+                <div className="chat-panel min-h-0 overflow-hidden">
                   <div
                     ref={chatScrollRef}
-                    className="flex-1 overflow-y-auto px-6 py-6"
+                    className="chat-messages min-h-0 px-6 py-8 bg-white"
                   >
-                  <div className="flex flex-col gap-5">
-                    {messages.map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                      >
-                        {msg.role === "assistant" && (
-                          <div className="mb-2 flex items-center gap-2">
-                            <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                            <span className="chat-section-label text-[#1A6B35]">
+                    <div className="flex flex-col gap-6 max-w-3xl">
+                      {messages.map((msg, i) => (
+                        <div
+                          key={i}
+                          className={`chat-message flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
+                        >
+                          {msg.role === "assistant" && (
+                            <span className="chat-section-label mb-2 text-[#1A6B35]">
                               {siteCopy.chat.aiLabel}
                             </span>
+                          )}
+                          <div
+                            className={`max-w-[90%] px-5 py-4 text-[15px] leading-relaxed whitespace-pre-wrap ${
+                              msg.role === "user"
+                                ? "bg-[#1A6B35] text-white"
+                                : "bg-[#F5F5F0] text-[#0D0D0D] border border-black/[0.08] border-l-4 border-l-[#1A6B35]"
+                            }`}
+                          >
+                            {msg.content}
                           </div>
-                        )}
-                        <div
-                          className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                            msg.role === "user"
-                              ? "bg-[#1A6B35] text-white"
-                              : "bg-white text-[#0D0D0D] border border-black/[0.12]"
-                          }`}
-                        >
-                          {msg.content}
                         </div>
-                      </div>
-                    ))}
-                    {loading && (
-                      <div className="flex flex-col items-start">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="chat-ai-pulse w-1.5 h-1.5 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-section-label text-[#1A6B35]">
+                      ))}
+                      {loading && (
+                        <div className="chat-message flex flex-col items-start">
+                          <span className="chat-section-label mb-2 text-[#1A6B35]">
                             {siteCopy.chat.aiLabel}
                           </span>
+                          <div className="bg-[#F5F5F0] border border-black/[0.08] border-l-4 border-l-[#1A6B35] px-5 py-4 flex gap-1.5">
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                            <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                          </div>
                         </div>
-                        <div className="bg-white border border-black/[0.12] px-4 py-3 flex gap-1.5">
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
-                          <span className="chat-typing-dot w-2 h-2 rounded-full bg-[#1A6B35]" />
+                      )}
+                      {messages.length === 1 && !loading && (
+                        <div className="mt-2 flex flex-col gap-3 max-w-xl">
+                          <p className="chat-section-label">
+                            {siteCopy.chat.startWithLabel}
+                          </p>
+                          {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                            <button
+                              key={prompt}
+                              type="button"
+                              onClick={() => handleSend(prompt)}
+                              className="chat-starter"
+                            >
+                              {prompt}
+                            </button>
+                          ))}
                         </div>
-                      </div>
-                    )}
-                    <div ref={messagesEndRef} />
+                      )}
+                      <div ref={messagesEndRef} />
+                    </div>
                   </div>
-                </div>
 
-                <div className="px-6 py-4 bg-[#F5F5F0]">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {siteCopy.chat.suggestedPrompts.map((prompt) => (
+                  <div className="chat-composer shrink-0 border-t border-black/[0.08] px-6 py-4 bg-[#F5F5F0]">
+                    <div className="flex items-center gap-3 max-w-3xl">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={siteCopy.chat.placeholder}
+                        className="flex-1 bg-white border border-black/[0.12] px-4 py-3.5 text-[15px] text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
+                      />
                       <button
-                        key={prompt}
-                        onClick={() => setInput(prompt)}
-                        className="px-3 py-1.5 text-xs border border-[#1A6B35] text-[#1A6B35] hover:bg-[#1A6B35] hover:text-white transition-colors cursor-pointer"
+                        type="button"
+                        onClick={() => handleSend()}
+                        disabled={!input.trim() || loading}
+                        className="shrink-0 px-6 py-3.5 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                       >
-                        {prompt}
+                        {siteCopy.chat.sendLabel}
                       </button>
-                    ))}
+                    </div>
+                    <p className="chat-shell-title mt-3 max-w-3xl">
+                      {siteCopy.chat.poweredBy}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={siteCopy.chat.placeholder}
-                      className="flex-1 bg-white border border-black/[0.12] px-4 py-3 text-sm text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-[#1A6B35]"
-                    />
-                    <button
-                      onClick={() => handleSend()}
-                      disabled={!input.trim() || loading}
-                      className="shrink-0 px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                      {siteCopy.chat.sendLabel}
-                    </button>
-                  </div>
-                  <p className="text-xs text-black/25 mt-3">{siteCopy.chat.poweredBy}</p>
-                </div>
-                </div>
-
-                <div className="chat-stats-shell h-[520px] max-h-[70vh]">
-                  <ChatStatsPanel />
                 </div>
               </div>
             </div>

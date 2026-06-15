@@ -1,29 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-type SkillCategory = {
-  label: string;
-  skills: string[];
-};
-
-const CATEGORIES: SkillCategory[] = [
-  { label: "Languages", skills: ["Python", "TypeScript", "SQL", "Swift"] },
-  { label: "Frontend", skills: ["React", "Next.js", "SwiftUI", "Tailwind CSS"] },
-  {
-    label: "Backend & APIs",
-    skills: ["FastAPI", "Node.js", "REST APIs", "PostgreSQL", "MySQL"],
-  },
-  {
-    label: "DevOps & Cloud",
-    skills: [
-      "AWS (EC2, S3, Lambda, RDS)",
-      "Docker",
-      "CI/CD",
-      "GitHub Actions",
-    ],
-  },
-];
+import { siteCopy, skillCategories } from "@/data/content";
 
 export function SkillsGrid() {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,7 +31,7 @@ export function SkillsGrid() {
       ].join(" ")}
     >
       <div className="grid gap-4 md:grid-cols-2">
-        {CATEGORIES.map((cat) => (
+        {skillCategories.map((cat) => (
           <div
             key={cat.label}
             className="rounded-2xl border border-border bg-surface p-6"
@@ -75,10 +53,7 @@ export function SkillsGrid() {
         ))}
       </div>
 
-      <p className="mt-6 text-sm text-zinc-500">
-        I pick tools based on what the problem needs, not habit.
-      </p>
+      <p className="mt-6 text-sm text-zinc-500">{siteCopy.skills.footer}</p>
     </div>
   );
 }
-

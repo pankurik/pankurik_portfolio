@@ -49,17 +49,17 @@ export function ProjectsSection() {
   };
 
   return (
-    <section id="projects" className="bg-[#F5F5F0] text-[#0D0D0D]">
-      <div className="border-b border-black/[0.08] px-6 py-8">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <p className="chat-section-label">{siteCopy.projects.sectionLabel}</p>
-            <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
+    <section id="projects" className="portfolio-section pt-12 pb-0">
+      <div className="section-content">
+        <div className="section-intro">
+          <div className="section-intro-title">
+            <p className="section-label">{siteCopy.projects.sectionLabel}</p>
+            <h2 className="section-title">
               {siteCopy.projects.headline}{" "}
-              <span className="text-[#1A6B35]">{siteCopy.projects.headlineAccent}</span>
+              <span className="section-title-accent">{siteCopy.projects.headlineAccent}</span>
             </h2>
           </div>
-          <p className="text-xs text-black/40 flex items-center gap-1">
+          <p className="section-intro-meta flex items-center gap-1">
             {siteCopy.projects.dragHint}
             <span className="projects-drag-arrow inline-block">→</span>
           </p>

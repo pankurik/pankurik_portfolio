@@ -51,9 +51,22 @@ export type HeroListItem = {
   tags: string[];
 };
 
-export type SkillCategory = {
-  label: string;
-  skills: string[];
+export type SkillSize = "xl" | "lg" | "md" | "sm";
+export type SkillFlyDirection = "left" | "right" | "top" | "bottom";
+
+export type SkillItem = {
+  name: string;
+  size: SkillSize;
+  green?: boolean;
+  position: {
+    top?: string;
+    left?: string;
+    right?: string;
+    bottom?: string;
+  };
+  direction: SkillFlyDirection;
+  tooltip: string;
+  rotation: number;
 };
 
 export const about: About = {
@@ -210,25 +223,266 @@ export const experience: Experience[] = [
   },
 ];
 
-export const skills: Record<string, string[]> = {
-  Languages: ["Python", "TypeScript", "SQL", "Swift", "Java", "C", "C++"],
-  Frontend: ["React", "Next.js", "SwiftUI", "Tailwind CSS", "Material UI"],
-  Backend: ["FastAPI", "Node.js", "NestJS", "LangGraph", "REST APIs"],
-  Databases: ["PostgreSQL", "MySQL", "Redis", "Supabase", "pgvector"],
-  DevOps: [
-    "AWS (EC2, S3, Lambda, RDS, ECR)",
-    "Docker",
-    "GitHub Actions",
-    "CI/CD",
-  ],
-  "AI/ML": [
-    "LangGraph",
-    "Multi-Agent Systems",
-    "RAG Pipelines",
-    "OpenAI",
-    "Claude",
-  ],
-};
+export const skillItems: SkillItem[] = [
+  {
+    name: "Python",
+    size: "xl",
+    green: true,
+    position: { top: "6%", left: "2%" },
+    direction: "left",
+    tooltip: "AdsGency · ETL pipelines",
+    rotation: -1.4,
+  },
+  {
+    name: "LangGraph",
+    size: "xl",
+    green: true,
+    position: { top: "3%", left: "34%" },
+    direction: "top",
+    tooltip: "Multi-agent pipelines",
+    rotation: 1.1,
+  },
+  {
+    name: "AWS",
+    size: "xl",
+    green: true,
+    position: { top: "8%", right: "4%" },
+    direction: "right",
+    tooltip: "EC2 · S3 · Lambda · RDS · ECR",
+    rotation: -0.6,
+  },
+  {
+    name: "React",
+    size: "xl",
+    green: true,
+    position: { top: "22%", left: "18%" },
+    direction: "left",
+    tooltip: "AdsGency dashboard · EduBridge",
+    rotation: 1.8,
+  },
+  {
+    name: "TypeScript",
+    size: "xl",
+    green: true,
+    position: { top: "18%", right: "22%" },
+    direction: "right",
+    tooltip: "AdsGency · This portfolio",
+    rotation: -1.1,
+  },
+  {
+    name: "Next.js",
+    size: "xl",
+    green: true,
+    position: { top: "28%", left: "4%" },
+    direction: "left",
+    tooltip: "This portfolio",
+    rotation: 0.5,
+  },
+  {
+    name: "FastAPI",
+    size: "lg",
+    green: true,
+    position: { top: "24%", left: "48%" },
+    direction: "top",
+    tooltip: "AdsGency AI APIs",
+    rotation: -1.7,
+  },
+  {
+    name: "PostgreSQL",
+    size: "lg",
+    position: { top: "34%", right: "6%" },
+    direction: "right",
+    tooltip: "AdsGency · portfolio",
+    rotation: 1.3,
+  },
+  {
+    name: "Swift",
+    size: "lg",
+    green: true,
+    position: { top: "38%", left: "10%" },
+    direction: "left",
+    tooltip: "CardMind · Recipe App",
+    rotation: -0.9,
+  },
+  {
+    name: "SwiftUI",
+    size: "lg",
+    green: true,
+    position: { top: "42%", left: "36%" },
+    direction: "bottom",
+    tooltip: "CardMind · Recipe App",
+    rotation: 1.6,
+  },
+  {
+    name: "REST APIs",
+    size: "lg",
+    position: { top: "46%", right: "28%" },
+    direction: "right",
+    tooltip: "Shopify · Meta · Google",
+    rotation: -1.2,
+  },
+  {
+    name: "Docker",
+    size: "lg",
+    position: { top: "52%", left: "22%" },
+    direction: "bottom",
+    tooltip: "AdsGency deployments",
+    rotation: 0.8,
+  },
+  {
+    name: "RAG Pipelines",
+    size: "lg",
+    green: true,
+    position: { top: "50%", right: "3%" },
+    direction: "right",
+    tooltip: "This portfolio",
+    rotation: -1.5,
+  },
+  {
+    name: "SQL",
+    size: "lg",
+    position: { top: "58%", left: "5%" },
+    direction: "left",
+    tooltip: "PostgreSQL · MySQL · Supabase",
+    rotation: 1.0,
+  },
+  {
+    name: "OpenAI",
+    size: "lg",
+    position: { top: "56%", left: "52%" },
+    direction: "bottom",
+    tooltip: "Embeddings · AdsGency",
+    rotation: -0.7,
+  },
+  {
+    name: "Node.js",
+    size: "md",
+    position: { top: "62%", right: "18%" },
+    direction: "right",
+    tooltip: "Portfolio API routes",
+    rotation: 1.4,
+  },
+  {
+    name: "Tailwind",
+    size: "md",
+    position: { top: "68%", left: "28%" },
+    direction: "bottom",
+    tooltip: "This portfolio",
+    rotation: -1.0,
+  },
+  {
+    name: "Supabase",
+    size: "md",
+    position: { top: "64%", right: "38%" },
+    direction: "bottom",
+    tooltip: "This portfolio · pgvector",
+    rotation: 0.6,
+  },
+  {
+    name: "MySQL",
+    size: "md",
+    position: { top: "72%", left: "8%" },
+    direction: "left",
+    tooltip: "SpeEdLabs · Finance bot",
+    rotation: -1.8,
+  },
+  {
+    name: "GitHub Actions",
+    size: "md",
+    position: { top: "70%", left: "44%" },
+    direction: "bottom",
+    tooltip: "CI/CD pipelines",
+    rotation: 1.2,
+  },
+  {
+    name: "Claude API",
+    size: "md",
+    position: { top: "74%", right: "8%" },
+    direction: "right",
+    tooltip: "This portfolio AI agent",
+    rotation: -0.4,
+  },
+  {
+    name: "Databricks",
+    size: "md",
+    position: { top: "78%", left: "62%" },
+    direction: "bottom",
+    tooltip: "AdsGency data layer",
+    rotation: 1.7,
+  },
+  {
+    name: "Shopify API",
+    size: "md",
+    position: { top: "12%", right: "30%" },
+    direction: "top",
+    tooltip: "AdsGency integrations",
+    rotation: -1.3,
+  },
+  {
+    name: "Java",
+    size: "md",
+    position: { top: "32%", right: "42%" },
+    direction: "top",
+    tooltip: "Finance tracker alerting",
+    rotation: 0.9,
+  },
+  {
+    name: "Material UI",
+    size: "sm",
+    position: { top: "82%", left: "18%" },
+    direction: "bottom",
+    tooltip: "EduBridge platform",
+    rotation: -1.6,
+  },
+  {
+    name: "NestJS",
+    size: "sm",
+    position: { top: "84%", left: "38%" },
+    direction: "bottom",
+    tooltip: "SpeEdLabs backend",
+    rotation: 1.5,
+  },
+  {
+    name: "Redis",
+    size: "sm",
+    position: { top: "80%", right: "24%" },
+    direction: "right",
+    tooltip: "SpeEdLabs quiz state",
+    rotation: -0.5,
+  },
+  {
+    name: "Vercel",
+    size: "sm",
+    position: { top: "86%", right: "12%" },
+    direction: "bottom",
+    tooltip: "This portfolio",
+    rotation: 1.1,
+  },
+  {
+    name: "pgvector",
+    size: "sm",
+    position: { top: "88%", left: "52%" },
+    direction: "bottom",
+    tooltip: "RAG embeddings",
+    rotation: -1.9,
+  },
+  {
+    name: "Snowflake",
+    size: "sm",
+    position: { top: "16%", left: "58%" },
+    direction: "top",
+    tooltip: "AdsGency data layer",
+    rotation: 0.3,
+  },
+  {
+    name: "C / C++",
+    size: "sm",
+    position: { top: "76%", left: "72%" },
+    direction: "right",
+    tooltip: "CCSF tutoring · coursework",
+    rotation: -1.1,
+  },
+];
 
 export const leadership: Leadership[] = [
   {
@@ -317,8 +571,10 @@ export const siteCopy = {
     cta: "View project →",
   },
   skills: {
-    title: "What I Work With",
-    footer: "I pick tools based on what the problem needs, not habit.",
+    sectionLabel: "What I work with",
+    headline: "SKILLS &",
+    headlineAccent: "STACK",
+    hoverHint: "Hover any skill to see where I've used it.",
   },
   github: {
     title: "Recently Building",
@@ -357,10 +613,3 @@ export const siteCopy = {
     ],
   },
 };
-
-export const skillCategories: SkillCategory[] = Object.entries(skills).map(
-  ([label, items]) => ({
-    label,
-    skills: items,
-  })
-);

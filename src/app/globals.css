@@ -46,7 +46,7 @@ body.custom-cursor-active * {
   left: 0;
   width: 12px;
   height: 12px;
-  background-color: #1a6b35;
+  background-color: #c9a87c;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -74,7 +74,7 @@ body.custom-cursor-active * {
   left: 0;
   width: 40px;
   height: 40px;
-  border: 2px solid #1a6b35;
+  border: 2px solid #b8956a;
   border-radius: 50%;
   background: transparent;
   pointer-events: none;
@@ -190,16 +190,14 @@ body {
 .snap-scroll {
   height: 100vh;
   overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
 }
 
 .snap-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   min-height: 100vh;
   position: relative;
+  scroll-margin-top: 4.5rem;
 }
 
 .snap-section--cream {
@@ -226,7 +224,35 @@ body {
   padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+}
+
+.section-panel--start {
+  justify-content: flex-start;
+  padding-top: 4.5rem;
+  padding-bottom: 3rem;
+}
+
+.section-panel--projects {
+  min-height: auto;
+  padding-bottom: 4rem;
+}
+
+.section-panel--chat {
+  min-height: auto;
+  padding-bottom: 4rem;
+}
+
+.chat-stats-shell {
+  min-height: 0;
+}
+
+.chat-stats-shell > aside {
+  height: 100%;
+}
+
+.section-intro--compact {
+  margin-bottom: 1.5rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -503,14 +529,18 @@ body {
 
 .section-intro {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.75rem 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   margin-bottom: 2.5rem;
+  text-align: center;
 }
 
 .section-intro-minimal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   margin-bottom: 1.5rem;
 }
@@ -518,7 +548,9 @@ body {
 .section-intro-title {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.35rem;
+  text-align: center;
 }
 
 .section-title {
@@ -526,6 +558,7 @@ body {
   font-size: clamp(26px, 4vw, 36px);
   line-height: 0.95;
   letter-spacing: 0.01em;
+  text-align: center;
 }
 
 .section-title-accent {
@@ -533,10 +566,11 @@ body {
 }
 
 .section-intro-meta {
-  max-width: 18rem;
+  max-width: 24rem;
   font-size: 11px;
   line-height: 1.6;
   color: var(--text-muted);
+  text-align: center;
 }
 
 .section-subblock {
@@ -794,11 +828,11 @@ body {
 }
 
 .projects-track-fade--left {
-  background: linear-gradient(to right, var(--cream) 0%, transparent 100%);
+  background: linear-gradient(to right, #ffffff 0%, transparent 100%);
 }
 
 .projects-track-fade--right {
-  background: linear-gradient(to left, var(--cream) 55%, transparent 100%);
+  background: linear-gradient(to left, #ffffff 55%, transparent 100%);
 }
 
 .project-card-featured {

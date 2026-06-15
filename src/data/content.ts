@@ -1,0 +1,301 @@
+export type Project = {
+  title: string;
+  description: string;
+  tags: string[];
+  link: string;
+  whatIBuilt: string;
+  type: "Professional" | "Personal" | "Team";
+};
+
+export type Experience = {
+  company: string;
+  role: string;
+  period: string;
+  location: string;
+  bullets: string[];
+};
+
+export type Leadership = {
+  title: string;
+  organization: string;
+  period: string;
+  description: string;
+};
+
+export type About = {
+  name: string;
+  title: string;
+  location: string;
+  bio: string;
+  shortBio: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  resume: string;
+  availability: string;
+  initials: string;
+  year: string;
+};
+
+export type HeroListItem = {
+  title: string;
+  tags: string[];
+};
+
+export type SkillCategory = {
+  label: string;
+  skills: string[];
+};
+
+export const about: About = {
+  name: "Pankuri Khare",
+  title: "Full-stack engineer",
+  location: "San Francisco",
+  shortBio:
+    "Full-stack engineer based in SF. I build backends, AI pipelines, and iOS apps — and I care about systems that hold up under failure.",
+  bio: "I studied Computer Science and Comparative World Literature at San Francisco State University — an unusual mix, but it shaped how I think: part logical, part creative. I like understanding whole systems, not just my piece of them. That curiosity shows up in how I debug, how I architect, and how I communicate. Outside of code I'm reading, exploring ideas across disciplines, and occasionally convincing myself a side project is a good idea. I'm most energized by early-stage teams building things that matter — where engineers are close to the problem and ownership is real.",
+  email: "pankuri@email.com",
+  github: "https://github.com/pankurik",
+  linkedin: "#",
+  resume: "#",
+  availability: "Open to work",
+  initials: "PK",
+  year: "2026",
+};
+
+export const projects: Project[] = [
+  {
+    title: "AdsGency AI",
+    type: "Professional",
+    description:
+      "AI-driven marketing automation platform for e-commerce brands — multi-agent pipelines, unified analytics, and production infrastructure at scale.",
+    tags: [
+      "LangGraph",
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "AWS",
+      "Docker",
+      "CI/CD",
+    ],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "LangGraph multi-agent pipelines for campaign workflows, ETL across 8 ad and commerce sources, a campaign recommendation engine, real-time analytics dashboard, and i18n support for 7 languages — deployed on AWS with Docker and CI/CD.",
+  },
+  {
+    title: "CardMind iOS",
+    type: "Personal",
+    description:
+      "A solo iOS app for credit card payment tracking with smart reminders — designed, built, and shipped in one week.",
+    tags: ["SwiftUI", "SwiftData", "WidgetKit", "Swift Charts"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "End-to-end iOS app with SwiftUI and SwiftData for payment tracking, home screen widgets via WidgetKit, spending visualizations with Swift Charts, and escalating smart notifications so due dates never slip.",
+  },
+  {
+    title: "Recipe App",
+    type: "Personal",
+    description:
+      "A SwiftUI cooking app built for the actual cooking experience — big text, hands-free support, and step-by-step navigation.",
+    tags: ["Swift", "SwiftUI", "AVFoundation"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "Cooking mode with step-by-step navigation, per-step timers, and text-to-speech via AVFoundation so instructions can be followed without constantly touching the phone.",
+  },
+  {
+    title: "Discord Personal Finance Bot",
+    type: "Personal",
+    description:
+      "A chat-first Discord bot that makes tracking spending frictionless — log expenses, view summaries, and set budgets without opening another app.",
+    tags: ["Python", "MySQL", "Discord API"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "Python-based Discord bot with MySQL-backed budget tracking, category-based expense logging, spending summaries, and simple budget enforcement through chat commands.",
+  },
+  {
+    title: "EduBridge",
+    type: "Team",
+    description:
+      "A team-built platform connecting students with mentors — role-based access, discovery flows, and a full React frontend.",
+    tags: ["React", "REST APIs", "Role-Based Access"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "React frontend with role-based access control, mentor discovery and matching flows, and collaborative team delivery across frontend and API integration.",
+  },
+];
+
+export const experience: Experience[] = [
+  {
+    company: "AdsGency AI",
+    role: "Software Engineer",
+    period: "Aug 2025 – Jan 2026",
+    location: "San Francisco, CA",
+    bullets: [
+      "Built LangGraph multi-agent pipelines and ETL systems unifying data from 8 advertising and commerce sources.",
+      "Shipped a campaign recommendation engine and real-time analytics dashboard with i18n across 7 languages.",
+      "Owned AWS deployments, Docker containerization, and CI/CD pipelines for production reliability.",
+    ],
+  },
+  {
+    company: "City College of San Francisco",
+    role: "CS Tutor",
+    period: "Aug 2024 – May 2025",
+    location: "San Francisco, CA",
+    bullets: [
+      "Tutored students in data structures, algorithms, and introductory programming courses.",
+      "Helped learners debug code and develop problem-solving approaches for technical interviews.",
+      "Adapted explanations to different learning styles across a diverse student body.",
+    ],
+  },
+  {
+    company: "SpeEdLabs",
+    role: "Web Developer",
+    period: "Apr 2021 – Mar 2023",
+    location: "Remote",
+    bullets: [
+      "Built and maintained web applications for an ed-tech platform serving learners and educators.",
+      "Collaborated on frontend features, API integrations, and responsive UI improvements.",
+      "Contributed to deployment workflows and cross-browser compatibility fixes.",
+    ],
+  },
+];
+
+export const skills: Record<string, string[]> = {
+  Languages: ["Python", "TypeScript", "SQL", "Swift", "Java", "C", "C++"],
+  Frontend: ["React", "Next.js", "SwiftUI", "Tailwind CSS", "Material UI"],
+  Backend: ["FastAPI", "Node.js", "NestJS", "LangGraph", "REST APIs"],
+  Databases: ["PostgreSQL", "MySQL", "Redis", "Supabase", "pgvector"],
+  DevOps: [
+    "AWS (EC2, S3, Lambda, RDS, ECR)",
+    "Docker",
+    "GitHub Actions",
+    "CI/CD",
+  ],
+  "AI/ML": [
+    "LangGraph",
+    "Multi-Agent Systems",
+    "RAG Pipelines",
+    "OpenAI",
+    "Claude",
+  ],
+};
+
+export const leadership: Leadership[] = [
+  {
+    title: "President",
+    organization: "Indian Student Association, SF State",
+    period: "2025 – Present",
+    description:
+      "Lead campus programming, community events, and advocacy for international students at San Francisco State University.",
+  },
+  {
+    title: "Peer Mentor",
+    organization: "San Francisco State University",
+    period: "2024 – 2025",
+    description:
+      "Mentored incoming students on academic planning, campus resources, and adjusting to university life in the US.",
+  },
+  {
+    title: "Orientation Leader",
+    organization: "San Francisco State University",
+    period: "2024",
+    description:
+      "Guided new student cohorts through orientation week, campus tours, and onboarding programming.",
+  },
+];
+
+export const hero = {
+  headlineMeta: "backends · AI pipelines · iOS apps",
+  marqueeItems: [
+    "Python",
+    "TypeScript",
+    "Next.js",
+    "LangGraph",
+    "FastAPI",
+    "SwiftUI",
+    "Supabase",
+    "AWS",
+    "Docker",
+    "Multi-Agent Systems",
+  ],
+  currentlyInto: [
+    { title: "AI in production", tags: ["latency", "cost", "trust"] },
+    { title: "Clean architecture", tags: ["predictable systems"] },
+    { title: "Ed-tech for educators", tags: ["someday"] },
+    { title: "Dark Japanese lit", tags: ["Yoko Ogawa"] },
+    { title: "Craft beer", tags: ["lowkey bars only"] },
+  ] satisfies HeroListItem[],
+  selectedWork: [
+    { title: "AdsGency AI", tags: ["LangGraph", "Multi-Agent"] },
+    { title: "CardMind iOS", tags: ["SwiftUI", "shipped in a week"] },
+    { title: "Recipe App", tags: ["iOS", "AVFoundation"] },
+    { title: "Discord Finance Bot", tags: ["Python", "MySQL"] },
+    { title: "This portfolio", tags: ["RAG", "Claude"] },
+  ] satisfies HeroListItem[],
+};
+
+export const siteCopy = {
+  chat: {
+    title: "Ask me anything",
+    subtitle: "Ask about my experience, projects, skills, or what I'm looking for.",
+    placeholder: "Ask me something...",
+    poweredBy: "powered by claude haiku + rag",
+    suggestedQuestions: [
+      "What tech stack do you work with?",
+      "Tell me about your recent projects",
+      "What's your background?",
+    ],
+  },
+  projects: {
+    title: "Things I've Built",
+    subtitle:
+      "Real systems, shipped work, and projects I built because I wanted them to exist.",
+  },
+  skills: {
+    title: "What I Work With",
+    footer: "I pick tools based on what the problem needs, not habit.",
+  },
+  github: {
+    title: "Recently Building",
+    subtitle: "A quick snapshot of what I've been shipping lately.",
+    fallback: "Check my GitHub for latest activity",
+    cta: "View GitHub →",
+  },
+  about: {
+    title: "About Me",
+    badges: ["1-2 yrs exp", "SF Based"],
+  },
+  experience: {
+    title: "Experience",
+  },
+  leadership: {
+    title: "Leadership",
+  },
+  contact: {
+    title: "Let's Work Together",
+    subtitle:
+      "I'm actively looking for the right full-time role. If you're building something interesting, I'd love to hear about it.",
+    cta: "Get in Touch →",
+  },
+  footer: {
+    builtBy: (name: string) =>
+      `Built by ${name} · Powered by Claude API + pgvector · ${about.year}`,
+    stack:
+      "Next.js, Supabase, pgvector, OpenAI embeddings, Claude Haiku, Vercel",
+  },
+  nav: {
+    links: [
+      { label: "Projects", href: "projects" },
+      { label: "Skills", href: "skills" },
+      { label: "About", href: "about" },
+      { label: "Contact", href: "contact" },
+    ],
+  },
+};
+
+export const skillCategories: SkillCategory[] = Object.entries(skills).map(
+  ([label, items]) => ({
+    label,
+    skills: items,
+  })
+);

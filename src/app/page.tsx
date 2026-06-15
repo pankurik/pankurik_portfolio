@@ -25,6 +25,7 @@ export default function Home() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState("top");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +38,23 @@ export default function Home() {
   }, [messages, loading]);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    const sectionIds = ["top", "projects", "about", "chat", "contact"];
+    const observers = sectionIds.flatMap((id) => {
+      const el = document.getElementById(id);
+      if (!el) return [];
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: "-42% 0px -52% 0px", threshold: 0 }
+      );
+
+      observer.observe(el);
+      return [observer];
+    });
+
+    return () => observers.forEach((observer) => observer.disconnect());
   }, []);
 
   async function handleSend(text?: string) {
@@ -87,50 +104,52 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Hero */}
-      <section
-        id="top"
-        className="hero-light min-h-screen flex flex-col bg-[#F5F5F0] text-[#0D0D0D]"
-      >
-        <header className="border-b border-black/[0.08]">
-          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
-            <button
-              onClick={() => scrollToId("top")}
-              className="text-[#1A6B35] tracking-tight font-semibold hover:opacity-80 transition-opacity cursor-pointer shrink-0"
-            >
-              {about.name}
-            </button>
+    <div className="portfolio-page min-h-screen">
+      <header className="site-nav">
+        <div className="section-content py-4 flex items-center justify-between gap-6">
+          <button
+            onClick={() => scrollToId("top")}
+            className="text-[#1A6B35] tracking-tight font-semibold hover:opacity-80 transition-opacity cursor-pointer shrink-0"
+          >
+            {about.name}
+          </button>
 
-            <nav className="hidden md:flex items-center gap-6 text-sm text-black/30">
-              {siteCopy.nav.links.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => scrollToId(link.href)}
-                  className="hover:text-black/60 transition-colors cursor-pointer"
-                >
-                  {link.label}
-                </button>
-              ))}
-              <a
-                href={about.github}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-black/60 transition-colors"
+          <nav className="hidden md:flex items-center gap-6 text-sm text-black/30">
+            {siteCopy.nav.links.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => scrollToId(link.href)}
+                className={[
+                  "site-nav-link hover:text-black/60 transition-colors cursor-pointer",
+                  activeSection === link.href ? "is-active" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
-                GitHub
-              </a>
-            </nav>
+                {link.label}
+              </button>
+            ))}
+            <a
+              href={about.github}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-black/60 transition-colors"
+            >
+              GitHub
+            </a>
+          </nav>
 
-            <div className="flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
-              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
-              {about.availability}
-            </div>
+          <div className="flex items-center gap-2 text-sm text-[#1A6B35] shrink-0">
+            <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
+            {about.availability}
           </div>
-        </header>
+        </div>
+      </header>
 
-        <div className="flex-1 flex flex-col justify-between w-full">
-          <div className="relative min-h-[70vh] w-full overflow-hidden">
+      {/* Hero */}
+      <section id="top" className="hero-light flex flex-col">
+        <div className="flex flex-col w-full">
+          <div className="hero-video-block relative min-h-[70vh] w-full overflow-hidden">
             <video
               src="/BayArea.mp4"
               autoPlay
@@ -197,49 +216,31 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="max-w-6xl mx-auto px-6 py-12 grid gap-10 md:grid-cols-3">
+            <div className="max-w-6xl mx-auto px-6 py-10 grid gap-10 md:grid-cols-2">
               <div>
-                <p className="hero-section-label">About</p>
-                <p className="mt-4 text-sm leading-relaxed text-black/60">
+                <p className="text-sm leading-relaxed text-black/60">
                   {about.shortBio}
                 </p>
-                <div className="mt-6 flex flex-col gap-3">
-                  <button
-                    onClick={() => scrollToId("chat")}
-                    className="inline-flex items-center justify-center px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
-                  >
-                    → Chat with my AI
-                  </button>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button
                     onClick={() => scrollToId("projects")}
-                    className="inline-flex items-center justify-center px-5 py-3 border border-[#0D0D0D]/20 text-[#0D0D0D] text-sm hover:border-[#1A6B35] hover:text-[#1A6B35] transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center px-5 py-3 bg-[#1A6B35] text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     → View Projects
+                  </button>
+                  <button
+                    onClick={() => scrollToId("chat")}
+                    className="inline-flex items-center justify-center px-5 py-3 border border-[#0D0D0D]/20 text-[#0D0D0D] text-sm hover:border-[#1A6B35] hover:text-[#1A6B35] transition-colors cursor-pointer"
+                  >
+                    → Chat with my AI
                   </button>
                 </div>
               </div>
 
               <div>
-                <p className="hero-section-label">Currently into</p>
+                <p className="section-label">Currently into</p>
                 <ul className="mt-4 space-y-0">
                   {hero.currentlyInto.map((item) => (
-                    <li
-                      key={item.title}
-                      className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
-                    >
-                      <span className="text-black/70">{item.title}</span>
-                      <span className="text-[#1A6B35] text-right shrink-0">
-                        {item.tags.join(" · ")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <p className="hero-section-label">Selected work</p>
-                <ul className="mt-4 space-y-0">
-                  {hero.selectedWork.map((item) => (
                     <li
                       key={item.title}
                       className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
@@ -257,24 +258,177 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Chat */}
-      <section id="chat" className="min-h-screen flex flex-col bg-[#F5F5F0] text-[#0D0D0D]">
-        <div className="border-b border-black/[0.08] px-6 py-8">
-          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div>
-              <p className="chat-section-label">{siteCopy.chat.sectionLabel}</p>
-              <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight text-[#0D0D0D]">
-                {siteCopy.chat.headline}{" "}
-                <span className="text-[#1A6B35]">{siteCopy.chat.headlineAccent}</span>
+      <ProjectsSection />
+
+      {/* About */}
+      <section id="about" className="portfolio-section">
+        <div className="section-content">
+          <div className="section-intro">
+            <div className="section-intro-title">
+              <p className="section-label">{siteCopy.about.sectionLabel}</p>
+              <h2 className="section-title">
+                {siteCopy.about.headline}{" "}
+                <span className="section-title-accent">{siteCopy.about.headlineAccent}</span>
               </h2>
             </div>
-            <p className="max-w-sm text-xs text-black/40 leading-relaxed lg:text-right">
-              {siteCopy.chat.description}
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-2">
+            <p className="font-mono text-sm leading-[1.9] text-black/55">
+              <RichText parts={about.bioStrip} />
             </p>
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {about.bioPills.green.map((pill) => (
+                  <span
+                    key={pill}
+                    className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
+                  >
+                    {pill}
+                  </span>
+                ))}
+              </div>
+              {about.bioPills.muted.map((row, rowIndex) => (
+                <div key={rowIndex} className="flex flex-wrap gap-2">
+                  {row.map((pill) => (
+                    <span
+                      key={pill}
+                      className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
+                    >
+                      {pill}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="section-subblock">
+            <p className="section-label mb-8">{siteCopy.experience.label}</p>
+            <div className="space-y-12">
+              {experience.map((job) => (
+                <div
+                  key={`${job.company}-${job.period}`}
+                  className="grid gap-x-10"
+                  style={{ gridTemplateColumns: "160px 1px 1fr" }}
+                >
+                  <div>
+                    <p className="font-mono text-[11px] text-black/40 leading-relaxed">
+                      {job.period}
+                    </p>
+                    {job.latest && (
+                      <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
+                        {siteCopy.experience.latestTag}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
+                    <div
+                      className={[
+                        "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
+                        job.latest
+                          ? "bg-[#1A6B35]"
+                          : "bg-white border border-black/20",
+                      ].join(" ")}
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-[28px] leading-none tracking-tight">
+                      {job.company}
+                    </h3>
+                    <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
+                      {job.role}
+                      {job.employmentType ? ` · ${job.employmentType}` : ""}
+                      {job.location ? ` · ${job.location}` : ""}
+                    </p>
+                    <ul className="mt-4 space-y-2">
+                      {job.bullets.map((bullet, bulletIndex) => (
+                        <li
+                          key={bulletIndex}
+                          className="text-[11px] leading-relaxed text-black/45"
+                        >
+                          <span className="text-[#1A6B35]">—</span>{" "}
+                          <RichText parts={bullet} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="section-subblock">
+            <p className="section-label mb-8">{siteCopy.leadership.label}</p>
+            <div className="grid gap-4 md:grid-cols-3">
+              {leadership.map((entry) => (
+                <article
+                  key={`${entry.title}-${entry.period}`}
+                  className="border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
+                >
+                  <h3 className="font-display text-[22px] leading-tight tracking-tight">
+                    {entry.title}
+                  </h3>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
+                    {entry.organization}
+                  </p>
+                  <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
+                  <p className="mt-3 text-[11px] leading-relaxed text-black/45">
+                    <RichText parts={entry.description} />
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Skills */}
+      <section id="skills" className="portfolio-section pt-0">
+        <div className="section-content">
+          <div className="section-intro section-intro-minimal">
+            <p className="section-label">{siteCopy.skills.sectionLabel}</p>
+            <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
           </div>
         </div>
 
-        <div className="flex-1 grid lg:grid-cols-2 min-h-0">
+        <SkillsGrid />
+      </section>
+
+      {/* GitHub */}
+      <section id="github" className="portfolio-section pt-0">
+        <div className="section-content">
+          <div className="section-intro section-intro-minimal">
+            <p className="section-label">{siteCopy.github.sectionLabel}</p>
+            <div className="section-intro-meta flex items-center gap-2 text-[#1A6B35]">
+              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
+              {siteCopy.github.liveLabel}
+            </div>
+          </div>
+        </div>
+
+        <GitHubFeed />
+      </section>
+
+      {/* Chat */}
+      <section id="chat" className="portfolio-section min-h-[85vh] flex flex-col pb-0">
+        <div className="section-content">
+          <div className="section-intro">
+            <div className="section-intro-title">
+              <p className="section-label">{siteCopy.chat.sectionLabel}</p>
+              <h2 className="section-title">
+                {siteCopy.chat.headline}{" "}
+                <span className="section-title-accent">{siteCopy.chat.headlineAccent}</span>
+              </h2>
+            </div>
+            <p className="section-intro-meta lg:text-right">{siteCopy.chat.description}</p>
+          </div>
+        </div>
+
+        <div className="flex-1 grid lg:grid-cols-2 min-h-0 border-t border-black/[0.06]">
           <div className="flex flex-col min-h-[70vh] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-black/[0.08]">
             <div className="flex-1 overflow-y-auto px-6 py-6">
               <div className="flex flex-col gap-5">
@@ -359,183 +513,9 @@ export default function Home() {
         </div>
       </section>
 
-      <ProjectsSection />
-
-      {/* Skills */}
-      <section id="skills" className="bg-[#F5F5F0] text-[#0D0D0D]">
-        <div className="border-b border-black/[0.08] px-6 py-8">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <p className="chat-section-label">{siteCopy.skills.sectionLabel}</p>
-              <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
-                {siteCopy.skills.headline}{" "}
-                <span className="text-[#1A6B35]">{siteCopy.skills.headlineAccent}</span>
-              </h2>
-            </div>
-            <p className="max-w-xs text-xs text-black/40 leading-relaxed sm:text-right">
-              {siteCopy.skills.hoverHint}
-            </p>
-          </div>
-        </div>
-
-        <SkillsGrid />
-      </section>
-
-      {/* GitHub */}
-      <section className="bg-[#F5F5F0] text-[#0D0D0D]">
-        <div className="border-b border-black/[0.08] px-6 py-8">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <p className="chat-section-label">{siteCopy.github.sectionLabel}</p>
-              <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
-                {siteCopy.github.headline}{" "}
-                <span className="text-[#1A6B35]">{siteCopy.github.headlineAccent}</span>
-              </h2>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-[#1A6B35]">
-              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
-              {siteCopy.github.liveLabel}
-            </div>
-          </div>
-        </div>
-
-        <GitHubFeed />
-      </section>
-
-      {/* About & Contact */}
-      <section id="about" className="bg-[#F5F5F0] text-[#0D0D0D]">
-        <div className="border-b border-black/[0.08] px-6 py-8">
-          <div className="max-w-6xl mx-auto">
-            <p className="chat-section-label">{siteCopy.about.sectionLabel}</p>
-            <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
-              {siteCopy.about.headline}{" "}
-              <span className="text-[#1A6B35]">{siteCopy.about.headlineAccent}</span>
-            </h2>
-          </div>
-        </div>
-
-        <div className="border-b border-black/[0.08] p-10">
-          <div className="max-w-6xl mx-auto grid gap-10 lg:grid-cols-2">
-            <p className="font-mono text-sm leading-[1.9] text-black/55">
-              <RichText parts={about.bioStrip} />
-            </p>
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {about.bioPills.green.map((pill) => (
-                  <span
-                    key={pill}
-                    className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
-                  >
-                    {pill}
-                  </span>
-                ))}
-              </div>
-              {about.bioPills.muted.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex flex-wrap gap-2">
-                  {row.map((pill) => (
-                    <span
-                      key={pill}
-                      className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
-                    >
-                      {pill}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="border-b border-black/[0.08] p-10">
-          <div className="max-w-6xl mx-auto">
-            <p className="chat-section-label mb-8">{siteCopy.experience.label}</p>
-            <div className="space-y-12">
-              {experience.map((job) => (
-                <div
-                  key={`${job.company}-${job.period}`}
-                  className="grid gap-x-10"
-                  style={{ gridTemplateColumns: "160px 1px 1fr" }}
-                >
-                  <div>
-                    <p className="font-mono text-[11px] text-black/40 leading-relaxed">
-                      {job.period}
-                    </p>
-                    {job.latest && (
-                      <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
-                        {siteCopy.experience.latestTag}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
-                    <div
-                      className={[
-                        "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
-                        job.latest
-                          ? "bg-[#1A6B35]"
-                          : "bg-white border border-black/20",
-                      ].join(" ")}
-                    />
-                  </div>
-
-                  <div>
-                    <h3 className="font-display text-[28px] leading-none tracking-tight">
-                      {job.company}
-                    </h3>
-                    <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
-                      {job.role}
-                      {job.employmentType ? ` · ${job.employmentType}` : ""}
-                      {job.location ? ` · ${job.location}` : ""}
-                    </p>
-                    <ul className="mt-4 space-y-2">
-                      {job.bullets.map((bullet, bulletIndex) => (
-                        <li
-                          key={bulletIndex}
-                          className="text-[11px] leading-relaxed text-black/45"
-                        >
-                          <span className="text-[#1A6B35]">—</span>{" "}
-                          <RichText parts={bullet} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="border-b border-black/[0.08] p-10">
-          <div className="max-w-6xl mx-auto">
-            <p className="chat-section-label mb-8">{siteCopy.leadership.label}</p>
-            <div className="grid gap-4 md:grid-cols-3">
-              {leadership.map((entry) => (
-                <article
-                  key={`${entry.title}-${entry.period}`}
-                  className="border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
-                >
-                  <h3 className="font-display text-[22px] leading-tight tracking-tight">
-                    {entry.title}
-                  </h3>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
-                    {entry.organization}
-                  </p>
-                  <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
-                  <p className="mt-3 text-[11px] leading-relaxed text-black/45">
-                    <RichText parts={entry.description} />
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="bg-[#F5F5F0] text-[#0D0D0D] border-t border-black/[0.08]">
-        <div className="p-10">
-          <div className="max-w-6xl mx-auto">
-            <p className="chat-section-label">{siteCopy.contact.label}</p>
+      <section id="contact" className="portfolio-section border-t border-black/[0.06]">
+        <div className="section-content">
+            <p className="section-label">{siteCopy.contact.label}</p>
             <a
               href={`mailto:${about.email}`}
               className="mt-4 inline-block font-display text-[clamp(32px,6vw,42px)] leading-none text-[#1A6B35] hover:opacity-80 transition-opacity"
@@ -555,10 +535,9 @@ export default function Home() {
                 </a>
               ))}
             </div>
-          </div>
         </div>
 
-        <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.08] px-10 py-6">
+        <footer className="section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.06] pt-6 mt-10">
           <p className="text-[10px] text-black/35">
             {siteCopy.footer.copyright(about.name, about.year)}
           </p>

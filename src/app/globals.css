@@ -183,6 +183,44 @@ html {
   margin-top: 0;
 }
 
+.contact-form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label-muted);
+}
+
+.contact-form-input {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-space-mono);
+  font-size: 12px;
+  outline: none;
+}
+
+.contact-form-input:focus {
+  border-color: var(--green);
+}
+
+.contact-form-feedback {
+  animation: contact-fade-in 0.35s ease forwards;
+}
+
+@keyframes contact-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Legacy aliases — keep for chat micro-labels */
 .section-headline-accent {
   color: var(--green);

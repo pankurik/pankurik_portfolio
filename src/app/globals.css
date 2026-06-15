@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #e4e4e7;
-  --accent: #00eaff;
-  --accent-dim: rgba(0, 234, 255, 0.16);
-  --surface: #111111;
-  --surface-hover: #1a1a1a;
-  --border: #222222;
+  --cream: #f5f5f0;
+  --cream-muted: #f0f0eb;
+  --ink: #0d0d0d;
+  --green: #1a6b35;
+  --green-bright: #3ecf6a;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --text-muted: rgba(0, 0, 0, 0.4);
+  --label-muted: rgba(0, 0, 0, 0.25);
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --accent: var(--green);
+  --accent-dim: rgba(26, 107, 53, 0.08);
+  --surface: #ffffff;
+  --surface-hover: var(--cream-muted);
+  --border: var(--border-subtle);
 }
 
 @theme inline {
@@ -87,6 +95,109 @@ body.custom-cursor-active * {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
+.portfolio-page {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(245, 245, 240, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.site-nav-link.is-active {
+  color: var(--green);
+}
+
+.section-label,
+.hero-section-label,
+.chat-section-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-muted);
+}
+
+.portfolio-section {
+  padding: 3.5rem 0;
+}
+
+.section-content {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.section-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.section-intro-minimal {
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-intro-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.section-title {
+  font-family: var(--font-bebas-neue);
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+
+.section-title-accent {
+  color: var(--green);
+}
+
+.section-intro-meta {
+  max-width: 18rem;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.section-subblock {
+  margin-top: 4rem;
+}
+
+.section-subblock:first-child {
+  margin-top: 0;
+}
+
+/* Legacy aliases — keep for chat micro-labels */
+.section-headline-accent {
+  color: var(--green);
+}
+
+.hero-video-block::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8rem;
+  background: linear-gradient(to bottom, transparent, var(--cream));
+  z-index: 3;
+  pointer-events: none;
 }
 
 /* Scrollbar */
@@ -97,7 +208,7 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 }
 
@@ -123,13 +234,6 @@ html {
 }
 
 /* Hero — light section */
-.hero-section-label {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.25);
-}
-
 .hero-nav-pulse {
   animation: hero-nav-pulse 2s ease-in-out infinite;
 }
@@ -191,7 +295,7 @@ html {
 }
 
 .hero-headline-outline-video:hover {
-  color: #3ecf6a;
+  color: var(--green-bright);
   -webkit-text-stroke: 0 transparent;
 }
 
@@ -211,13 +315,6 @@ html {
 }
 
 /* Chat section */
-.chat-section-label {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.25);
-}
-
 .chat-ai-pulse {
   animation: hero-nav-pulse 2s ease-in-out infinite;
 }

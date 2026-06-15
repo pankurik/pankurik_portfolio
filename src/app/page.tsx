@@ -5,6 +5,7 @@ import { SkillsGrid } from "@/components/SkillsGrid";
 import { GitHubFeed } from "@/components/GitHubFeed";
 import { ChatStatsPanel } from "@/components/ChatStatsPanel";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { RichText } from "@/components/RichText";
 import {
   about,
   experience,
@@ -384,144 +385,168 @@ export default function Home() {
         <GitHubFeed />
       </section>
 
-      {/* About */}
-      <section id="about" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2
-          className="font-display text-white leading-[0.9] tracking-tight"
-          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
-        >
-          {siteCopy.about.title}
-        </h2>
-
-        <div className="mt-10 grid gap-10 md:grid-cols-[240px_1fr] items-start">
-          <div className="hidden md:block relative">
-            <div className="select-none font-display text-white/5 leading-none tracking-tight text-[160px]">
-              {about.initials}
-            </div>
+      {/* About & Contact */}
+      <section id="about" className="bg-[#F5F5F0] text-[#0D0D0D]">
+        <div className="border-b border-black/[0.08] px-6 py-8">
+          <div className="max-w-6xl mx-auto">
+            <p className="chat-section-label">{siteCopy.about.sectionLabel}</p>
+            <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
+              {siteCopy.about.headline}{" "}
+              <span className="text-[#1A6B35]">{siteCopy.about.headlineAccent}</span>
+            </h2>
           </div>
+        </div>
 
-          <div className="space-y-10">
-            <div className="text-zinc-400 leading-relaxed">
-              <p>{about.bio}</p>
-
-              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                {siteCopy.about.badges.map((badge) => (
-                  <span key={badge} className="text-accent font-semibold">
-                    {badge}
+        <div className="border-b border-black/[0.08] p-10">
+          <div className="max-w-6xl mx-auto grid gap-10 lg:grid-cols-2">
+            <p className="font-mono text-sm leading-[1.9] text-black/55">
+              <RichText parts={about.bioStrip} />
+            </p>
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {about.bioPills.green.map((pill) => (
+                  <span
+                    key={pill}
+                    className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
+                  >
+                    {pill}
                   </span>
                 ))}
-                <span className="text-accent font-semibold">{about.availability}</span>
               </div>
+              {about.bioPills.muted.map((row, rowIndex) => (
+                <div key={rowIndex} className="flex flex-wrap gap-2">
+                  {row.map((pill) => (
+                    <span
+                      key={pill}
+                      className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
+                    >
+                      {pill}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
 
-            <div>
-              <h3 className="text-white text-lg font-semibold tracking-tight">
-                {siteCopy.experience.title}
-              </h3>
-              <div className="mt-6 space-y-8">
-                {experience.map((job) => (
-                  <div key={`${job.company}-${job.period}`}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <p className="text-white font-semibold">{job.role}</p>
-                      <p className="text-xs text-zinc-500">{job.period}</p>
-                    </div>
-                    <p className="text-sm text-accent mt-1">
-                      {job.company} · {job.location}
+        <div className="border-b border-black/[0.08] p-10">
+          <div className="max-w-6xl mx-auto">
+            <p className="chat-section-label mb-8">{siteCopy.experience.label}</p>
+            <div className="space-y-12">
+              {experience.map((job) => (
+                <div
+                  key={`${job.company}-${job.period}`}
+                  className="grid gap-x-10"
+                  style={{ gridTemplateColumns: "160px 1px 1fr" }}
+                >
+                  <div>
+                    <p className="font-mono text-[11px] text-black/40 leading-relaxed">
+                      {job.period}
                     </p>
-                    <ul className="mt-3 space-y-2 text-sm text-zinc-400 list-disc pl-5">
-                      {job.bullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
+                    {job.latest && (
+                      <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
+                        {siteCopy.experience.latestTag}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
+                    <div
+                      className={[
+                        "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
+                        job.latest
+                          ? "bg-[#1A6B35]"
+                          : "bg-white border border-black/20",
+                      ].join(" ")}
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="font-display text-[28px] leading-none tracking-tight">
+                      {job.company}
+                    </h3>
+                    <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
+                      {job.role}
+                      {job.employmentType ? ` · ${job.employmentType}` : ""}
+                      {job.location ? ` · ${job.location}` : ""}
+                    </p>
+                    <ul className="mt-4 space-y-2">
+                      {job.bullets.map((bullet, bulletIndex) => (
+                        <li
+                          key={bulletIndex}
+                          className="text-[11px] leading-relaxed text-black/45"
+                        >
+                          <span className="text-[#1A6B35]">—</span>{" "}
+                          <RichText parts={bullet} />
+                        </li>
                       ))}
                     </ul>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
 
-            <div>
-              <h3 className="text-white text-lg font-semibold tracking-tight">
-                {siteCopy.leadership.title}
-              </h3>
-              <div className="mt-6 space-y-6">
-                {leadership.map((entry) => (
-                  <div key={`${entry.title}-${entry.organization}`}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <p className="text-white font-semibold">{entry.title}</p>
-                      <p className="text-xs text-zinc-500">{entry.period}</p>
-                    </div>
-                    <p className="text-sm text-accent mt-1">{entry.organization}</p>
-                    <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
-                      {entry.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
+        <div className="border-b border-black/[0.08] p-10">
+          <div className="max-w-6xl mx-auto">
+            <p className="chat-section-label mb-8">{siteCopy.leadership.label}</p>
+            <div className="grid gap-4 md:grid-cols-3">
+              {leadership.map((entry) => (
+                <article
+                  key={`${entry.title}-${entry.period}`}
+                  className="border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
+                >
+                  <h3 className="font-display text-[22px] leading-tight tracking-tight">
+                    {entry.title}
+                  </h3>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
+                    {entry.organization}
+                  </p>
+                  <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
+                  <p className="mt-3 text-[11px] leading-relaxed text-black/45">
+                    <RichText parts={entry.description} />
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact */}
-      <section id="contact" className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2
-          className="font-display text-white leading-[0.9] tracking-tight text-center"
-          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
-        >
-          {siteCopy.contact.title}
-        </h2>
-
-        <p className="mt-6 text-zinc-400 text-center max-w-2xl mx-auto leading-relaxed">
-          {siteCopy.contact.subtitle}
-        </p>
-
-        <div className="mt-10 flex items-center justify-center">
-          <a
-            href={`mailto:${about.email}`}
-            className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-accent text-black font-semibold tracking-tight hover:opacity-90 transition-opacity glow"
-          >
-            {siteCopy.contact.cta}
-          </a>
-        </div>
-
-        <div className="mt-8 flex items-center justify-center gap-6 text-sm">
-          <a
-            href={about.github}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
-          >
-            <span className="text-accent">●</span> GitHub
-          </a>
-          <a
-            href={about.linkedin}
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
-          >
-            <span className="text-accent">●</span> LinkedIn
-          </a>
-          <a
-            href={about.resume}
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
-          >
-            <span className="text-accent">●</span> Resume
-          </a>
-        </div>
-
-        <div className="mt-12 border-t border-border pt-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <p className="text-xs text-zinc-600">
-              {siteCopy.footer.builtBy(about.name)}
-            </p>
-
-            <details className="text-xs text-zinc-500">
-              <summary className="cursor-pointer select-none hover:text-white transition-colors">
-                [ built with ]
-              </summary>
-              <div className="mt-3 rounded-xl border border-border bg-surface px-4 py-3 text-zinc-400">
-                {siteCopy.footer.stack}
-              </div>
-            </details>
+      <section id="contact" className="bg-[#F5F5F0] text-[#0D0D0D] border-t border-black/[0.08]">
+        <div className="p-10">
+          <div className="max-w-6xl mx-auto">
+            <p className="chat-section-label">{siteCopy.contact.label}</p>
+            <a
+              href={`mailto:${about.email}`}
+              className="mt-4 inline-block font-display text-[clamp(32px,6vw,42px)] leading-none text-[#1A6B35] hover:opacity-80 transition-opacity"
+            >
+              {about.email}
+            </a>
+            <div className="mt-6 flex flex-wrap gap-6">
+              {siteCopy.contact.links.map((link) => (
+                <a
+                  key={link.key}
+                  href={about[link.key]}
+                  target={link.key === "github" ? "_blank" : undefined}
+                  rel={link.key === "github" ? "noreferrer" : undefined}
+                  className="font-mono text-[11px] text-black/45 hover:text-[#1A6B35] transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
+
+        <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.08] px-10 py-6">
+          <p className="text-[10px] text-black/35">
+            {siteCopy.footer.copyright(about.name, about.year)}
+          </p>
+          <p className="text-[10px] text-black/35">{siteCopy.footer.builtWith}</p>
+        </footer>
       </section>
     </div>
   );

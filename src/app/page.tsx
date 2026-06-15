@@ -364,20 +364,24 @@ export default function Home() {
       </section>
 
       {/* GitHub */}
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20 border-t border-border">
-        <h2
-          className="font-display text-white leading-[0.9] tracking-tight"
-          style={{ fontSize: "clamp(44px, 6vw, 72px)" }}
-        >
-          {siteCopy.github.title}
-        </h2>
-        <p className="mt-4 text-zinc-500 max-w-2xl">
-          {siteCopy.github.subtitle}
-        </p>
-
-        <div className="mt-10">
-          <GitHubFeed />
+      <section className="bg-[#F5F5F0] text-[#0D0D0D]">
+        <div className="border-b border-black/[0.08] px-6 py-8">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="chat-section-label">{siteCopy.github.sectionLabel}</p>
+              <h2 className="mt-2 font-display text-[clamp(40px,8vw,64px)] leading-[0.95] tracking-tight">
+                {siteCopy.github.headline}{" "}
+                <span className="text-[#1A6B35]">{siteCopy.github.headlineAccent}</span>
+              </h2>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] text-[#1A6B35]">
+              <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
+              {siteCopy.github.liveLabel}
+            </div>
+          </div>
         </div>
+
+        <GitHubFeed />
       </section>
 
       {/* About */}

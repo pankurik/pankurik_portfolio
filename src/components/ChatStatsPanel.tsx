@@ -73,7 +73,7 @@ export function ChatStatsPanel() {
   ];
 
   return (
-    <aside className="flex flex-col bg-[#F0F0EB] px-6 py-8 overflow-y-auto">
+    <aside className="flex h-full flex-col bg-[#F0F0EB] px-6 py-8 overflow-y-auto">
       <p className="chat-section-label">{siteCopy.chat.statsLabel}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3">

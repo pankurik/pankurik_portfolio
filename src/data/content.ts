@@ -1,10 +1,19 @@
+export type ProjectDescriptionPart = {
+  text: string;
+  emphasis?: boolean;
+};
+
 export type Project = {
   title: string;
-  description: string;
+  description: ProjectDescriptionPart[];
+  tagPills: string[];
+  role: string;
+  period: string;
   tags: string[];
   link: string;
   whatIBuilt: string;
   type: "Professional" | "Personal" | "Team";
+  featured?: boolean;
 };
 
 export type Experience = {
@@ -67,8 +76,17 @@ export const projects: Project[] = [
   {
     title: "AdsGency AI",
     type: "Professional",
-    description:
-      "AI-driven marketing automation platform for e-commerce brands — multi-agent pipelines, unified analytics, and production infrastructure at scale.",
+    featured: true,
+    tagPills: ["Professional", "AI Platform"],
+    role: "Software Engineer",
+    period: "Aug 2025 – Jan 2026",
+    description: [
+      { text: "AI-driven marketing automation platform with " },
+      { text: "LangGraph multi-agent pipelines", emphasis: true },
+      { text: ", ETL across 8 sources, and a " },
+      { text: "real-time analytics dashboard", emphasis: true },
+      { text: " — i18n in 7 languages on AWS/Docker/CI-CD." },
+    ],
     tags: [
       "LangGraph",
       "Python",
@@ -85,8 +103,16 @@ export const projects: Project[] = [
   {
     title: "CardMind iOS",
     type: "Personal",
-    description:
-      "A solo iOS app for credit card payment tracking with smart reminders — designed, built, and shipped in one week.",
+    tagPills: ["Personal", "iOS"],
+    role: "Solo Developer",
+    period: "Shipped in one week",
+    description: [
+      { text: "Solo iOS app for " },
+      { text: "credit card payment tracking", emphasis: true },
+      { text: " with SwiftUI, SwiftData, WidgetKit, and " },
+      { text: "escalating smart notifications", emphasis: true },
+      { text: "." },
+    ],
     tags: ["SwiftUI", "SwiftData", "WidgetKit", "Swift Charts"],
     link: "https://github.com/pankurik",
     whatIBuilt:
@@ -95,18 +121,34 @@ export const projects: Project[] = [
   {
     title: "Recipe App",
     type: "Personal",
-    description:
-      "A SwiftUI cooking app built for the actual cooking experience — big text, hands-free support, and step-by-step navigation.",
+    tagPills: ["Personal", "iOS"],
+    role: "Solo Developer",
+    period: "SwiftUI · AVFoundation",
+    description: [
+      { text: "SwiftUI cooking app with " },
+      { text: "cooking mode", emphasis: true },
+      { text: ", step-by-step timers, and " },
+      { text: "text-to-speech", emphasis: true },
+      { text: " for hands-free use mid-recipe." },
+    ],
     tags: ["Swift", "SwiftUI", "AVFoundation"],
     link: "https://github.com/pankurik",
     whatIBuilt:
       "Cooking mode with step-by-step navigation, per-step timers, and text-to-speech via AVFoundation so instructions can be followed without constantly touching the phone.",
   },
   {
-    title: "Discord Personal Finance Bot",
+    title: "Discord Finance Bot",
     type: "Personal",
-    description:
-      "A chat-first Discord bot that makes tracking spending frictionless — log expenses, view summaries, and set budgets without opening another app.",
+    tagPills: ["Personal", "Side Project"],
+    role: "Solo Developer",
+    period: "Python · MySQL",
+    description: [
+      { text: "Chat-first " },
+      { text: "budget tracking", emphasis: true },
+      { text: " bot for Discord — log expenses, view summaries, and set budgets via " },
+      { text: "Discord API", emphasis: true },
+      { text: " commands." },
+    ],
     tags: ["Python", "MySQL", "Discord API"],
     link: "https://github.com/pankurik",
     whatIBuilt:
@@ -115,8 +157,16 @@ export const projects: Project[] = [
   {
     title: "EduBridge",
     type: "Team",
-    description:
-      "A team-built platform connecting students with mentors — role-based access, discovery flows, and a full React frontend.",
+    tagPills: ["Team", "Ed-tech"],
+    role: "Frontend Developer",
+    period: "Team Project",
+    description: [
+      { text: "Team-built mentor discovery platform with " },
+      { text: "role-based access", emphasis: true },
+      { text: ", React frontend, and flows for connecting students with " },
+      { text: "mentors", emphasis: true },
+      { text: "." },
+    ],
     tags: ["React", "REST APIs", "Role-Based Access"],
     link: "https://github.com/pankurik",
     whatIBuilt:
@@ -260,9 +310,11 @@ export const siteCopy = {
     ],
   },
   projects: {
-    title: "Things I've Built",
-    subtitle:
-      "Real systems, shipped work, and projects I built because I wanted them to exist.",
+    sectionLabel: "What I've shipped",
+    headline: "SELECTED",
+    headlineAccent: "WORK",
+    dragHint: "Drag to explore",
+    cta: "View project →",
   },
   skills: {
     title: "What I Work With",

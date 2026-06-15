@@ -120,7 +120,7 @@ export default function Home() {
     if (!container) return;
 
     const ids = PAGE_SECTIONS.map((s) => s.id);
-    const visibleHeights = new Map<string, number>();
+    const visibleRatios = new Map<string, number>();
 
     const updateSectionClasses = (nextId: string) => {
       const prevId = activeSectionRef.current;
@@ -142,22 +142,19 @@ export default function Home() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          visibleHeights.set(
-            entry.target.id,
-            entry.isIntersecting ? entry.intersectionRect.height : 0
-          );
+          visibleRatios.set(entry.target.id, entry.intersectionRatio);
         });
 
         let bestId = activeSectionRef.current;
-        let bestVisible = 0;
-        visibleHeights.forEach((height, id) => {
-          if (height > bestVisible) {
-            bestVisible = height;
+        let bestRatio = 0;
+        visibleRatios.forEach((ratio, id) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
             bestId = id;
           }
         });
 
-        if (bestVisible > 0) {
+        if (bestRatio > 0) {
           updateSectionClasses(bestId);
         }
       },

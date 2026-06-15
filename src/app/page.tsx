@@ -37,6 +37,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeSection, setActiveSection] = useState("top");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
@@ -47,6 +48,7 @@ export default function Home() {
   const [contactError, setContactError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   function scrollToId(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -57,23 +59,113 @@ export default function Home() {
   }, [messages, loading]);
 
   useEffect(() => {
-    const sectionIds = ["top", "projects", "about", "chat", "contact"];
-    const observers = sectionIds.flatMap((id) => {
+    const onScroll = () => {
+      const { scrollTop, scrollHeight } = document.documentElement;
+      const maxScroll = scrollHeight - window.innerHeight;
+      setScrollProgress(maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    const onScroll = () => {
+      video.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sectionIds = [
+      "top",
+      "projects",
+      "about",
+      "skills",
+      "github",
+      "chat",
+      "contact",
+    ];
+    const visibility = new Map<string, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibility.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRatio : 0
+          );
+        });
+
+        let bestId = "top";
+        let bestRatio = 0;
+        visibility.forEach((ratio, id) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        });
+
+        if (bestRatio > 0) setActiveSection(bestId);
+      },
+      {
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+        rootMargin: "-80px 0px -45% 0px",
+      }
+    );
+
+    sectionIds.forEach((id) => {
       const el = document.getElementById(id);
-      if (!el) return [];
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry?.isIntersecting) setActiveSection(id);
-        },
-        { rootMargin: "-42% 0px -52% 0px", threshold: 0 }
-      );
-
-      observer.observe(el);
-      return [observer];
+      if (el) observer.observe(el);
     });
 
-    return () => observers.forEach((observer) => observer.disconnect());
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const reveal = (el: Element) => el.classList.add("scroll-visible");
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      document.querySelectorAll(".scroll-hidden").forEach(reveal);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const observeAll = () => {
+      document
+        .querySelectorAll(".scroll-hidden:not(.scroll-visible)")
+        .forEach((el) => observer.observe(el));
+    };
+
+    observeAll();
+    const frame = requestAnimationFrame(observeAll);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   async function handleSend(text?: string) {
@@ -160,6 +252,12 @@ export default function Home() {
 
   return (
     <div className="portfolio-page min-h-screen">
+      <div
+        className="scroll-progress-bar"
+        style={{ width: `${scrollProgress}%` }}
+        aria-hidden="true"
+      />
+
       <header className="site-nav">
         <div className="section-content py-4 flex items-center justify-between gap-6">
           <button
@@ -206,12 +304,13 @@ export default function Home() {
         <div className="flex flex-col w-full">
           <div className="hero-video-block relative min-h-[70vh] w-full overflow-hidden">
             <video
+              ref={heroVideoRef}
               src="/BayArea.mp4"
               autoPlay
               muted
               loop
               playsInline
-              className="absolute inset-0 z-0 h-full w-full object-cover"
+              className="absolute inset-0 z-0 h-full w-full object-cover will-change-transform"
             />
             <div
               className="absolute inset-0 z-[1]"
@@ -221,7 +320,7 @@ export default function Home() {
               }}
             />
             <div className="relative z-[2] mx-auto flex min-h-[70vh] max-w-6xl flex-col justify-end px-6 pb-10 pt-10 md:pt-14">
-              <div className="flex flex-wrap items-center gap-3 text-xs">
+              <div className="scroll-hidden scroll-from-bottom scroll-stagger-100 flex flex-wrap items-center gap-3 text-xs">
                 <span className="rounded-full border border-white/50 px-3 py-1 text-white">
                   {about.title}
                 </span>
@@ -272,7 +371,7 @@ export default function Home() {
             </div>
 
             <div className="max-w-6xl mx-auto px-6 py-10 grid gap-10 md:grid-cols-2">
-              <div>
+              <div className="scroll-hidden scroll-from-bottom scroll-stagger-100">
                 <p className="text-sm leading-relaxed text-black/60">
                   {about.shortBio}
                 </p>
@@ -292,13 +391,14 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
+              <div className="scroll-hidden scroll-from-bottom scroll-stagger-100" style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}>
                 <p className="section-label">Currently into</p>
                 <ul className="mt-4 space-y-0">
-                  {hero.currentlyInto.map((item) => (
+                  {hero.currentlyInto.map((item, itemIndex) => (
                     <li
                       key={item.title}
-                      className="flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
+                      className="scroll-hidden scroll-from-bottom scroll-stagger-100 flex items-baseline justify-between gap-4 py-3 border-b border-black/[0.06] text-sm"
+                      style={{ "--scroll-stagger-index": itemIndex + 2 } as React.CSSProperties}
                     >
                       <span className="text-black/70">{item.title}</span>
                       <span className="text-[#1A6B35] text-right shrink-0">
@@ -318,7 +418,7 @@ export default function Home() {
       {/* About */}
       <section id="about" className="portfolio-section">
         <div className="section-content">
-          <div className="section-intro">
+          <div className="section-intro scroll-hidden scroll-from-bottom scroll-stagger-100">
             <div className="section-intro-title">
               <p className="section-label">{siteCopy.about.sectionLabel}</p>
               <h2 className="section-title">
@@ -329,10 +429,10 @@ export default function Home() {
           </div>
 
           <div className="grid gap-10 lg:grid-cols-2">
-            <p className="font-mono text-sm leading-[1.9] text-black/55">
+            <p className="scroll-hidden scroll-from-bottom scroll-stagger-100 font-mono text-sm leading-[1.9] text-black/55">
               <RichText parts={about.bioStrip} />
             </p>
-            <div className="space-y-3">
+            <div className="scroll-hidden scroll-from-bottom scroll-stagger-100 space-y-3" style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}>
               <div className="flex flex-wrap gap-2">
                 {about.bioPills.green.map((pill) => (
                   <span
@@ -359,13 +459,16 @@ export default function Home() {
           </div>
 
           <div className="section-subblock">
-            <p className="section-label mb-8">{siteCopy.experience.label}</p>
+            <p className="scroll-hidden scroll-from-bottom scroll-stagger-100 section-label mb-8">{siteCopy.experience.label}</p>
             <div className="space-y-12">
-              {experience.map((job) => (
+              {experience.map((job, jobIndex) => (
                 <div
                   key={`${job.company}-${job.period}`}
-                  className="grid gap-x-10"
-                  style={{ gridTemplateColumns: "160px 1px 1fr" }}
+                  className="scroll-hidden scroll-from-left scroll-stagger-150 grid gap-x-10"
+                  style={{
+                    gridTemplateColumns: "160px 1px 1fr",
+                    "--scroll-stagger-index": jobIndex,
+                  } as React.CSSProperties}
                 >
                   <div>
                     <p className="font-mono text-[11px] text-black/40 leading-relaxed">
@@ -417,12 +520,13 @@ export default function Home() {
           </div>
 
           <div className="section-subblock">
-            <p className="section-label mb-8">{siteCopy.leadership.label}</p>
+            <p className="scroll-hidden scroll-from-bottom scroll-stagger-100 section-label mb-8">{siteCopy.leadership.label}</p>
             <div className="grid gap-4 md:grid-cols-3">
-              {leadership.map((entry) => (
+              {leadership.map((entry, entryIndex) => (
                 <article
                   key={`${entry.title}-${entry.period}`}
-                  className="border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
+                  className="scroll-hidden scroll-from-bottom scroll-stagger-100 border-[0.5px] border-black/[0.08] p-5 transition-colors hover:border-[#1A6B35]/30"
+                  style={{ "--scroll-stagger-index": entryIndex } as React.CSSProperties}
                 >
                   <h3 className="font-display text-[22px] leading-tight tracking-tight">
                     {entry.title}
@@ -444,7 +548,7 @@ export default function Home() {
       {/* Skills */}
       <section id="skills" className="portfolio-section pt-0">
         <div className="section-content">
-          <div className="section-intro section-intro-minimal">
+          <div className="section-intro section-intro-minimal scroll-hidden scroll-from-bottom scroll-stagger-100">
             <p className="section-label">{siteCopy.skills.sectionLabel}</p>
             <p className="section-intro-meta">{siteCopy.skills.hoverHint}</p>
           </div>
@@ -456,7 +560,7 @@ export default function Home() {
       {/* GitHub */}
       <section id="github" className="portfolio-section pt-0">
         <div className="section-content">
-          <div className="section-intro section-intro-minimal">
+          <div className="section-intro section-intro-minimal scroll-hidden scroll-from-bottom scroll-stagger-100">
             <p className="section-label">{siteCopy.github.sectionLabel}</p>
             <div className="section-intro-meta flex items-center gap-2 text-[#1A6B35]">
               <span className="hero-nav-pulse w-2 h-2 rounded-full bg-[#1A6B35]" />
@@ -465,13 +569,15 @@ export default function Home() {
           </div>
         </div>
 
-        <GitHubFeed />
+        <div className="scroll-hidden scroll-from-bottom scroll-stagger-100">
+          <GitHubFeed />
+        </div>
       </section>
 
       {/* Chat */}
       <section id="chat" className="portfolio-section min-h-[85vh] flex flex-col pb-0">
         <div className="section-content">
-          <div className="section-intro">
+          <div className="section-intro scroll-hidden scroll-from-bottom scroll-stagger-100">
             <div className="section-intro-title">
               <p className="section-label">{siteCopy.chat.sectionLabel}</p>
               <h2 className="section-title">
@@ -479,12 +585,12 @@ export default function Home() {
                 <span className="section-title-accent">{siteCopy.chat.headlineAccent}</span>
               </h2>
             </div>
-            <p className="section-intro-meta lg:text-right">{siteCopy.chat.description}</p>
+            <p className="section-intro-meta lg:text-right scroll-hidden scroll-from-bottom scroll-stagger-100" style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}>{siteCopy.chat.description}</p>
           </div>
         </div>
 
         <div className="flex-1 grid lg:grid-cols-2 min-h-0 border-t border-black/[0.06]">
-          <div className="flex flex-col min-h-[70vh] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-black/[0.08]">
+          <div className="scroll-hidden scroll-from-left scroll-stagger-100 flex flex-col min-h-[70vh] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-black/[0.08]">
             <div className="flex-1 overflow-y-auto px-6 py-6">
               <div className="flex flex-col gap-5">
                 {messages.map((msg, i) => (
@@ -564,21 +670,24 @@ export default function Home() {
             </div>
           </div>
 
-          <ChatStatsPanel />
+          <div className="scroll-hidden scroll-from-right scroll-stagger-100 h-full min-h-[70vh] lg:min-h-0">
+            <ChatStatsPanel />
+          </div>
         </div>
       </section>
 
       <section id="contact" className="portfolio-section border-t border-black/[0.06]">
         <div className="section-content">
-            <p className="section-label">{siteCopy.contact.label}</p>
+            <p className="scroll-hidden scroll-from-bottom scroll-stagger-100 section-label">{siteCopy.contact.label}</p>
             <a
               href={`mailto:${about.email}`}
-              className="mt-4 inline-block font-display text-[clamp(32px,6vw,42px)] leading-none text-[#1A6B35] hover:opacity-80 transition-opacity"
+              className="scroll-hidden scroll-from-bottom scroll-stagger-100 mt-4 inline-block font-display text-[clamp(32px,6vw,42px)] leading-none text-[#1A6B35] hover:opacity-80 transition-opacity"
+              style={{ "--scroll-stagger-index": 1 } as React.CSSProperties}
             >
               {about.email}
             </a>
             <div className="mt-6 flex flex-wrap gap-6">
-              {siteCopy.contact.links.map((link) => {
+              {siteCopy.contact.links.map((link, linkIndex) => {
                 const href = about[link.key];
                 const isExternal =
                   href.startsWith("http") || link.key === "resume";
@@ -589,7 +698,8 @@ export default function Home() {
                   href={href}
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noreferrer" : undefined}
-                  className="font-mono text-[11px] text-black/45 hover:text-[#1A6B35] transition-colors"
+                  className="scroll-hidden scroll-from-bottom scroll-stagger-100 font-mono text-[11px] text-black/45 hover:text-[#1A6B35] transition-colors"
+                  style={{ "--scroll-stagger-index": linkIndex + 2 } as React.CSSProperties}
                 >
                   {link.label}
                 </a>
@@ -597,13 +707,14 @@ export default function Home() {
               })}
             </div>
 
-            <p className="mt-8 mb-6 text-[10px] uppercase tracking-[0.12em] text-black/25">
+            <p className="scroll-hidden scroll-from-bottom scroll-stagger-100 mt-8 mb-6 text-[10px] uppercase tracking-[0.12em] text-black/25" style={{ "--scroll-stagger-index": 5 } as React.CSSProperties}>
               Or send a message
             </p>
 
             <form
               onSubmit={handleContactSubmit}
-              className="flex max-w-[480px] flex-col gap-5"
+              className="scroll-hidden scroll-from-bottom scroll-stagger-100 flex max-w-[480px] flex-col gap-5"
+              style={{ "--scroll-stagger-index": 6 } as React.CSSProperties}
             >
               <input
                 type="text"
@@ -705,7 +816,7 @@ export default function Home() {
             </form>
         </div>
 
-        <footer className="section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.06] pt-6 mt-10">
+        <footer className="scroll-hidden scroll-from-bottom scroll-stagger-100 section-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-black/[0.06] pt-6 mt-10">
           <p className="text-[10px] text-black/35">
             {siteCopy.footer.copyright(about.name, about.year)}
           </p>

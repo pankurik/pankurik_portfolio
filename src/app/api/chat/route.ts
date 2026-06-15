@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       "utf-8"
     );
 
-    const { message } = await req.json();
+    const { message, history = [] } = await req.json();
 
     if (!message || typeof message !== "string") {
       return NextResponse.json(
@@ -23,8 +23,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const lastUserMessage = [...history]
+      .reverse()
+      .find((entry: { role: string; content: string }) => entry.role === "user")
+      ?.content;
+
+    const wordCount = message.trim().split(/\s+/).filter(Boolean).length;
+    const embeddingText =
+      wordCount <= 10 && lastUserMessage
+        ? `${lastUserMessage} ${message}`
+        : message;
+
     // 1. Generate embedding for the user's question
-    const queryEmbedding = await generateEmbedding(message);
+    const queryEmbedding = await generateEmbedding(embeddingText);
 
     // 2. Retrieve relevant context from Supabase pgvector
     const { data: documents, error: matchError } = await supabase.rpc(
@@ -47,7 +58,7 @@ export async function POST(req: NextRequest) {
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       system: `${systemPrompt}\n\n## Relevant context from knowledge base:\n${context}`,
-      messages: [{ role: "user", content: message }],
+      messages: [...history, { role: "user", content: message }],
     });
 
     const answer =

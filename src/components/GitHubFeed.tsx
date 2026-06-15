@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { about, siteCopy } from "@/data/content";
+import { useEffect, useState } from "react";
+import { siteCopy } from "@/data/content";
 
 type FeedItem = {
   type: "PushEvent" | "CreateEvent" | "PullRequestEvent" | "WatchEvent";
@@ -10,65 +10,67 @@ type FeedItem = {
   created_at: string;
 };
 
-function relativeTime(iso: string) {
-  const date = new Date(iso);
-  const diffMs = date.getTime() - Date.now();
+function relativeTimeCompact(iso: string) {
+  const diffMs = Date.now() - new Date(iso).getTime();
   const diffSec = Math.round(diffMs / 1000);
-
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
   const abs = Math.abs(diffSec);
-  if (abs < 60) return rtf.format(diffSec, "second");
+
+  if (abs < 60) return "just now";
   const diffMin = Math.round(diffSec / 60);
-  if (Math.abs(diffMin) < 60) return rtf.format(diffMin, "minute");
+  if (Math.abs(diffMin) < 60) return `${Math.abs(diffMin)}m ago`;
   const diffHr = Math.round(diffMin / 60);
-  if (Math.abs(diffHr) < 24) return rtf.format(diffHr, "hour");
+  if (Math.abs(diffHr) < 24) return `${Math.abs(diffHr)}h ago`;
   const diffDay = Math.round(diffHr / 24);
-  if (Math.abs(diffDay) < 30) return rtf.format(diffDay, "day");
+  if (Math.abs(diffDay) < 30) return `${Math.abs(diffDay)}d ago`;
   const diffMo = Math.round(diffDay / 30);
-  if (Math.abs(diffMo) < 12) return rtf.format(diffMo, "month");
+  if (Math.abs(diffMo) < 12) return `${Math.abs(diffMo)}mo ago`;
   const diffYr = Math.round(diffMo / 12);
-  return rtf.format(diffYr, "year");
+  return `${Math.abs(diffYr)}y ago`;
 }
 
-function SkeletonRow() {
+function TerminalGroup({
+  delay,
+  children,
+}: {
+  delay: number;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="relative pl-6">
-      <span className="absolute left-0 top-[6px] w-2.5 h-2.5 rounded-full bg-accent/30" />
-      <div className="h-4 w-[68%] rounded bg-white/5 animate-pulse" />
-      <div className="mt-2 h-3 w-[40%] rounded bg-white/5 animate-pulse" />
+    <div
+      className="terminal-group"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
     </div>
   );
 }
 
 export function GitHubFeed() {
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState<FeedItem[] | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [events, setEvents] = useState<FeedItem[]>([]);
+  const [rateLimited, setRateLimited] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
       setLoading(true);
-      setFailed(false);
+      setRateLimited(false);
 
       try {
         const res = await fetch("/api/github");
-        if (!res.ok) {
-          // rate-limited (429) or upstream error — we’ll just show fallback
-          throw new Error(`github feed failed: ${res.status}`);
+        if (res.status === 429) {
+          if (!cancelled) setRateLimited(true);
+          return;
         }
+        if (!res.ok) throw new Error(`github feed failed: ${res.status}`);
         const data = (await res.json()) as { events?: FeedItem[] };
         if (cancelled) return;
         setEvents(Array.isArray(data.events) ? data.events : []);
       } catch {
-        if (cancelled) return;
-        setFailed(true);
-        setEvents([]);
+        if (!cancelled) setRateLimited(true);
       } finally {
-        if (cancelled) return;
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -78,65 +80,90 @@ export function GitHubFeed() {
     };
   }, []);
 
-  const isEmpty = useMemo(() => !events || events.length === 0, [events]);
+  const eventBaseDelay = 200;
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6">
-      <div className="flex items-center gap-3">
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60 opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
-        </span>
-        <p className="text-sm text-zinc-300">Active on GitHub</p>
-      </div>
-
-      <div className="relative mt-6">
-        <div className="absolute left-[4px] top-1 bottom-1 w-px bg-border" />
-
-        <div className="space-y-5">
-          {loading ? (
-            <>
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-            </>
-          ) : isEmpty || failed ? (
-            <div className="pl-6">
-              <p className="text-sm text-zinc-500">
-                {siteCopy.github.fallback}
-              </p>
-            </div>
-          ) : (
-            events!.map((e, idx) => (
-              <div key={`${e.repo}-${e.created_at}-${idx}`} className="relative pl-6">
-                <span className="absolute left-0 top-[6px] w-2.5 h-2.5 rounded-full bg-accent glow" />
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <p className="text-sm text-zinc-200">{e.description}</p>
-                  <span className="text-sm font-mono text-accent">{e.repo}</span>
-                  <span className="text-xs text-zinc-600">
-                    {relativeTime(e.created_at)}
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
+    <div className="github-terminal w-full bg-[#0D0D0D]">
+      <div className="flex items-center justify-center relative border-b border-white/[0.06] px-4 py-3">
+        <div className="absolute left-4 flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+          <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+          <span className="w-3 h-3 rounded-full bg-[#28C840]" />
         </div>
+        <p className="text-[11px] text-white/35 font-mono">
+          {siteCopy.github.terminalTitle}
+        </p>
       </div>
 
-      <div className="mt-6">
-        <a
-          href={about.github}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm text-zinc-400 hover:text-white transition-colors"
-        >
-          {siteCopy.github.cta}
-        </a>
+      <div className="terminal-body min-h-[420px] p-6 font-mono text-sm leading-relaxed">
+        <TerminalGroup delay={0}>
+          <p className="terminal-line">
+            <span className="text-[#1A6B35]">~$</span>{" "}
+            <span className="text-[#F5F5F0]">{siteCopy.github.command}</span>
+          </p>
+        </TerminalGroup>
+
+        {loading && (
+          <TerminalGroup delay={100}>
+            <p className="terminal-line terminal-output pl-4 text-white/50">
+              {siteCopy.github.fetching}
+            </p>
+          </TerminalGroup>
+        )}
+
+        {!loading && rateLimited && (
+          <TerminalGroup delay={100}>
+            <p className="terminal-line pl-4 text-[rgba(255,80,80,0.8)]">
+              {siteCopy.github.rateLimitError}
+            </p>
+          </TerminalGroup>
+        )}
+
+        {!loading &&
+          !rateLimited &&
+          events.map((event, index) => (
+            <TerminalGroup
+              key={`${event.repo}-${event.created_at}-${index}`}
+              delay={eventBaseDelay + index * 100}
+            >
+              <p className="terminal-line text-[#1A6B35]">✓ {event.type}</p>
+              <p className="terminal-line terminal-output pl-4 text-white/50">
+                <span className="text-[#F5F5F0]">{event.repo}</span>{" "}
+                <span className="text-white/20">
+                  {relativeTimeCompact(event.created_at)}
+                </span>
+              </p>
+              <p className="terminal-line terminal-output pl-4 text-white/20">
+                └── {event.description}
+              </p>
+              {index < events.length - 1 && <div className="h-3" />}
+            </TerminalGroup>
+          ))}
+
+        {!loading && (
+          <TerminalGroup
+            delay={
+              rateLimited
+                ? 200
+                : eventBaseDelay + Math.max(events.length, 1) * 100
+            }
+          >
+            <p className="terminal-line terminal-comment text-white/20 mt-2">
+              {siteCopy.github.currentlyBuildingLabel}
+            </p>
+            {siteCopy.github.building.map((item) => (
+              <p
+                key={item.repo}
+                className="terminal-line terminal-output pl-4 text-white/50"
+              >
+                <span className="text-[#1A6B35]">→ {item.repo}</span>{" "}
+                <span className="text-white/20">{item.note}</span>
+              </p>
+            ))}
+            <span className="terminal-cursor inline-block mt-4" aria-hidden="true" />
+          </TerminalGroup>
+        )}
       </div>
     </div>
   );
 }
-

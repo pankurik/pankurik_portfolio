@@ -60,22 +60,16 @@ export type HeroListItem = {
   tags: string[];
 };
 
-export type SkillSize = "xl" | "lg" | "md" | "sm";
-export type SkillFlyDirection = "left" | "right" | "top" | "bottom";
-
-export type SkillItem = {
+export type Skill = {
   name: string;
-  size: SkillSize;
-  green?: boolean;
-  position: {
-    top?: string;
-    left?: string;
-    right?: string;
-    bottom?: string;
-  };
-  direction: SkillFlyDirection;
-  tooltip: string;
-  rotation: number;
+  context: string;
+  primary?: boolean;
+};
+
+export type SkillCategory = {
+  id: string;
+  label: string;
+  skills: Skill[];
 };
 
 export const about: About = {
@@ -289,264 +283,79 @@ export const experience: Experience[] = [
   },
 ];
 
-export const skillItems: SkillItem[] = [
+export const skillCategories: SkillCategory[] = [
   {
-    name: "Python",
-    size: "xl",
-    green: true,
-    position: { top: "6%", left: "2%" },
-    direction: "left",
-    tooltip: "AdsGency · ETL pipelines",
-    rotation: -1.4,
+    id: "ai",
+    label: "AI & Agents",
+    skills: [
+      { name: "LangGraph", context: "Multi-agent pipelines at AdsGency AI", primary: true },
+      { name: "RAG Pipelines", context: "Portfolio AI chat with pgvector retrieval", primary: true },
+      { name: "OpenAI", context: "Embeddings and generation at AdsGency", primary: true },
+      { name: "Claude API", context: "Portfolio AI agent responses" },
+    ],
   },
   {
-    name: "LangGraph",
-    size: "xl",
-    green: true,
-    position: { top: "3%", left: "34%" },
-    direction: "top",
-    tooltip: "Multi-agent pipelines",
-    rotation: 1.1,
+    id: "backend",
+    label: "Backend & APIs",
+    skills: [
+      { name: "Python", context: "AdsGency ETL, FastAPI services, data pipelines", primary: true },
+      { name: "FastAPI", context: "AdsGency AI platform APIs", primary: true },
+      { name: "Node.js", context: "Portfolio API routes and server logic" },
+      { name: "REST APIs", context: "Shopify, Meta, and Google integrations" },
+      { name: "NestJS", context: "SpeEdLabs backend services" },
+    ],
   },
   {
-    name: "AWS",
-    size: "xl",
-    green: true,
-    position: { top: "8%", right: "4%" },
-    direction: "right",
-    tooltip: "EC2 · S3 · Lambda · RDS · ECR",
-    rotation: -0.6,
+    id: "data",
+    label: "Data & Storage",
+    skills: [
+      { name: "PostgreSQL", context: "AdsGency analytics and portfolio submissions", primary: true },
+      { name: "SQL", context: "PostgreSQL, MySQL, and Supabase queries", primary: true },
+      { name: "Supabase", context: "Portfolio chat logs and pgvector embeddings" },
+      { name: "MySQL", context: "SpeEdLabs and finance tracker alerting" },
+      { name: "pgvector", context: "RAG embedding storage for portfolio chat" },
+      { name: "Databricks", context: "AdsGency data layer" },
+      { name: "Snowflake", context: "AdsGency data warehouse" },
+      { name: "Redis", context: "SpeEdLabs quiz state caching" },
+    ],
   },
   {
-    name: "React",
-    size: "xl",
-    green: true,
-    position: { top: "22%", left: "18%" },
-    direction: "left",
-    tooltip: "AdsGency dashboard · EduBridge",
-    rotation: 1.8,
+    id: "frontend",
+    label: "Frontend",
+    skills: [
+      { name: "React", context: "AdsGency dashboard and EduBridge platform", primary: true },
+      { name: "TypeScript", context: "AdsGency and this portfolio", primary: true },
+      { name: "Next.js", context: "This portfolio — App Router, API routes", primary: true },
+      { name: "Tailwind", context: "This portfolio styling system" },
+      { name: "Material UI", context: "EduBridge platform UI" },
+    ],
   },
   {
-    name: "TypeScript",
-    size: "xl",
-    green: true,
-    position: { top: "18%", right: "22%" },
-    direction: "right",
-    tooltip: "AdsGency · This portfolio",
-    rotation: -1.1,
+    id: "mobile",
+    label: "Mobile",
+    skills: [
+      { name: "Swift", context: "CardMind iOS and Recipe App", primary: true },
+      { name: "SwiftUI", context: "CardMind payment tracking and Recipe App UI", primary: true },
+    ],
   },
   {
-    name: "Next.js",
-    size: "xl",
-    green: true,
-    position: { top: "28%", left: "4%" },
-    direction: "left",
-    tooltip: "This portfolio",
-    rotation: 0.5,
+    id: "infra",
+    label: "Infrastructure",
+    skills: [
+      { name: "AWS", context: "EC2, S3, Lambda, RDS, and ECR at AdsGency", primary: true },
+      { name: "Docker", context: "AdsGency containerized deployments", primary: true },
+      { name: "GitHub Actions", context: "CI/CD pipelines across projects" },
+      { name: "Vercel", context: "This portfolio hosting" },
+    ],
   },
   {
-    name: "FastAPI",
-    size: "lg",
-    green: true,
-    position: { top: "24%", left: "48%" },
-    direction: "top",
-    tooltip: "AdsGency AI APIs",
-    rotation: -1.7,
-  },
-  {
-    name: "PostgreSQL",
-    size: "lg",
-    position: { top: "34%", right: "6%" },
-    direction: "right",
-    tooltip: "AdsGency · portfolio",
-    rotation: 1.3,
-  },
-  {
-    name: "Swift",
-    size: "lg",
-    green: true,
-    position: { top: "38%", left: "10%" },
-    direction: "left",
-    tooltip: "CardMind · Recipe App",
-    rotation: -0.9,
-  },
-  {
-    name: "SwiftUI",
-    size: "lg",
-    green: true,
-    position: { top: "42%", left: "36%" },
-    direction: "bottom",
-    tooltip: "CardMind · Recipe App",
-    rotation: 1.6,
-  },
-  {
-    name: "REST APIs",
-    size: "lg",
-    position: { top: "46%", right: "28%" },
-    direction: "right",
-    tooltip: "Shopify · Meta · Google",
-    rotation: -1.2,
-  },
-  {
-    name: "Docker",
-    size: "lg",
-    position: { top: "52%", left: "22%" },
-    direction: "bottom",
-    tooltip: "AdsGency deployments",
-    rotation: 0.8,
-  },
-  {
-    name: "RAG Pipelines",
-    size: "lg",
-    green: true,
-    position: { top: "50%", right: "3%" },
-    direction: "right",
-    tooltip: "This portfolio",
-    rotation: -1.5,
-  },
-  {
-    name: "SQL",
-    size: "lg",
-    position: { top: "58%", left: "5%" },
-    direction: "left",
-    tooltip: "PostgreSQL · MySQL · Supabase",
-    rotation: 1.0,
-  },
-  {
-    name: "OpenAI",
-    size: "lg",
-    position: { top: "56%", left: "52%" },
-    direction: "bottom",
-    tooltip: "Embeddings · AdsGency",
-    rotation: -0.7,
-  },
-  {
-    name: "Node.js",
-    size: "md",
-    position: { top: "62%", right: "18%" },
-    direction: "right",
-    tooltip: "Portfolio API routes",
-    rotation: 1.4,
-  },
-  {
-    name: "Tailwind",
-    size: "md",
-    position: { top: "68%", left: "28%" },
-    direction: "bottom",
-    tooltip: "This portfolio",
-    rotation: -1.0,
-  },
-  {
-    name: "Supabase",
-    size: "md",
-    position: { top: "64%", right: "38%" },
-    direction: "bottom",
-    tooltip: "This portfolio · pgvector",
-    rotation: 0.6,
-  },
-  {
-    name: "MySQL",
-    size: "md",
-    position: { top: "72%", left: "8%" },
-    direction: "left",
-    tooltip: "SpeEdLabs · Finance bot",
-    rotation: -1.8,
-  },
-  {
-    name: "GitHub Actions",
-    size: "md",
-    position: { top: "70%", left: "44%" },
-    direction: "bottom",
-    tooltip: "CI/CD pipelines",
-    rotation: 1.2,
-  },
-  {
-    name: "Claude API",
-    size: "md",
-    position: { top: "74%", right: "8%" },
-    direction: "right",
-    tooltip: "This portfolio AI agent",
-    rotation: -0.4,
-  },
-  {
-    name: "Databricks",
-    size: "md",
-    position: { top: "78%", left: "62%" },
-    direction: "bottom",
-    tooltip: "AdsGency data layer",
-    rotation: 1.7,
-  },
-  {
-    name: "Shopify API",
-    size: "md",
-    position: { top: "12%", right: "30%" },
-    direction: "top",
-    tooltip: "AdsGency integrations",
-    rotation: -1.3,
-  },
-  {
-    name: "Java",
-    size: "md",
-    position: { top: "32%", right: "42%" },
-    direction: "top",
-    tooltip: "Finance tracker alerting",
-    rotation: 0.9,
-  },
-  {
-    name: "Material UI",
-    size: "sm",
-    position: { top: "82%", left: "18%" },
-    direction: "bottom",
-    tooltip: "EduBridge platform",
-    rotation: -1.6,
-  },
-  {
-    name: "NestJS",
-    size: "sm",
-    position: { top: "84%", left: "38%" },
-    direction: "bottom",
-    tooltip: "SpeEdLabs backend",
-    rotation: 1.5,
-  },
-  {
-    name: "Redis",
-    size: "sm",
-    position: { top: "80%", right: "24%" },
-    direction: "right",
-    tooltip: "SpeEdLabs quiz state",
-    rotation: -0.5,
-  },
-  {
-    name: "Vercel",
-    size: "sm",
-    position: { top: "86%", right: "12%" },
-    direction: "bottom",
-    tooltip: "This portfolio",
-    rotation: 1.1,
-  },
-  {
-    name: "pgvector",
-    size: "sm",
-    position: { top: "88%", left: "52%" },
-    direction: "bottom",
-    tooltip: "RAG embeddings",
-    rotation: -1.9,
-  },
-  {
-    name: "Snowflake",
-    size: "sm",
-    position: { top: "16%", left: "58%" },
-    direction: "top",
-    tooltip: "AdsGency data layer",
-    rotation: 0.3,
-  },
-  {
-    name: "C / C++",
-    size: "sm",
-    position: { top: "76%", left: "72%" },
-    direction: "right",
-    tooltip: "CCSF tutoring · coursework",
-    rotation: -1.1,
+    id: "integrations",
+    label: "Integrations & Other",
+    skills: [
+      { name: "Shopify API", context: "AdsGency commerce integrations" },
+      { name: "Java", context: "Finance tracker alerting system" },
+      { name: "C / C++", context: "CCSF tutoring and coursework" },
+    ],
   },
 ];
 
@@ -653,7 +462,7 @@ export const siteCopy = {
     sectionLabel: "What I work with",
     headline: "SKILLS &",
     headlineAccent: "STACK",
-    hoverHint: "Hover any skill to see where I've used it.",
+    hoverHint: "Hover a skill to see where I've used it.",
   },
   github: {
     sectionLabel: "What I've been pushing",
@@ -697,8 +506,10 @@ export const siteCopy = {
   nav: {
     links: [
       { label: "Projects", href: "projects" },
-      { label: "About", href: "about" },
+      { label: "Skills", href: "skills" },
+      { label: "GitHub", href: "github" },
       { label: "Chat", href: "chat" },
+      { label: "About", href: "about" },
       { label: "Contact", href: "contact" },
     ],
   },

@@ -72,21 +72,32 @@ export type SkillCategory = {
   skills: Skill[];
 };
 
+export type Tool = {
+  name: string;
+  description: string;
+};
+
+export type ToolCategory = {
+  id: string;
+  label: string;
+  tools: Tool[];
+};
+
 export const about: About = {
   name: "Pankuri Khare",
   title: "Full-stack engineer",
   location: "San Francisco",
   shortBio:
     "Full-stack engineer based in SF. I build backends, AI pipelines, and iOS apps — and I care about systems that hold up under failure.",
-  bio: "I studied Computer Science and Comparative World Literature at San Francisco State University — an unusual mix, but it shaped how I think: part logical, part creative. I like understanding whole systems, not just my piece of them. That curiosity shows up in how I debug, how I architect, and how I communicate. Outside of code I'm reading, exploring ideas across disciplines, and occasionally convincing myself a side project is a good idea. I'm most energized by early-stage teams building things that matter — where engineers are close to the problem and ownership is real.",
+  bio: "I studied Computer Science and Comparative World Literature at San Francisco State University — an unusual mix, but it shaped how I think: part logical, part creative. Give me an ambiguous problem and I'll figure it out. That shows up in how I debug systems I've never seen, how I navigate infrastructure without a playbook, and how I keep going when the answer isn't obvious. I'm most energized by early-stage teams where engineers are close to the problem and ownership is real.",
   bioStrip: [
     { text: "I studied CS and Comparative World Literature at SF State — an unusual mix, but it shaped how I think: " },
     { text: "part logical, part creative", emphasis: true },
-    { text: ". I like understanding " },
-    { text: "whole systems", emphasis: true },
-    { text: ", not just my piece of them. That shows up in how I debug, how I architect, and how I communicate. I'm most energized by " },
+    { text: ". Give me an ambiguous problem and " },
+    { text: "I'll figure it out", emphasis: true },
+    { text: ". That shows up in how I debug systems I've never seen, navigate infrastructure without a playbook, and keep going when the answer isn't obvious. I'm most energized by " },
     { text: "early-stage teams", emphasis: true },
-    { text: " building things that matter — where engineers are close to the problem and " },
+    { text: " where engineers are close to the problem and " },
     { text: "ownership is real", emphasis: true },
     { text: "." },
   ],
@@ -115,11 +126,11 @@ export const projects: Project[] = [
     role: "Software Engineer",
     period: "Aug 2025 – Jan 2026",
     description: [
-      { text: "AI-driven marketing automation platform with " },
-      { text: "LangGraph multi-agent pipelines", emphasis: true },
-      { text: ", ETL across 8 sources, and a " },
+      { text: "AI-driven marketing automation platform — built the " },
+      { text: "DataValidationAgent from scratch", emphasis: true },
+      { text: ", normalized data across 8 enterprise sources, owned end-to-end i18n in 7 languages, and shipped the " },
       { text: "real-time analytics dashboard", emphasis: true },
-      { text: " — i18n in 7 languages on AWS/Docker/CI-CD." },
+      { text: " (frontend + backend) pulling live from Facebook, Google, TikTok, and LinkedIn." },
     ],
     tags: [
       "LangGraph",
@@ -128,11 +139,32 @@ export const projects: Project[] = [
       "PostgreSQL",
       "AWS",
       "Docker",
-      "CI/CD",
+      "Next.js",
+      "TypeScript",
+      "pgvector",
     ],
     link: "https://github.com/pankurik",
     whatIBuilt:
-      "LangGraph multi-agent pipelines for campaign workflows, ETL across 8 ad and commerce sources, a campaign recommendation engine, real-time analytics dashboard, and i18n support for 7 languages — deployed on AWS with Docker and CI/CD.",
+      "DataValidationAgent (schema validation, anomaly detection, freshness checks, exponential backoff retry logic, 1,382 lines of unit tests). Data normalization across Databricks, Redshift, Snowflake, BigQuery, PostgreSQL, Shopify, Salesforce, and MondayCRM. End-to-end i18n across frontend and backend — Babel translation infrastructure, 11 backend controllers, 7 languages. Real-time analytics dashboard (frontend + backend) pulling live from Facebook, Google, TikTok, and LinkedIn. Reduced planning page load from 5s to 2s, measured via PostHog. Top contributor to the frontend codebase: 991 of 2,068 commits.",
+  },
+  {
+    title: "Portfolio AI Agent",
+    type: "Personal",
+    featured: true,
+    tagPills: ["Personal", "AI"],
+    role: "Solo Developer",
+    period: "Next.js · Supabase · Claude",
+    description: [
+      { text: "RAG-powered AI agent built into this portfolio — user question → " },
+      { text: "OpenAI embedding → pgvector similarity search", emphasis: true },
+      { text: " → Claude Haiku with persona prompt + retrieved chunks → " },
+      { text: "logged to Supabase", emphasis: true },
+      { text: " for live stats." },
+    ],
+    tags: ["Next.js", "TypeScript", "Claude Haiku", "OpenAI", "pgvector", "Supabase", "RAG"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "Full RAG pipeline: knowledge base chunked by section headings, embedded via OpenAI text-embedding-3-small (1536 dimensions), stored in Supabase with pgvector. Per-query: embed → cosine similarity search (top 5, threshold 0.3) → Claude Haiku with system prompt + retrieved context. Q&A logged to Supabase; live stats panel shows real questions asked. Designed the persona prompt so the agent answers as me — warm, direct, no hallucinating facts not in the knowledge base.",
   },
   {
     title: "CardMind iOS",
@@ -141,16 +173,34 @@ export const projects: Project[] = [
     role: "Solo Developer",
     period: "Shipped in one week",
     description: [
-      { text: "Solo iOS app for " },
-      { text: "credit card payment tracking", emphasis: true },
-      { text: " with SwiftUI, SwiftData, WidgetKit, and " },
-      { text: "escalating smart notifications", emphasis: true },
-      { text: "." },
+      { text: "iOS app that solves a real problem: " },
+      { text: "multiple credit cards, different due dates, reminders you ignore", emphasis: true },
+      { text: ". CardMind sends escalating notifications that keep coming back until you actually pay — with one-tap " },
+      { text: "\"Paid\" to cancel all future reminders", emphasis: true },
+      { text: " for that card." },
     ],
-    tags: ["SwiftUI", "SwiftData", "WidgetKit", "Swift Charts"],
+    tags: ["SwiftUI", "SwiftData", "WidgetKit", "Swift Charts", "App Groups"],
     link: "https://github.com/pankurik",
     whatIBuilt:
-      "End-to-end iOS app with SwiftUI and SwiftData for payment tracking, home screen widgets via WidgetKit, spending visualizations with Swift Charts, and escalating smart notifications so due dates never slip.",
+      "Card-first UI with SwiftUI and SwiftData. Escalating notification system: automatic reminders at 5 days, 3 days, 2 days, 1 day, and due date — each with 'Paid' (cancels all future reminders instantly) and 'Remind me later' (snooze 1, 24, or 48 hours). Home screen widgets via WidgetKit — hardest part was sharing SwiftData between the main app and widget process using App Groups, shared container URLs, and manual WidgetCenter timeline reloads. Spending visualizations with Swift Charts. Validated with 10 people before building. Submitting to App Store soon.",
+  },
+  {
+    title: "EduBridge",
+    type: "Team",
+    tagPills: ["Team", "Ed-tech"],
+    role: "Frontend Lead",
+    period: "Senior Capstone · 5-person team",
+    description: [
+      { text: "Senior capstone — mentorship platform with " },
+      { text: "role-based dashboards", emphasis: true },
+      { text: " for students, mentors, and admins. I led the frontend: auth, JWT-protected routes, " },
+      { text: "mentor discovery flows, forums, and file uploads", emphasis: true },
+      { text: " — deployed to AWS EC2 and Netlify." },
+    ],
+    tags: ["React", "React Query", "Context API", "JWT", "AWS EC2", "Netlify"],
+    link: "https://github.com/pankurik",
+    whatIBuilt:
+      "Frontend architecture on a 5-person capstone team. Login flows, JWT authentication, protected routes, and role-based access control — students, mentors, and admins each saw different dashboards and data. Mentor discovery and matching flows. Forum and community features. File upload functionality. State management with React Context API and React Query. Deployed to AWS EC2 and Netlify — not just localhost.",
   },
   {
     title: "Recipe App",
@@ -159,16 +209,16 @@ export const projects: Project[] = [
     role: "Solo Developer",
     period: "SwiftUI · AVFoundation",
     description: [
-      { text: "SwiftUI cooking app with " },
-      { text: "cooking mode", emphasis: true },
-      { text: ", step-by-step timers, and " },
-      { text: "text-to-speech", emphasis: true },
-      { text: " for hands-free use mid-recipe." },
+      { text: "iOS cooking app built around one insight: most recipe apps are optimized for " },
+      { text: "discovering recipes, not actually cooking them", emphasis: true },
+      { text: ". Cooking Mode guides you step by step with integrated timers and " },
+      { text: "voice-guided instructions", emphasis: true },
+      { text: " so you never have to touch your phone mid-recipe." },
     ],
     tags: ["Swift", "SwiftUI", "AVFoundation"],
     link: "https://github.com/pankurik",
     whatIBuilt:
-      "Cooking mode with step-by-step navigation, per-step timers, and text-to-speech via AVFoundation so instructions can be followed without constantly touching the phone.",
+      "Cooking Mode with step-by-step navigation and per-step timers. Text-to-speech via AVFoundation reads each instruction aloud as you advance — hands-light by design. Interesting engineering challenge: keeping AVSpeechSynthesizer synchronized with SwiftUI state as users navigate between steps, avoiding overlapping speech when steps change quickly, and managing speech lifecycle correctly when leaving and returning to the screen. Built for iPhone and iPad.",
   },
   {
     title: "Discord Finance Bot",
@@ -177,34 +227,16 @@ export const projects: Project[] = [
     role: "Solo Developer",
     period: "Python · MySQL",
     description: [
-      { text: "Chat-first " },
-      { text: "budget tracking", emphasis: true },
-      { text: " bot for Discord — log expenses, view summaries, and set budgets via " },
-      { text: "Discord API", emphasis: true },
-      { text: " commands." },
+      { text: "Budget tracker that lives in Discord — because " },
+      { text: "logging an expense in 30 seconds means you'll actually do it", emphasis: true },
+      { text: ". Commands for expenses, budgets, savings goals, and summaries. Backed by a " },
+      { text: "normalized schema with 10+ entities", emphasis: true },
+      { text: " and SQL aggregation for real spending analytics." },
     ],
     tags: ["Python", "MySQL", "Discord API"],
     link: "https://github.com/pankurik",
     whatIBuilt:
-      "Python-based Discord bot with MySQL-backed budget tracking, category-based expense logging, spending summaries, and simple budget enforcement through chat commands.",
-  },
-  {
-    title: "EduBridge",
-    type: "Team",
-    tagPills: ["Team", "Ed-tech"],
-    role: "Frontend Developer",
-    period: "Team Project",
-    description: [
-      { text: "Team-built mentor discovery platform with " },
-      { text: "role-based access", emphasis: true },
-      { text: ", React frontend, and flows for connecting students with " },
-      { text: "mentors", emphasis: true },
-      { text: "." },
-    ],
-    tags: ["React", "REST APIs", "Role-Based Access"],
-    link: "https://github.com/pankurik",
-    whatIBuilt:
-      "React frontend with role-based access control, mentor discovery and matching flows, and collaborative team delivery across frontend and API integration.",
+      "Python Discord bot with commands for logging expenses, setting budgets, creating savings goals, and viewing spending summaries and category breakdowns. MySQL backend with a normalized relational schema covering 10+ entities — users, transactions, categories, budgets, goals, alerts, and summaries — with proper multi-user data isolation. SQL aggregation queries answered real questions: how much did I spend this month, which category is over budget, how close am I to a savings goal. Tested with real users and submitted as a database systems course project.",
   },
 ];
 
@@ -212,36 +244,54 @@ export const experience: Experience[] = [
   {
     company: "AdsGency AI",
     role: "Software Engineer",
-    period: "Aug 2025 – Jan 2026",
+    period: "Aug 2025 – Current",
     location: "San Francisco",
     employmentType: "Full-time",
     latest: true,
     bullets: [
       [
-        { text: "Built " },
+        { text: "Promoted to " },
+        { text: "primary technical owner within the first month", emphasis: true },
+        { text: " — full architecture authority, and de facto PM responsibilities; became the person holding the product together across a distributed engineering team" },
+      ],
+      [
+        { text: "Designed and built " },
         { text: "LangGraph multi-agent pipelines", emphasis: true },
-        { text: " for budget forecasting, SEO analysis, and content generation — integrated with OpenAI, LangChain, and PGVector" },
+        { text: " for customer segmentation and multi-platform ad generation — orchestrated OpenAI, LangChain, and PGVector into automated workflows that ran continuously against live customer data across Facebook, Instagram, Google, TikTok, Twitter, Pinterest, and LinkedIn" },
       ],
       [
-        { text: "Unified data layer across " },
+        { text: "Built the " },
+        { text: "DataValidationAgent from scratch", emphasis: true },
+        { text: " — a 366-line service wired into every ETL job with schema validation, anomaly detection, data freshness checks, exponential backoff retry logic, degradation tracking, and QA escalation; caught bad data before it reached customers and drove a " },
+        { text: "60% pipeline efficiency improvement", emphasis: true },
+        { text: "; backed by 1,382 lines of unit tests covering edge cases, timezone handling, and retry behavior" },
+      ],
+      [
+        { text: "Designed and built the " },
+        { text: "campaign recommendation engine solo", emphasis: true },
+        { text: " — ingested performance data, audience segments, and budget signals across ad platforms; scored and ranked recommendations using a keyword-matching engine; cached results in S3 with a campaign recommendation UI that let users view, refresh, and act on suggestions with generated reasoning" },
+      ],
+      [
+        { text: "Built a unified data layer across " },
         { text: "8 enterprise sources", emphasis: true },
-        { text: " — Databricks, Snowflake, Redshift, BigQuery, PostgreSQL, Shopify, Salesforce, Monday CRM" },
+        { text: " (Databricks, Redshift, Snowflake, BigQuery, PostgreSQL, Shopify, Salesforce, MondayCRM) — designed normalization metadata generation per source so the AI layer could analyze customer data consistently regardless of where it lived; full ETL pipeline: ingestion, normalization, validation, and orchestration of long-running jobs" },
       ],
       [
-        { text: "Wired " },
-        { text: "DataValidationAgent", emphasis: true },
-        { text: " into every ETL job — schema validation, anomaly detection, retry logic — improving pipeline efficiency by " },
-        { text: "60%", emphasis: true },
+        { text: "Built the " },
+        { text: "real-time multi-campaign analytics dashboard end-to-end", emphasis: true },
+        { text: " (API design → backend → UI) — replaced the workflow where customers logged into each ad platform separately; unified live data from Facebook, Google, TikTok, and LinkedIn into a single view; reduced planning page load from " },
+        { text: "5s → 2s", emphasis: true },
+        { text: " measured via PostHog" },
       ],
       [
-        { text: "Built " },
-        { text: "real-time analytics dashboard", emphasis: true },
-        { text: " pulling live from Facebook, Google, TikTok, and LinkedIn into one view" },
+        { text: "Owned full i18n across the entire product — extracted every hardcoded string from the frontend, built a " },
+        { text: "Babel-based translation extraction pipeline", emphasis: true },
+        { text: ", updated all API controllers to return localized responses, and shipped 7-language support (EN, AR, DE, ES, FR, HI, ZH) across frontend and backend simultaneously" },
       ],
       [
-        { text: "Led " },
-        { text: "i18n", emphasis: true },
-        { text: " across frontend and backend supporting 7 languages — Korea, Japan, Europe, India" },
+        { text: "Top contributor across all three repositories — " },
+        { text: "1,327 of 4,008 total commits (33%)", emphasis: true },
+        { text: ", took initiative to restructure all 3 repos (frontend, backend, AI-agents), provided architectural guidance on the agent codebase, and stayed on-call for live production failures — debugging issues in real time on AWS" },
       ],
     ],
   },
@@ -253,12 +303,14 @@ export const experience: Experience[] = [
     employmentType: "Part-time",
     bullets: [
       [
-        { text: "Taught C, C++, and data structures to 5 students — " },
-        { text: "pointers, memory management, linked lists, trees, sorting algorithms", emphasis: true },
+        { text: "Taught C, C++, data structures, algorithms, and OS concepts in " },
+        { text: "one-on-one scheduled sessions", emphasis: true },
+        { text: ", 10 hours weekly — topics included pointers, memory management, linked lists, trees, sorting algorithms, and process scheduling" },
       ],
       [
-        { text: "Tracked individual progress and adjusted explanations to match each student's " },
-        { text: "learning pace", emphasis: true },
+        { text: "All 5 students passed; " },
+        { text: "2 who were struggling at the start", emphasis: true },
+        { text: " finished with strong grades — adapted explanations to each student's learning pace and gaps rather than teaching to a fixed script" },
       ],
     ],
   },
@@ -270,14 +322,19 @@ export const experience: Experience[] = [
     employmentType: "Remote",
     bullets: [
       [
-        { text: "Built quiz infrastructure end-to-end — " },
-        { text: "incremental saves", emphasis: true },
-        { text: " that persisted responses continuously so no work was lost on refresh or disconnection" },
+        { text: "Built core quiz infrastructure end-to-end — question rendering, navigation, answer state management (unanswered / answered / marked for review), and " },
+        { text: "incremental save system", emphasis: true },
+        { text: " that persisted responses continuously so no work was lost on refresh, tab close, or network interruption" },
+      ],
+      [
+        { text: "Implemented timer system with countdown, automatic submission on timeout, and " },
+        { text: "state sync across browser refreshes", emphasis: true },
+        { text: " — critical for timed assessments running 1–3 hours with real students" },
       ],
       [
         { text: "React + TypeScript frontend, " },
         { text: "NestJS backend APIs", emphasis: true },
-        { text: ", PostgreSQL + Redis for persistence and active quiz state" },
+        { text: " for question retrieval, response storage, and submission processing; PostgreSQL for persistence, Redis to cache active quiz state and reduce repeated DB reads during live sessions" },
       ],
     ],
   },
@@ -292,6 +349,8 @@ export const skillCategories: SkillCategory[] = [
       { name: "RAG Pipelines", context: "Portfolio AI chat with pgvector retrieval", primary: true },
       { name: "OpenAI", context: "Embeddings and generation at AdsGency", primary: true },
       { name: "Claude API", context: "Portfolio AI agent responses" },
+      { name: "LangChain", context: "Agent tooling and LLM integration at AdsGency" },
+      { name: "Langfuse", context: "LLM observability and tracing at AdsGency" },
     ],
   },
   {
@@ -301,8 +360,9 @@ export const skillCategories: SkillCategory[] = [
       { name: "Python", context: "AdsGency ETL, FastAPI services, data pipelines", primary: true },
       { name: "FastAPI", context: "AdsGency AI platform APIs", primary: true },
       { name: "Node.js", context: "Portfolio API routes and server logic" },
-      { name: "REST APIs", context: "Shopify, Meta, and Google integrations" },
       { name: "NestJS", context: "SpeEdLabs backend services" },
+      { name: "REST APIs", context: "Shopify, Meta, Google, and LinkedIn integrations" },
+      { name: "Flask", context: "AdsGency AI agents service layer" },
     ],
   },
   {
@@ -312,22 +372,25 @@ export const skillCategories: SkillCategory[] = [
       { name: "PostgreSQL", context: "AdsGency analytics and portfolio submissions", primary: true },
       { name: "SQL", context: "PostgreSQL, MySQL, and Supabase queries", primary: true },
       { name: "Supabase", context: "Portfolio chat logs and pgvector embeddings" },
-      { name: "MySQL", context: "SpeEdLabs and finance tracker alerting" },
       { name: "pgvector", context: "RAG embedding storage for portfolio chat" },
-      { name: "Databricks", context: "AdsGency data layer" },
-      { name: "Snowflake", context: "AdsGency data warehouse" },
       { name: "Redis", context: "SpeEdLabs quiz state caching" },
+      { name: "MySQL", context: "Discord finance bot database" },
+      { name: "Databricks", context: "AdsGency data layer normalization" },
+      { name: "Snowflake", context: "AdsGency data warehouse normalization" },
+      { name: "BigQuery", context: "AdsGency analytics data source" },
+      { name: "Redshift", context: "AdsGency ETL pipeline" },
     ],
   },
   {
     id: "frontend",
     label: "Frontend",
     skills: [
-      { name: "React", context: "AdsGency dashboard and EduBridge platform", primary: true },
+      { name: "React", context: "AdsGency dashboard, EduBridge platform, SpeEdLabs quiz UI", primary: true },
       { name: "TypeScript", context: "AdsGency and this portfolio", primary: true },
       { name: "Next.js", context: "This portfolio — App Router, API routes", primary: true },
       { name: "Tailwind", context: "This portfolio styling system" },
-      { name: "Material UI", context: "EduBridge platform UI" },
+      { name: "React Query", context: "EduBridge data fetching and cache management" },
+      { name: "Ant Design", context: "AdsGency frontend component system" },
     ],
   },
   {
@@ -336,6 +399,9 @@ export const skillCategories: SkillCategory[] = [
     skills: [
       { name: "Swift", context: "CardMind iOS and Recipe App", primary: true },
       { name: "SwiftUI", context: "CardMind payment tracking and Recipe App UI", primary: true },
+      { name: "SwiftData", context: "CardMind local persistence and widget data sharing" },
+      { name: "WidgetKit", context: "CardMind home screen widgets with App Groups" },
+      { name: "AVFoundation", context: "Recipe App voice-guided cooking instructions" },
     ],
   },
   {
@@ -353,8 +419,51 @@ export const skillCategories: SkillCategory[] = [
     label: "Integrations & Other",
     skills: [
       { name: "Shopify API", context: "AdsGency commerce integrations" },
+      { name: "Discord API", context: "Finance bot commands and event handling" },
+      { name: "Babel", context: "AdsGency backend translation extraction and i18n pipeline" },
       { name: "Java", context: "Finance tracker alerting system" },
       { name: "C / C++", context: "CCSF tutoring and coursework" },
+    ],
+  },
+];
+
+export const toolCategories: ToolCategory[] = [
+  {
+    id: "dev",
+    label: "Dev Tools",
+    tools: [
+      { name: "Cursor", description: "Primary editor — AI-assisted coding and codebase navigation" },
+      { name: "Claude", description: "Architecture reasoning, system design, and writing" },
+      { name: "Claude Code", description: "Agentic coding directly from the CLI" },
+      { name: "Greptile", description: "AI code review on pull requests" },
+      { name: "GitHub Actions", description: "CI/CD pipelines — built and maintained them at AdsGency" },
+      { name: "Docker", description: "Containerized deployments on AWS (EC2, ECR)" },
+      { name: "AWS CLI", description: "EC2, S3, ECR deployments and production debugging" },
+    ],
+  },
+  {
+    id: "productivity",
+    label: "Productivity",
+    tools: [
+      { name: "Notion", description: "Job search system of record — applications, contacts, outreach pipeline" },
+      { name: "Google Calendar", description: "Scheduling and time management" },
+    ],
+  },
+  {
+    id: "design",
+    label: "Design",
+    tools: [
+      { name: "Excalidraw", description: "Sketching architecture and system design before writing any code" },
+      { name: "Antigravity", description: "Frontend UI iteration and component exploration" },
+    ],
+  },
+  {
+    id: "communication",
+    label: "Communication",
+    tools: [
+      { name: "Gmail", description: "Primary email" },
+      { name: "Slack", description: "Team communication" },
+      { name: "Zoom", description: "Meetings and interviews" },
     ],
   },
 ];
@@ -367,11 +476,11 @@ export const leadership: Leadership[] = [
     description: [
       { text: "Led a " },
       { text: "10-person officer team", emphasis: true },
-      { text: ", SF State's largest Diwali celebration with " },
+      { text: " and organized SF State's largest Diwali celebration with " },
       { text: "180+ attendees", emphasis: true },
-      { text: ", and drove " },
+      { text: ". Drove " },
       { text: "30% membership growth", emphasis: true },
-      { text: "." },
+      { text: " over two years by expanding programming, building community across international students, and keeping the organization running end-to-end as a full-time student." },
     ],
   },
   {
@@ -381,7 +490,7 @@ export const leadership: Leadership[] = [
     description: [
       { text: "Advised " },
       { text: "300+ first-year students", emphasis: true },
-      { text: " on academic planning, class registration, and navigating university life." },
+      { text: " on academic planning, class registration, and navigating university life — one-on-one and in group settings across three years." },
     ],
   },
   {
@@ -391,7 +500,7 @@ export const leadership: Leadership[] = [
     description: [
       { text: "Led groups of " },
       { text: "150+ students and parents per day", emphasis: true },
-      { text: " through orientation — registration, academics, housing, financial aid." },
+      { text: " through new student orientation — covering registration, academics, housing, and financial aid." },
     ],
   },
 ];
@@ -409,20 +518,22 @@ export const hero = {
     "AWS",
     "Docker",
     "Multi-Agent Systems",
+    "pgvector",
+    "RAG",
   ],
   currentlyInto: [
     { title: "AI in production", tags: ["latency", "cost", "trust"] },
     { title: "Clean architecture", tags: ["predictable systems"] },
-    { title: "Ed-tech for educators", tags: ["someday"] },
     { title: "Dark Japanese lit", tags: ["Yoko Ogawa"] },
-    { title: "Craft beer", tags: ["lowkey bars only"] },
+    { title: "The God of Small Things", tags: ["Arundhati Roy"] },
+    { title: "Mandala art", tags: ["how I reset"] },
   ] satisfies HeroListItem[],
   selectedWork: [
     { title: "AdsGency AI", tags: ["LangGraph", "Multi-Agent"] },
+    { title: "Portfolio AI Agent", tags: ["RAG", "Claude Haiku"] },
     { title: "CardMind iOS", tags: ["SwiftUI", "shipped in a week"] },
-    { title: "Recipe App", tags: ["iOS", "AVFoundation"] },
+    { title: "EduBridge", tags: ["Frontend Lead", "capstone"] },
     { title: "Discord Finance Bot", tags: ["Python", "MySQL"] },
-    { title: "This portfolio", tags: ["RAG", "Claude"] },
   ] satisfies HeroListItem[],
 };
 
@@ -463,6 +574,11 @@ export const siteCopy = {
     headline: "SKILLS &",
     headlineAccent: "STACK",
     hoverHint: "Hover a skill to see where I've used it.",
+  },
+  tools: {
+    sectionLabel: "What's in my setup",
+    headline: "TOOLS I",
+    headlineAccent: "USE",
   },
   github: {
     sectionLabel: "What I've been pushing",
@@ -508,6 +624,7 @@ export const siteCopy = {
       { label: "About", href: "about" },
       { label: "Projects", href: "projects" },
       { label: "Skills", href: "skills" },
+      { label: "Tools", href: "tools" },
       { label: "Chat", href: "chat" },
       { label: "Contact", href: "contact" },
     ],

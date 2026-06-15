@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { about, siteCopy } from "@/data/content";
 
 type FeedItem = {
   type: "PushEvent" | "CreateEvent" | "PullRequestEvent" | "WatchEvent";
@@ -105,7 +106,7 @@ export function GitHubFeed() {
           ) : isEmpty || failed ? (
             <div className="pl-6">
               <p className="text-sm text-zinc-500">
-                Check my GitHub for latest activity
+                {siteCopy.github.fallback}
               </p>
             </div>
           ) : (
@@ -127,12 +128,12 @@ export function GitHubFeed() {
 
       <div className="mt-6">
         <a
-          href="https://github.com/pankurik"
+          href={about.github}
           target="_blank"
           rel="noreferrer"
           className="text-sm text-zinc-400 hover:text-white transition-colors"
         >
-          View GitHub →
+          {siteCopy.github.cta}
         </a>
       </div>
     </div>

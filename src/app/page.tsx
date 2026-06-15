@@ -47,6 +47,7 @@ export default function Home() {
     { role: "assistant", content: siteCopy.chat.openingMessage },
   ]);
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -185,7 +186,7 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, history }),
       });
 
       const data = await res.json();
@@ -198,6 +199,11 @@ export default function Home() {
       } else {
         setMessages((prev) => [
           ...prev,
+          { role: "assistant", content: data.answer },
+        ]);
+        setHistory((prev) => [
+          ...prev,
+          { role: "user", content: message },
           { role: "assistant", content: data.answer },
         ]);
       }

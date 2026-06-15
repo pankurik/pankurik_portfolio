@@ -67,7 +67,7 @@ export function ToolsSection() {
           </nav>
 
           <div
-            className="tools-list border border-black/[0.06] bg-white"
+            className="tools-list border border-black/[0.06] bg-[#F5F5F0]"
             onMouseLeave={() => setActiveTool(null)}
           >
             <div className="tools-list-header border-b border-black/[0.06] px-5 py-3">

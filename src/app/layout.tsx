@@ -27,9 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${spaceMono.variable} ${bebasNeue.variable} antialiased`}
+        suppressHydrationWarning
       >
         <CustomCursor />
         {children}

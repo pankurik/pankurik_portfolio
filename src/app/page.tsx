@@ -6,11 +6,9 @@ import { ToolsSection } from "@/components/ToolsSection";
 import { GitHubFeed } from "@/components/GitHubFeed";
 import { ChatInlineStats } from "@/components/ChatInlineStats";
 import { ProjectsSection } from "@/components/ProjectsSection";
-import { RichText } from "@/components/RichText";
+import { AboutSection } from "@/components/AboutSection";
 import {
   about,
-  experience,
-  leadership,
   hero,
   siteCopy,
 } from "@/data/content";
@@ -421,152 +419,7 @@ export default function Home() {
         <section id="about" className="snap-section snap-section--cream">
           <div className="section-panel section-panel--start">
             <div className="section-content">
-              <div className="section-intro">
-                <div className="section-intro-title">
-                  <p className="section-label">{siteCopy.about.sectionLabel}</p>
-                  <h2 className="section-title">
-                    {siteCopy.about.headline}{" "}
-                    <span className="section-title-accent">
-                      {siteCopy.about.headlineAccent}
-                    </span>
-                  </h2>
-                </div>
-              </div>
-
-              <div className="grid gap-10 md:grid-cols-2 mb-12">
-                <div>
-                  <p className="text-sm leading-relaxed text-black/60">
-                    {about.shortBio}
-                  </p>
-                </div>
-                <div>
-                  <p className="section-label">Currently into</p>
-                  <ul className="mt-4 space-y-0">
-                    {hero.currentlyInto.map((item) => (
-                      <li
-                        key={item.title}
-                        className="flex items-baseline justify-between gap-4 py-3 text-sm"
-                      >
-                        <span className="text-black/70">{item.title}</span>
-                        <span className="text-[#1A6B35] text-right shrink-0">
-                          {item.tags.join(" · ")}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="grid gap-10 lg:grid-cols-2">
-                <p className="font-mono text-sm leading-[1.9] text-black/55">
-                  <RichText parts={about.bioStrip} />
-                </p>
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    {about.bioPills.green.map((pill) => (
-                      <span
-                        key={pill}
-                        className="px-3 py-1.5 text-xs border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]"
-                      >
-                        {pill}
-                      </span>
-                    ))}
-                  </div>
-                  {about.bioPills.muted.map((row, rowIndex) => (
-                    <div key={rowIndex} className="flex flex-wrap gap-2">
-                      {row.map((pill) => (
-                        <span
-                          key={pill}
-                          className="px-3 py-1.5 text-xs border border-black/[0.12] text-black/45"
-                        >
-                          {pill}
-                        </span>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="section-subblock">
-                <p className="section-label mb-8">{siteCopy.experience.label}</p>
-                <div className="space-y-12">
-                  {experience.map((job) => (
-                    <div
-                      key={`${job.company}-${job.period}`}
-                      className="grid gap-x-10 mb-12 last:mb-0"
-                      style={{ gridTemplateColumns: "160px 1px 1fr" }}
-                    >
-                      <div>
-                        <p className="font-mono text-[11px] text-black/40 leading-relaxed">
-                          {job.period}
-                        </p>
-                        {job.latest && (
-                          <span className="mt-2 inline-block px-2 py-1 text-[10px] uppercase tracking-[0.12em] border border-[#1A6B35]/30 bg-[#1A6B35]/[0.04] text-[#1A6B35]">
-                            {siteCopy.experience.latestTag}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/[0.08]" />
-                        <div
-                          className={[
-                            "absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full",
-                            job.latest
-                              ? "bg-[#1A6B35]"
-                              : "bg-white border border-black/20",
-                          ].join(" ")}
-                        />
-                      </div>
-
-                      <div>
-                        <h3 className="font-display text-[28px] leading-none tracking-tight">
-                          {job.company}
-                        </h3>
-                        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[#1A6B35]">
-                          {job.role}
-                          {job.employmentType ? ` · ${job.employmentType}` : ""}
-                          {job.location ? ` · ${job.location}` : ""}
-                        </p>
-                        <ul className="mt-4 space-y-2">
-                          {job.bullets.map((bullet, bulletIndex) => (
-                            <li
-                              key={bulletIndex}
-                              className="text-[11px] leading-relaxed text-black/45"
-                            >
-                              <span className="text-[#1A6B35]">—</span>{" "}
-                              <RichText parts={bullet} />
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="section-subblock">
-                <p className="section-label mb-8">{siteCopy.leadership.label}</p>
-                <div className="grid gap-4 md:grid-cols-3">
-                  {leadership.map((entry) => (
-                    <article
-                      key={`${entry.title}-${entry.period}`}
-                      className="p-5 transition-colors hover:bg-white/60"
-                    >
-                      <h3 className="font-display text-[22px] leading-tight tracking-tight">
-                        {entry.title}
-                      </h3>
-                      <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-[#1A6B35]">
-                        {entry.organization}
-                      </p>
-                      <p className="mt-1 text-[10px] text-black/35">{entry.period}</p>
-                      <p className="mt-3 text-[11px] leading-relaxed text-black/45">
-                        <RichText parts={entry.description} />
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </div>
+              <AboutSection isActive={activeSection === "about"} />
             </div>
           </div>
         </section>
